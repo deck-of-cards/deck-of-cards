@@ -32,6 +32,13 @@ var Deck = (function () {
       return test;
     }
 
+    test = 'Moz' + camelCase;
+
+    if (test) {
+      memoized[param] = test;
+      return test;
+    }
+
     test = 'o' + camelCase;
 
     if (test) {
