@@ -1,0 +1,80 @@
+@import 'nib'
+
+global-reset()
+
+*
+  box-sizing: border-box
+
+body
+  background-color: #e5e5e5
+  color: #333
+  font-family: 'Open Sans', sans-serif
+  user-select: none
+
+#container
+  position: absolute
+  top: calc(50% + 1.5rem)
+  left: 50%
+  transform: translate3d(-50%, -50%, 0)
+
+.card
+  position: absolute
+  display: inline-block
+  left: unit(-31 / 16, 'rem')
+  top: unit(-44 / 16, 'rem')
+  width: unit(62 / 16, 'rem')
+  height: unit(88 / 16, 'rem')
+  background-color: #fff
+  border-radius: 3px
+  box-shadow: 0 1px 2px rgba(#000, .15)
+  cursor: move
+
+  .topleft, .bottomright
+    position: absolute
+    width: .6rem
+    font-size: .6rem
+    text-align: center
+    line-height: 1
+
+  .topleft
+    top: .25rem
+    left: .1rem
+
+  .bottomright
+    bottom: .25rem
+    right: .25rem
+    transform: rotate(180deg)
+
+  .suit
+    position: absolute
+    top: 50%
+    left: 50%
+    font-size: 2.5rem
+    transform: translate3d(-50%, -50%, 0)
+
+  &.red
+    color: red
+
+#topbar
+  position: fixed
+  top: 0
+  left: 0
+  width: 100%
+  background-color: rgba(#333, .8)
+  padding: .25rem
+  text-align: center
+
+  button
+    background: none
+    border: 1px solid #fff
+    outline: none
+    margin: .25rem
+    padding: .5rem
+    font: inherit
+    font-size: .875rem
+    color: #fff
+    cursor: pointer
+
+    &:hover
+      background-color: #fff
+      color: #444

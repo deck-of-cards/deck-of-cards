@@ -1,0 +1,37 @@
+{
+  "name": "deck-of-cards",
+  "version": "0.0.1",
+  "description": "HTML5 Deck of Cards",
+  "main": "dist/deck.min.js",
+  "scripts": {
+    "build-js": "rollup --name Deck -f iife lib/deck.js | babel -o dist/deck.js && uglifyjs dist/deck.js -cmo dist/deck.min.js",
+    "build-css": "stylus -u nib -u husl-stylus css/index.styl -o example/example.css",
+    "build-html": "jade views/index.jade -o example/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pakastin/deck-of-cards.git"
+  },
+  "keywords": [
+    "html5",
+    "deck",
+    "of",
+    "cards"
+  ],
+  "author": "Juha Lindstedt",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pakastin/deck-of-cards/issues"
+  },
+  "homepage": "https://github.com/pakastin/deck-of-cards#readme",
+  "dev-dependencies": {
+    "babel": "^5.8.23",
+    "chokidar": "^1.0.5",
+    "husl-stylus": "^1.0.2",
+    "jade": "^1.11.0",
+    "nib": "^1.1.0",
+    "rollup": "^0.14.1",
+    "stylus": "^0.52.0",
+    "uglify-js": "^2.4.24"
+  }
+}
