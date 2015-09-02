@@ -18,6 +18,6 @@ http://pakastin.github.io/deck-of-cards/
 ## build instructions
 
     npm install
-    node index
+    npm start
 
 (starts watching for changes..)
