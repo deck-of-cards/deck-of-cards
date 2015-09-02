@@ -11,7 +11,7 @@ http://pakastin.github.io/deck-of-cards/
 
 [example/](https://github.com/pakastin/deck-of-cards/tree/master/example) - source of http://pakastin.github.io/deck-of-cards/
 
-[lib/](https://github.com/pakastin/deck-of-cards/tree/master/lib) - JS source
+[lib/](https://github.com/pakastin/deck-of-cards/tree/master/lib) - JS (ES6) source
 
 [views/](https://github.com/pakastin/deck-of-cards/tree/master/views) - HTML source
 
