@@ -24,7 +24,7 @@
     "url": "https://github.com/pakastin/deck-of-cards/issues"
   },
   "homepage": "https://github.com/pakastin/deck-of-cards#readme",
-  "dev-dependencies": {
+  "devDependencies": {
     "babel": "^5.8.23",
     "chokidar": "^1.0.5",
     "husl-stylus": "^1.0.2",
