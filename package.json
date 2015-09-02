@@ -4,6 +4,7 @@
   "description": "HTML5 Deck of Cards",
   "main": "dist/deck.min.js",
   "scripts": {
+    "start": "node index",
     "build-js": "rollup --name Deck -f iife lib/deck.js | babel -o dist/deck.js && uglifyjs dist/deck.js -cmo dist/deck.min.js",
     "build-css": "stylus -u nib -u husl-stylus css/index.styl -c -o example/example.css",
     "build-html": "jade views/index.jade -o example/"
