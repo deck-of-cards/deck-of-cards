@@ -5,7 +5,7 @@ http://pakastin.github.io/deck-of-cards/
 
 ## where's what?
 
-[css/](https://github.com/pakastin/deck-of-cards/tree/master/css) - css source (stylus + nib)
+[css/](https://github.com/pakastin/deck-of-cards/tree/master/css) - CSS source (stylus + nib)
 
 [dist/](https://github.com/pakastin/deck-of-cards/tree/master/dist) - deck.js & deck.min.js
 
