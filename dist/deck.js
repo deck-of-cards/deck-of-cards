@@ -47,11 +47,11 @@ var Deck = (function () {
     }
   }
 
-  var _____transition = prefix('transition');
-  var _____transform = prefix('transform');
-  var transformOrigin = prefix('transformOrigin');
-
   function fan(card, $el) {
+    var transition = prefix('transition');
+    var transform = prefix('transform');
+    var transformOrigin = prefix('transformOrigin');
+
     card.fan = function (i, cb) {
       var z = i / 5;
       var delay = i * 10;
@@ -60,11 +60,11 @@ var Deck = (function () {
       $el.style[transformOrigin] = '50% 110%';
 
       setTimeout(function () {
-        $el.style[_____transition] = '.3s all cubic-bezier(0.645, 0.045, 0.355, 1.000)';
-        $el.style[_____transform] = 'translate(-' + z + 'px, -' + z + 'px)';
+        $el.style[transition] = '.3s all cubic-bezier(0.645, 0.045, 0.355, 1.000)';
+        $el.style[transform] = 'translate(-' + z + 'px, -' + z + 'px)';
 
         setTimeout(function () {
-          $el.style[_____transform] = 'rotate(' + rot + 'deg)';
+          $el.style[transform] = 'rotate(' + rot + 'deg)';
         }, 300);
       }, delay);
 
@@ -76,10 +76,10 @@ var Deck = (function () {
     };
   }
 
-  var ____transform = prefix('transform');
-  var ____transition = prefix('transition');
-
   function bysuit(card, $el) {
+    var transform = prefix('transform');
+    var transition = prefix('transition');
+
     var value = card.value;
     var suit = card.suit;
 
@@ -90,29 +90,29 @@ var Deck = (function () {
       var posY = -(1.5 - suit) * 105;
 
       setTimeout(function () {
-        $el.style[____transition] = 'all .5s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
-        $el.style[____transform] = 'translate(' + posX + '%,' + posY + '%)';
+        $el.style[transition] = 'all .5s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
+        $el.style[transform] = 'translate(' + posX + '%,' + posY + '%)';
         $el.style.zIndex = i;
 
         setTimeout(function () {
-          $el.style[____transition] = '';
+          $el.style[transition] = '';
           cb(i);
         }, 500);
       }, delay);
     };
   }
 
-  var ___transform = prefix('transform');
-  var ___transition = prefix('transition');
-
   function sort(card, $el) {
+    var transform = prefix('transform');
+    var transition = prefix('transition');
+
     card.sort = function (n, cb, reverse) {
       var z = n / 5;
       var delay = n * 10;
 
       setTimeout(function () {
-        $el.style[___transition] = 'all .4s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
-        $el.style[___transform] = 'translate(-' + z + 'px, -150%)';
+        $el.style[transition] = 'all .4s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
+        $el.style[transform] = 'translate(-' + z + 'px, -150%)';
       }, delay);
 
       setTimeout(function () {
@@ -120,10 +120,10 @@ var Deck = (function () {
       }, 200 + delay);
 
       setTimeout(function () {
-        $el.style[___transform] = 'translate(-' + z + 'px, -' + z + 'px)';
+        $el.style[transform] = 'translate(-' + z + 'px, -' + z + 'px)';
 
         setTimeout(function () {
-          $el.style[___transition] = '';
+          $el.style[transition] = '';
           card.x = -z;
           card.y = -z;
           cb(n);
@@ -138,20 +138,20 @@ var Deck = (function () {
     return plusminus * value;
   }
 
-  var __transform = prefix('transform');
-  var __transition = prefix('transition');
-
   function shuffle(card, $el) {
+    var transform = prefix('transform');
+    var transition = prefix('transition');
+
     card.shuffle = function (n, cb) {
       var i = card.pos;
       var z = i / 5;
       var offsetX = plusMinus(Math.random() * 40 + 30);
       var delay = i * 2;
 
-      $el.style[__transition] = 'all .3s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
+      $el.style[transition] = 'all .3s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
 
       setTimeout(function () {
-        $el.style[__transform] = 'translate(' + offsetX + '%, -' + z + 'px)';
+        $el.style[transform] = 'translate(' + offsetX + '%, -' + z + 'px)';
       }, delay);
 
       setTimeout(function () {
@@ -159,34 +159,34 @@ var Deck = (function () {
       }, 150 + delay);
 
       setTimeout(function () {
-        $el.style[__transform] = 'translate(-' + z + 'px, -' + z + 'px)';
+        $el.style[transform] = 'translate(-' + z + 'px, -' + z + 'px)';
 
         setTimeout(function () {
-          n || ($el.style[__transition] = '');
+          n || ($el.style[transition] = '');
           cb(i);
         }, n ? 100 : 300);
       }, 300 + delay);
     };
   }
 
-  var _transform = prefix('transform');
-  var _transition = prefix('transition');
-
   function intro(card, $el) {
+    var transform = prefix('transform');
+    var transition = prefix('transition');
+
     card.intro = function (i, cb) {
       var z = i / 5;
 
-      $el.style[_transform] = 'translate(-' + z + 'px, -500%)';
+      $el.style[transform] = 'translate(-' + z + 'px, -500%)';
       $el.style.opacity = 0;
-      $el.style[_transition] = 'all 1s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
+      $el.style[transition] = 'all 1s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
       $el.style.zIndex = i;
 
       setTimeout(function () {
-        $el.style[_transform] = 'translate(-' + z + 'px, -' + z + 'px)';
+        $el.style[transform] = 'translate(-' + z + 'px, -' + z + 'px)';
         $el.style.opacity = 1;
 
         setTimeout(function () {
-          $el.style[_transition] = '';
+          $el.style[transition] = '';
 
           cb && cb(i);
         }, 1000);
@@ -198,11 +198,11 @@ var Deck = (function () {
     return document.createElement(type);
   }
 
-  var transition = prefix('transition');
-  var transform = prefix('transform');
-  var maxZ = 52;
-
   function Card(i) {
+    var transition = prefix('transition');
+    var transform = prefix('transform');
+    var maxZ = 52;
+
     var value = i % 13 + 1;
     var name = value === 1 ? 'A' : value === 11 ? 'J' : value === 12 ? 'Q' : value === 13 ? 'K' : value;
     var suit = i / 13 | 0;
