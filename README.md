@@ -23,3 +23,11 @@ https://pakastin.github.io/deck-of-cards/
     npm start
 
 (starts watching for changes..)
+
+## Note to self: todo
+
+- Make z-index temporary by reordering DOM elements between actions
+- Fix moving
+- Make API more open
+- Make cards flippable
+- Maybe use translate3d for even better performance, but make that temporary because of the smoothing issue
