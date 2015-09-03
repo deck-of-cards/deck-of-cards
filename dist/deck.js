@@ -245,8 +245,8 @@ var Deck = (function () {
         addListener(window, 'mousemove', onMousemove);
         addListener(window, 'mouseup', onMouseup);
       } else {
-        removeListener(window, 'touchmove', onMousemove);
-        removeListener(window, 'touchend', onMouseup);
+        addListener(window, 'touchmove', onMousemove);
+        addListener(window, 'touchend', onMouseup);
       }
 
       $el.style[transition] = '';
