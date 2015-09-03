@@ -3,7 +3,7 @@
 
 Pure vanilla JS – no dependencies.
 
-https://pakastin.github.io/deck-of-cards/
+http://deck-of-cards.js.org
 
 ## where's what?
 
