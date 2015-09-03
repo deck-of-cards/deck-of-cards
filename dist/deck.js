@@ -196,11 +196,11 @@ var Deck = (function () {
 
       $el.style[transform] = 'translate(-' + z + 'px, -250%)';
       $el.style.opacity = 0;
-      $el.style[transition] = 'all 1s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
-      $el.style[transitionDelay] = delay / 1000 + 's';
       $el.style.zIndex = i;
 
       setTimeout(function () {
+        $el.style[transition] = 'all 1s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
+        $el.style[transitionDelay] = delay / 1000 + 's';
         $el.style[transform] = 'translate(-' + z + 'px, -' + z + 'px)';
         $el.style.opacity = 1;
 
