@@ -11,7 +11,7 @@ https://pakastin.github.io/deck-of-cards/
 
 [dist/](https://github.com/pakastin/deck-of-cards/tree/master/dist) - deck.js & deck.min.js
 
-[example/](https://github.com/pakastin/deck-of-cards/tree/master/example) - http://pakastin.github.io/deck-of-cards
+[example/](https://github.com/pakastin/deck-of-cards/tree/master/example) - https://pakastin.github.io/deck-of-cards
 
 [lib/](https://github.com/pakastin/deck-of-cards/tree/master/lib) - JS (ES6) source of deck.js
 
