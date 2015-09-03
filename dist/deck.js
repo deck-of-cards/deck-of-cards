@@ -3,6 +3,7 @@
 var Deck = (function () {
   'use strict';
 
+  var style = document.createElement('p').style;
   var memoized = {};
 
   function prefix(param) {
@@ -10,48 +11,21 @@ var Deck = (function () {
       return memoized[param];
     }
 
-    var style = document.createElement('p').style;
-
     if (typeof style[param] !== 'undefined') {
       memoized[param] = param;
       return param;
     }
 
     var camelCase = param[0].toUpperCase() + param.slice(1);
+    var prefixes = ['webkit', 'moz', 'Moz', 'ms', 'o'];
+    var test;
 
-    var test = 'webkit' + camelCase;
-
-    if (typeof style[test] !== 'undefined') {
-      memoized[param] = test;
-      return test;
-    }
-
-    test = 'moz' + camelCase;
-
-    if (typeof style[test] !== 'undefined') {
-      memoized[param] = test;
-      return test;
-    }
-
-    test = 'Moz' + camelCase;
-
-    if (typeof style[test] !== 'undefined') {
-      memoized[param] = test;
-      return test;
-    }
-
-    test = 'o' + camelCase;
-
-    if (typeof style[test] !== 'undefined') {
-      memoized[param] = test;
-      return test;
-    }
-
-    test = 'ms' + camelCase;
-
-    if (typeof style[test] !== 'undefined') {
-      memoized[param] = test;
-      return test;
+    for (var i = 0, len = prefixes.length; i < len; i++) {
+      test = prefixes[i] + camelCase;
+      if (typeof style[test] !== 'undefined') {
+        memoized[param] = test;
+        return test;
+      }
     }
   }
 
