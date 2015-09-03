@@ -110,7 +110,7 @@ var Deck = (function () {
         setTimeout(function () {
           $el.style[transition] = '';
           cb(i);
-        }, 500);
+        }, 500 + delay);
       }, 0);
     };
   }
