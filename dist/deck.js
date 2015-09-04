@@ -482,6 +482,8 @@ var Deck = (function () {
   }
 
   function queue(target) {
+    var array = Array.prototype;
+
     var queueing = [];
 
     target.queue = queue;
@@ -495,7 +497,7 @@ var Deck = (function () {
         var args = arguments;
 
         queue(function (next) {
-          action.apply(self, [next].concat(args));
+          action.apply(self, array.concat.apply(next, args));
         });
       };
     }
