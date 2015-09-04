@@ -3,7 +3,7 @@
 
 Pure vanilla JS – no dependencies.
 
-http://deck-of-cards.js.org
+http://pakastin.github.io/deck-of-cards
 
 ## Version history
 
@@ -16,7 +16,7 @@ http://deck-of-cards.js.org
 
 [dist/](https://github.com/pakastin/deck-of-cards/tree/master/dist) - deck.js & deck.min.js
 
-[example/](https://github.com/pakastin/deck-of-cards/tree/master/example) - http://deck-of-cards.js.org
+[example/](https://github.com/pakastin/deck-of-cards/tree/master/example) - http://pakastin.github.io/deck-of-cards
 
 [lib/](https://github.com/pakastin/deck-of-cards/tree/master/lib) - JS (ES6) source of deck.js
 
