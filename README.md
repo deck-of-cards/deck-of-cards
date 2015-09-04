@@ -5,7 +5,12 @@ Pure vanilla JS – no dependencies.
 
 http://deck-of-cards.js.org
 
-## where's what?
+## Version history
+
+- 0.0.2 made intro shorter & added "poker"
+- 0.0.1 initial version
+
+## Where's what?
 
 [css/](https://github.com/pakastin/deck-of-cards/tree/master/css) - CSS source (stylus + nib) of the example
 
@@ -17,7 +22,7 @@ http://deck-of-cards.js.org
 
 [views/](https://github.com/pakastin/deck-of-cards/tree/master/views) - HTML source of the example
 
-## build instructions
+## Build instructions
 
     npm install
     npm start
@@ -28,6 +33,6 @@ http://deck-of-cards.js.org
 
 - Make z-index temporary by reordering DOM elements between actions
 - Fix moving
-- Make API more open
+- Enhance API, make more generic
 - Make cards flippable
 - Maybe use translate3d for even better performance, but make that temporary because of the smoothing issue
