@@ -29,6 +29,29 @@ var Deck = (function () {
     }
   }
 
+  function poker(card, $el) {
+    var transform = prefix('transform');
+    var transition = prefix('transition');
+    var transitionDelay = prefix('transitionDelay');
+
+    card.poker = function (i, cb) {
+      var delay = i * 250;
+      var target = {
+        x: (i - 2) * 110,
+        y: -125
+      };
+      setTimeout(function () {
+        $el.style[transition] = 'all .25s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
+        $el.style[transitionDelay] = delay / 1000 + 's';
+        $el.style[transform] = 'translate(' + target.x + '%, ' + target.y + '%)';
+      }, 0);
+      setTimeout(function () {
+        $el.style[transition] = '';
+        cb(i);
+      }, delay + 250);
+    };
+  }
+
   function fan(card, $el) {
     var transform = prefix('transform');
     var transformOrigin = prefix('transformOrigin');
@@ -182,7 +205,7 @@ var Deck = (function () {
           $el.style[transition] = '';
 
           cb && cb(i);
-        }, 1000 + delay);
+        }, 1250 + delay);
       }, 0);
     };
   }
@@ -232,6 +255,7 @@ var Deck = (function () {
     sort(self, $el);
     bysuit(self, $el);
     fan(self, $el);
+    poker(self, $el);
 
     addListener($el, 'mousedown', onMousedown);
     addListener($el, 'touchstart', onMousedown);
@@ -439,6 +463,7 @@ var Deck = (function () {
 
     self.sort = sort;
     self.bysuit = bysuit;
+    self.poker = poker;
     self.fan = fan;
 
     $el.classList.add('deck');
@@ -457,7 +482,6 @@ var Deck = (function () {
       }
     });
 
-    self.shuffle();
     self.sort();
 
     return self;
@@ -489,6 +513,19 @@ var Deck = (function () {
         cards.forEach(function (card) {
           card.bysuit(function (i) {
             if (i === 51) {
+              next();
+            }
+          });
+        });
+      });
+    }
+
+    function poker() {
+      self.shuffle();
+      self.queue(function (next) {
+        cards.slice(-5).forEach(function (card, i) {
+          card.poker(i, function (i) {
+            if (i === 4) {
               next();
             }
           });
