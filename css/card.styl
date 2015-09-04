@@ -1,0 +1,37 @@
+.card
+  position: absolute
+  display: inline-block
+  left: unit(-31 / 16, 'rem')
+  top: unit(-44 / 16, 'rem')
+  width: unit(62 / 16, 'rem')
+  height: unit(88 / 16, 'rem')
+  background-color: #fff
+  border-radius: 3px
+  box-shadow: 0 1px 1px rgba(#000, .15)
+  cursor: move
+
+  .topleft, .bottomright
+    position: absolute
+    width: .6rem
+    font-size: .6rem
+    text-align: center
+    line-height: 1
+
+  .topleft
+    top: .25rem
+    left: .1rem
+
+  .bottomright
+    bottom: .25rem
+    right: .25rem
+    transform: rotate(180deg)
+
+  .suit
+    position: absolute
+    top: 50%
+    left: 50%
+    font-size: 2.5rem
+    transform: translate3d(-50%, -50%, 0)
+
+  &.red
+    color: red
