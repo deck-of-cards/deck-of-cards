@@ -29,6 +29,51 @@ var Deck = (function () {
     }
   }
 
+  var transform = prefix('transform');
+  var $p = document.createElement('p');
+
+  document.body.appendChild($p);
+
+  $p.style[transform] = 'translate3d(1px,1px,1px)';
+
+  var has3d = $p.style[transform];
+
+  has3d = has3d != null && has3d.length && has3d !== 'none';
+
+  document.body.removeChild($p);
+
+  function translate(a, b, c) {
+    c = c || 0;
+    if (has3d) {
+      return 'translate3d(' + a + ', ' + b + ', ' + c + ')';
+    } else {
+      return 'translate(' + a + ', ' + b + ')';
+    }
+  }
+
+  function poker(card, $el) {
+    var transform = prefix('transform');
+    var transition = prefix('transition');
+    var transitionDelay = prefix('transitionDelay');
+
+    card.poker = function (i, cb) {
+      var delay = i * 250;
+      var target = {
+        x: (i - 2) * 110,
+        y: -125
+      };
+      setTimeout(function () {
+        $el.style[transition] = 'all .25s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
+        $el.style[transitionDelay] = delay / 1000 + 's';
+        $el.style[transform] = translate(target.x + '%', target.y + '%');
+      }, 0);
+      setTimeout(function () {
+        $el.style[transition] = '';
+        cb(i);
+      }, delay + 250);
+    };
+  }
+
   function fan(card, $el) {
     var transform = prefix('transform');
     var transformOrigin = prefix('transformOrigin');
@@ -36,24 +81,23 @@ var Deck = (function () {
     var transitionDelay = prefix('transitionDelay');
 
     card.fan = function (i, cb) {
-      var z = i / 5;
+      var z = i / 4;
       var delay = i * 10;
       var rot = i / 51 * 260 - 130;
 
       $el.style[transformOrigin] = '50% 110%';
 
       setTimeout(function () {
-        $el.style[transition] = '.3s all cubic-bezier(0.645, 0.045, 0.355, 1.000)';
+        $el.style[transition] = 'all .3s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
         $el.style[transitionDelay] = delay / 1000 + 's';
-        $el.style[transform] = 'translate(-' + z + 'px, -' + z + 'px)';
+        $el.style[transform] = translate(-z + 'px', -z + 'px');
+        $el.style.zIndex = i;
 
         setTimeout(function () {
           $el.style[transitionDelay] = '';
-          $el.style[transform] = 'rotate(' + rot + 'deg)';
+          $el.style[transform] = translate(0, 0) + 'rotate(' + rot + 'deg)';
         }, 300 + delay);
       }, 0);
-
-      $el.style.zIndex = i;
 
       setTimeout(function () {
         cb(i);
@@ -78,7 +122,7 @@ var Deck = (function () {
       setTimeout(function () {
         $el.style[transition] = 'all .5s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
         $el.style[transitionDelay] = delay / 1000 + 's';
-        $el.style[transform] = 'translate(' + posX + '%,' + posY + '%)';
+        $el.style[transform] = translate(posX + '%', posY + '%');
         $el.style.zIndex = i;
 
         setTimeout(function () {
@@ -94,12 +138,12 @@ var Deck = (function () {
     var transition = prefix('transition');
 
     card.sort = function (n, cb, reverse) {
-      var z = n / 5;
+      var z = n / 4;
       var delay = n * 10;
 
       setTimeout(function () {
         $el.style[transition] = 'all .4s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
-        $el.style[transform] = 'translate(-' + z + 'px, -150%)';
+        $el.style[transform] = translate(-z + 'px', '-150%');
       }, delay);
 
       setTimeout(function () {
@@ -107,7 +151,7 @@ var Deck = (function () {
       }, 200 + delay);
 
       setTimeout(function () {
-        $el.style[transform] = 'translate(-' + z + 'px, -' + z + 'px)';
+        $el.style[transform] = translate(-z + 'px', -z + 'px');
 
         setTimeout(function () {
           $el.style[transition] = '';
@@ -132,30 +176,30 @@ var Deck = (function () {
 
     card.shuffle = function (n, cb) {
       var i = card.pos;
-      var z = i / 5;
+      var z = i / 4;
       var offsetX = plusMinus(Math.random() * 40 + 30);
       var delay = i * 2;
 
-      $el.style[transition] = 'all .25s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
+      $el.style[transition] = 'all .2s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
       $el.style[transitionDelay] = delay / 1000 + 's';
 
       setTimeout(function () {
-        $el.style[transform] = 'translate(' + offsetX + '%, -' + z + 'px)';
+        $el.style[transform] = translate(offsetX + '%', -z + 'px');
       }, 0);
 
       setTimeout(function () {
         $el.style[transitionDelay] = '';
         $el.style.zIndex = i;
-      }, 125 + delay);
+      }, 100 + delay);
 
       setTimeout(function () {
-        $el.style[transform] = 'translate(-' + z + 'px, -' + z + 'px)';
+        $el.style[transform] = translate(-z + 'px', -z + 'px');
 
         setTimeout(function () {
           n || ($el.style[transition] = '');
           cb(i);
-        }, 250);
-      }, 250 + delay);
+        }, 200);
+      }, 200 + delay);
     };
   }
 
@@ -166,23 +210,23 @@ var Deck = (function () {
 
     card.intro = function (i, cb) {
       var delay = i * 10 + 250;
-      var z = i / 5;
+      var z = i / 4;
 
-      $el.style[transform] = 'translate(-' + z + 'px, -250%)';
+      $el.style[transform] = translate(-z + 'px', '-250%');
       $el.style.opacity = 0;
       $el.style.zIndex = i;
 
       setTimeout(function () {
         $el.style[transition] = 'all 1s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
         $el.style[transitionDelay] = delay / 1000 + 's';
-        $el.style[transform] = 'translate(-' + z + 'px, -' + z + 'px)';
+        $el.style[transform] = translate(-z + 'px', -z + 'px');
         $el.style.opacity = 1;
 
         setTimeout(function () {
           $el.style[transition] = '';
 
           cb && cb(i);
-        }, 1000 + delay);
+        }, 1250 + delay);
       }, 0);
     };
   }
@@ -201,7 +245,7 @@ var Deck = (function () {
     var suit = i / 13 | 0;
     var suitsymbol = suitSymbol(suit);
     var color = suit % 2 ? 'red' : 'black';
-    var z = (52 - i) / 5;
+    var z = (52 - i) / 4;
     var self = { i: i, value: value, suit: suit, pos: i, $el: $el, mount: mount, unmount: unmount };
 
     var $el = createElement('div');
@@ -232,6 +276,7 @@ var Deck = (function () {
     sort(self, $el);
     bysuit(self, $el);
     fan(self, $el);
+    poker(self, $el);
 
     addListener($el, 'mousedown', onMousedown);
     addListener($el, 'touchstart', onMousedown);
@@ -240,16 +285,25 @@ var Deck = (function () {
 
     function onMousedown(e) {
       var middlePoint = $root.getBoundingClientRect();
+      var pos = {};
+
+      e.preventDefault();
 
       if (e.type === 'mousedown') {
+        pos.x = e.clientX;
+        pos.y = e.clientY;
         addListener(window, 'mousemove', onMousemove);
         addListener(window, 'mouseup', onMouseup);
       } else {
-        removeListener(window, 'touchmove', onMousemove);
-        removeListener(window, 'touchend', onMouseup);
+        pos.x = e.touches[0].clientX;
+        pos.y = e.touches[0].clientY;
+        addListener(window, 'touchmove', onMousemove);
+        addListener(window, 'touchend', onMouseup);
       }
 
-      $el.style[transition] = '';
+      $el.style[transition] = 'all .2s cubic-bezier(0.215, 0.610, 0.355, 1.000)';
+      $el.style[transform] = translate(pos.x - middlePoint.left + 'px', pos.y - middlePoint.top + 'px');
+      $el.style.zIndex = maxZ++;
 
       function onMousemove(e) {
         var pos = {};
@@ -262,7 +316,8 @@ var Deck = (function () {
           pos.y = e.touches[0].clientY;
         }
 
-        $el.style[transform] = 'translate(' + (pos.x - middlePoint.left) + 'px, ' + (pos.y - middlePoint.top) + 'px)';
+        $el.style[transition] = '';
+        $el.style[transform] = translate(pos.x - middlePoint.left + 'px', pos.y - middlePoint.top + 'px');
       }
 
       function onMouseup(e) {
@@ -273,8 +328,6 @@ var Deck = (function () {
           removeListener(window, 'touchmove', onMousemove);
           removeListener(window, 'touchend', onMouseup);
         }
-
-        $el.style.zIndex = maxZ++;
       }
     }
 
@@ -318,7 +371,7 @@ var Deck = (function () {
       }
 
       if (shuffling === -1) {
-        shuffling = 2;
+        shuffling = 1;
       } else {
         shuffling--;
       }
@@ -439,6 +492,7 @@ var Deck = (function () {
 
     self.sort = sort;
     self.bysuit = bysuit;
+    self.poker = poker;
     self.fan = fan;
 
     $el.classList.add('deck');
@@ -457,7 +511,6 @@ var Deck = (function () {
       }
     });
 
-    self.shuffle();
     self.sort();
 
     return self;
@@ -489,6 +542,19 @@ var Deck = (function () {
         cards.forEach(function (card) {
           card.bysuit(function (i) {
             if (i === 51) {
+              next();
+            }
+          });
+        });
+      });
+    }
+
+    function poker() {
+      self.shuffle();
+      self.queue(function (next) {
+        cards.slice(-5).reverse().forEach(function (card, i) {
+          card.poker(i, function (i) {
+            if (i === 4) {
               next();
             }
           });
