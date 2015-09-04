@@ -38,7 +38,7 @@ var Deck = (function () {
 
   var has3d = window.getComputedStyle($p).getPropertyValue(transform);
 
-  has3d = typeof has3d !== 'undefined' && has3d.length && has3d !== 'none';
+  has3d = has3d != null && has3d.length && has3d !== 'none';
 
   console.log('3d support', has3d);
 
