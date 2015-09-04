@@ -28,13 +28,18 @@ $sort.addEventListener('click', function () {
   deck.sort()
 })
 $bysuit.addEventListener('click', function () {
+  deck.sort(true) // sort reversed
   deck.bysuit()
 })
 $fan.addEventListener('click', function () {
   deck.fan()
 })
 $poker.addEventListener('click', function () {
+  deck.shuffle()
   deck.poker()
 })
 
 deck.mount($container)
+
+deck.intro()
+deck.sort()
