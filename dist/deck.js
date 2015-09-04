@@ -235,10 +235,11 @@ var Deck = (function () {
     return document.createElement(type);
   }
 
+  var maxZ = 52;
+
   function Card(i) {
     var transition = prefix('transition');
     var transform = prefix('transform');
-    var maxZ = 52;
 
     var value = i % 13 + 1;
     var name = value === 1 ? 'A' : value === 11 ? 'J' : value === 12 ? 'Q' : value === 13 ? 'K' : value;
