@@ -287,6 +287,8 @@ var Deck = (function () {
       var middlePoint = $root.getBoundingClientRect();
       var pos = {};
 
+      e.preventDefault();
+
       if (e.type === 'mousedown') {
         pos.x = e.clientX;
         pos.y = e.clientY;
