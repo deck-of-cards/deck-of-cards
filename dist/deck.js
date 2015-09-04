@@ -355,18 +355,106 @@ var Deck = (function () {
     target.removeEventListener(name, listener);
   }
 
-  function shuffleable(deck, cards) {
+  function introModule(deck) {
+    deck.intro = deck.queued(intro);
+
+    function intro(next) {
+      var cards = deck.cards;
+
+      cards.forEach(function (card, i) {
+        card.intro(i, function (i) {
+          if (i === 51) {
+            next();
+          }
+        });
+      });
+    }
+  }
+
+  function bysuitModule(deck) {
+    deck.bysuit = deck.queued(bysuit);
+
+    function bysuit(next) {
+      var cards = deck.cards;
+
+      cards.forEach(function (card) {
+        card.bysuit(function (i) {
+          if (i === 51) {
+            next();
+          }
+        });
+      });
+    }
+  }
+
+  function pokerModule(deck) {
+    deck.poker = deck.queued(poker);
+
+    function poker(next) {
+      var cards = deck.cards;
+
+      cards.slice(-5).reverse().forEach(function (card, i) {
+        card.poker(i, function (i) {
+          if (i === 4) {
+            next();
+          }
+        });
+      });
+    }
+  }
+
+  function fanModule(deck) {
+    deck.fan = deck.queued(fan);
+
+    function fan(next) {
+      var cards = deck.cards;
+
+      cards.forEach(function (card, i) {
+        card.fan(i, function (i) {
+          if (i === 51) {
+            next();
+          }
+        });
+      });
+    }
+  }
+
+  function sortModule(deck) {
+    deck.sort = deck.queued(sort);
+
+    function sort(next, reverse) {
+      var cards = deck.cards;
+
+      cards.sort(function (a, b) {
+        if (reverse) {
+          return a.i - b.i;
+        } else {
+          return b.i - a.i;
+        }
+      });
+
+      cards.forEach(function (card, i) {
+        card.sort(i, function (i) {
+          if (i === 51) {
+            next();
+          }
+        }, reverse);
+      });
+    }
+  }
+
+  function shuffleable(deck) {
     var shuffling = -1;
 
-    deck.shuffle = function () {
-      deck.queue(shuffle);
-    };
+    deck.shuffle = deck.queued(shuffle);
 
-    function shuffle(cb) {
+    function shuffle(next) {
+      var cards = deck.cards;
+
       if (shuffling === 0) {
         shuffling = -1;
 
-        cb && cb();
+        next && next();
         return;
       }
 
@@ -385,7 +473,7 @@ var Deck = (function () {
 
         card.shuffle(shuffling, function (i) {
           if (i === 51) {
-            shuffle(cb);
+            shuffle(next);
           }
         });
       });
@@ -397,8 +485,20 @@ var Deck = (function () {
     var queueing = [];
 
     target.queue = queue;
+    target.queued = queued;
 
     return target;
+
+    function queued(action) {
+      return function () {
+        var self = this;
+        var args = arguments;
+
+        queue(function (next) {
+          action.apply(self, [next].concat(args));
+        });
+      };
+    }
 
     function queue(action) {
       if (!action) {
@@ -427,6 +527,7 @@ var Deck = (function () {
   }
 
   function observable(target) {
+    target || (target = {});
     var listeners = {};
 
     target.on = on;
@@ -480,38 +581,27 @@ var Deck = (function () {
 
   function deck() {
     var cards = new Array(52);
-    var self = observable({ mount: mount, unmount: unmount, cards: cards });
 
     var $el = createElement('div');
+    var self = observable({ mount: mount, unmount: unmount, cards: cards, $el: $el });
     var $root;
 
-    var card;
-
     queue(self);
-    shuffleable(self, cards);
-
-    self.sort = sort;
-    self.bysuit = bysuit;
-    self.poker = poker;
-    self.fan = fan;
+    shuffleable(self);
+    sortModule(self);
+    fanModule(self);
+    pokerModule(self);
+    bysuitModule(self);
+    introModule(self);
 
     $el.classList.add('deck');
 
-    self.queue(function (next) {
-      for (var i = 0, len = cards.length; i < len; i++) {
-        card = cards[i] = Card(i);
+    var card;
 
-        card.intro(i, function (i) {
-          if (i === 51) {
-            next();
-          }
-        });
-
-        card.mount($el);
-      }
-    });
-
-    self.sort();
+    for (var i = 0, len = cards.length; i < len; i++) {
+      card = cards[i] = Card(i);
+      card.mount($el);
+    }
 
     return self;
 
@@ -522,63 +612,6 @@ var Deck = (function () {
 
     function unmount() {
       $root.removeChild($el);
-    }
-
-    function fan() {
-      self.queue(function (next) {
-        cards.forEach(function (card, i) {
-          card.fan(i, function (i) {
-            if (i === 51) {
-              next();
-            }
-          });
-        });
-      });
-    }
-
-    function bysuit() {
-      self.sort(true);
-      self.queue(function (next) {
-        cards.forEach(function (card) {
-          card.bysuit(function (i) {
-            if (i === 51) {
-              next();
-            }
-          });
-        });
-      });
-    }
-
-    function poker() {
-      self.shuffle();
-      self.queue(function (next) {
-        cards.slice(-5).reverse().forEach(function (card, i) {
-          card.poker(i, function (i) {
-            if (i === 4) {
-              next();
-            }
-          });
-        });
-      });
-    }
-
-    function sort(reverse) {
-      self.queue(function (cb) {
-        cards.sort(function (a, b) {
-          if (reverse) {
-            return a.i - b.i;
-          } else {
-            return b.i - a.i;
-          }
-        });
-        cards.forEach(function (card, i) {
-          card.sort(i, function (i) {
-            if (i === 51) {
-              cb();
-            }
-          }, reverse);
-        });
-      });
     }
   }
 
