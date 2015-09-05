@@ -11,6 +11,13 @@ http://pakastin.github.io/deck-of-cards
 - 0.0.2 made intro shorter & added "poker"
 - 0.0.1 initial version
 
+
+## Download
+
+- [Production version (~5 KB uncompressed)](https://pakastin.github.io/deck-of-cards/dist/deck.min.js)
+- [Development version (~15 KB uncompressed)](https://pakastin.github.io/deck-of-cards/dist/deck.js)
+
+
 ## Where's what?
 
 [css/](https://github.com/pakastin/deck-of-cards/tree/master/css) - CSS source (stylus + nib) of the example
@@ -23,9 +30,7 @@ http://pakastin.github.io/deck-of-cards
 
 [views/](https://github.com/pakastin/deck-of-cards/tree/master/views) - HTML source of the example
 
-## Download
-- [Production version (~5 KB uncompressed)](https://pakastin.github.io/deck-of-cards/dist/deck.min.js)
-- [Development version (~15 KB uncompressed)](https://pakastin.github.io/deck-of-cards/dist/deck.js)
+
 ## Build instructions
 
     npm install
