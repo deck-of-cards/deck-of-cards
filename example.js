@@ -126,3 +126,38 @@ deck.mount($container)
 
 deck.intro()
 deck.sort()
+
+setTimeout(function () {
+  printMessage('Psst..Let me tell you a little secret...')
+}, 10000)
+
+setTimeout(function () {
+  printMessage('...try clicking all the aces and nothing in between..')
+}, 15000)
+
+setTimeout(function () {
+  printMessage('...have fun, but keep it a secret..? ;)')
+}, 20000)
+
+function printMessage (text) {
+  var $message = document.createElement('p')
+  $message.classList.add('message')
+  $message.textContent = text
+
+  document.body.appendChild($message)
+
+  $message.style[transform] = translate(window.innerWidth + 'px', 0)
+
+  setTimeout(function () {
+    $message.style[transition] = 'all .7s ' + easing('cubicInOut')
+    $message.style[transform] = translate(0, 0)
+  }, 1000)
+
+  setTimeout(function () {
+    $message.style[transform] = translate(-window.innerWidth + 'px', 0)
+  }, 6000)
+
+  setTimeout(function () {
+    document.body.removeChild($message)
+  }, 7000)
+}
