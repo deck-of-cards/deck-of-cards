@@ -35,7 +35,10 @@ var acesClicked = []
 var deck = Deck()
 
 deck.cards.forEach(function (card, i) {
-  card.$el.addEventListener('click', function () {
+  card.$el.addEventListener('mousedown', onTouch)
+  card.$el.addEventListener('touchstart', onTouch)
+
+  function onTouch () {
     if (i % 13 === 0) {
       acesClicked[i] = true
       if (acesClicked.filter(function (ace) {
@@ -50,7 +53,7 @@ deck.cards.forEach(function (card, i) {
     } else {
       acesClicked = []
     }
-  })
+  }
 })
 
 function startWinning () {
