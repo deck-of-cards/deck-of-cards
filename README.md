@@ -24,8 +24,8 @@ http://pakastin.github.io/deck-of-cards
 [views/](https://github.com/pakastin/deck-of-cards/tree/master/views) - HTML source of the example
 
 ## Download
-- [Production version (~5 KB uncompressed)](https://pakastin.github.io/dist/deck.min.js)
-- [Development version (~15 KB uncompressed)](https://pakastin.github.io/dist/deck.js)
+- [Production version (~5 KB uncompressed)](https://pakastin.github.io/deck-of-cards/dist/deck.min.js)
+- [Development version (~15 KB uncompressed)](https://pakastin.github.io/deck-of-cards/dist/deck.js)
 ## Build instructions
 
     npm install
