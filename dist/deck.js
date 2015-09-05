@@ -247,12 +247,13 @@ var Deck = (function () {
     var suitsymbol = suitSymbol(suit);
     var color = suit % 2 ? 'red' : 'black';
     var z = (52 - i) / 4;
-    var self = { i: i, value: value, suit: suit, pos: i, $el: $el, mount: mount, unmount: unmount };
 
     var $el = createElement('div');
     var $suit = createElement('div');
     var $topleft = createElement('div');
     var $bottomright = createElement('div');
+
+    var self = { i: i, value: value, suit: suit, pos: i, $el: $el, mount: mount, unmount: unmount };
 
     var $root;
 
@@ -354,6 +355,12 @@ var Deck = (function () {
 
   function removeListener(target, name, listener) {
     target.removeEventListener(name, listener);
+  }
+
+  function easing(name) {
+    if (name === 'cubicInOut') {
+      return 'cubic-bezier(0.645, 0.045, 0.355, 1.000)';
+    }
   }
 
   function introModule(deck) {
@@ -568,8 +575,9 @@ var Deck = (function () {
     }
   }
 
-  function deck() {
-    var cards = new Array(52);
+  function Deck(n) {
+    n || (n = 1);
+    var cards = new Array(n * 52);
 
     var $el = createElement('div');
     var self = observable({ mount: mount, unmount: unmount, cards: cards, $el: $el });
@@ -588,7 +596,7 @@ var Deck = (function () {
     var card;
 
     for (var i = 0, len = cards.length; i < len; i++) {
-      card = cards[i] = Card(i);
+      card = cards[i] = Card(i % 52);
       card.mount($el);
     }
 
@@ -603,6 +611,10 @@ var Deck = (function () {
       $root.removeChild($el);
     }
   }
+  Deck.Card = Card;
+  Deck.easing = easing;
+  Deck.prefix = prefix;
+  Deck.translate = translate;
 
-  return deck;
+  return Deck;
 })();
