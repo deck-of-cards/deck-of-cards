@@ -1,7 +1,7 @@
 # HTML5 Deck of Cards
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/pakastin/deck-of-cards?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-Pure vanilla JS – no dependencies.
+Pure vanilla JS (+CSS3) – no dependencies.
 
 http://pakastin.github.io/deck-of-cards
 
