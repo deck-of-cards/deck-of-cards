@@ -1,7 +1,7 @@
 # HTML5 Deck of Cards
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/pakastin/deck-of-cards?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-Pure vanilla JS (+CSS3) – no dependencies.
+Pure vanilla JS (+ CSS3) – no dependencies.
 
 http://pakastin.github.io/deck-of-cards
 
@@ -33,7 +33,5 @@ http://pakastin.github.io/deck-of-cards
 ## Note to self: todo
 
 - Make z-index temporary by reordering DOM elements between actions
-- Fix moving
 - Enhance API, make more generic
 - Make cards flippable
-- Maybe use translate3d for even better performance, but make that temporary because of the smoothing issue
