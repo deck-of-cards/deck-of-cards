@@ -41,5 +41,5 @@ http://pakastin.github.io/deck-of-cards
 ## Note to self: todo
 
 - Make z-index temporary by reordering DOM elements between actions
-- Enhance API, make more generic
+- Enhance API, make more flexible
 - Make cards flippable
