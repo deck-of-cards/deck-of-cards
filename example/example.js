@@ -23,6 +23,7 @@ var deck = Deck()
 
 $shuffle.addEventListener('click', function () {
   deck.shuffle()
+  deck.shuffle()
 })
 $sort.addEventListener('click', function () {
   deck.sort()
@@ -35,6 +36,8 @@ $fan.addEventListener('click', function () {
   deck.fan()
 })
 $poker.addEventListener('click', function () {
+  deck.shuffle()
+  deck.shuffle()
   deck.shuffle()
   deck.poker()
 })

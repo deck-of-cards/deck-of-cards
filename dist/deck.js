@@ -174,7 +174,7 @@ var Deck = (function () {
     var transition = prefix('transition');
     var transitionDelay = prefix('transitionDelay');
 
-    card.shuffle = function (n, cb) {
+    card.shuffle = function (cb) {
       var i = card.pos;
       var z = i / 4;
       var offsetX = plusMinus(Math.random() * 40 + 30);
@@ -196,7 +196,7 @@ var Deck = (function () {
         $el.style[transform] = translate(-z + 'px', -z + 'px');
 
         setTimeout(function () {
-          n || ($el.style[transition] = '');
+          $el.style[transition] = '';
           cb(i);
         }, 200);
       }, 200 + delay);
@@ -445,25 +445,11 @@ var Deck = (function () {
   }
 
   function shuffleable(deck) {
-    var shuffling = -1;
 
     deck.shuffle = deck.queued(shuffle);
 
     function shuffle(next) {
       var cards = deck.cards;
-
-      if (shuffling === 0) {
-        shuffling = -1;
-
-        next && next();
-        return;
-      }
-
-      if (shuffling === -1) {
-        shuffling = 1;
-      } else {
-        shuffling--;
-      }
 
       cards.sort(function () {
         return Math.random() * 100 - 50;
@@ -472,9 +458,9 @@ var Deck = (function () {
       cards.forEach(function (card, i) {
         card.pos = i;
 
-        card.shuffle(shuffling, function (i) {
+        card.shuffle(function (i) {
           if (i === 51) {
-            shuffle(next);
+            next();
           }
         });
       });
