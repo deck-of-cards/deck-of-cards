@@ -19,7 +19,7 @@ http://pakastin.github.io/deck-of-cards
 
 [example/](https://github.com/pakastin/deck-of-cards/tree/master/example) - http://pakastin.github.io/deck-of-cards
 
-[lib/](https://github.com/pakastin/deck-of-cards/tree/master/lib) - JS (ES6) source of deck.js
+[lib/](https://github.com/pakastin/deck-of-cards/tree/master/lib) - JS (ES6) source of deck.js - deck.js is the main file
 
 [views/](https://github.com/pakastin/deck-of-cards/tree/master/views) - HTML source of the example
 
