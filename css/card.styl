@@ -8,7 +8,7 @@
   background-color: #fff
   border-radius: 3px
   box-shadow: 0 1px 1px rgba(#000, .15)
-  cursor: move
+  cursor: default
 
   .topleft, .bottomright
     position: absolute
@@ -17,16 +17,17 @@
     line-height: 1
     letter-spacing: -.1rem
     font-family: 'Ubuntu Condensed', sans-serif
+    white-space: pre
 
   .topleft
-    top: .5rem
+    top: .25rem
     left: .25rem
-    transform: translate(-50%, -50%)
+    transform: translate(-50%, 0)
 
   .bottomright
-    bottom: .5rem
+    bottom: .25rem
     right: .25rem
-    transform: rotate(180deg) translate(-50%, -50%)
+    transform: rotate(180deg) translate(-50%, 0)
 
   .face
     height: 100%
@@ -34,7 +35,11 @@
     background-size: 100% 100%
     background-repeat: no-repeat
 
-  &.spades, &.clubs
+  &.joker
+    .topleft, .bottomright
+      font-size: .4rem
+
+  &.spades, &.clubs, &.joker
     color: black
 
   &.hearts, &.diamonds
@@ -199,3 +204,13 @@
   &.diamonds13
     .face
       background-image: url(faces/3_13.svg)
+
+  &.joker1
+    .face
+      background-image: url(faces/4_1.svg)
+  &.joker2
+    .face
+      background-image: url(faces/4_2.svg)
+  &.joker3
+    .face
+      background-image: url(faces/4_3.svg)

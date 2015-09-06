@@ -31,14 +31,19 @@ $topbar.appendChild($fan)
 $topbar.appendChild($poker)
 
 var acesClicked = []
+var kingsClicked = []
 
 var deck = Deck()
 
 deck.cards.forEach(function (card, i) {
+  card.enableMoving()
+
   card.$el.addEventListener('mousedown', onTouch)
   card.$el.addEventListener('touchstart', onTouch)
 
   function onTouch () {
+    var card
+
     if (i % 13 === 0) {
       acesClicked[i] = true
       if (acesClicked.filter(function (ace) {
@@ -50,8 +55,27 @@ deck.cards.forEach(function (card, i) {
           startWinning()
         }, 250)
       }
+    } else if (i % 13 === 12) {
+      if (!kingsClicked) {
+        return
+      }
+      kingsClicked[i] = true
+      if (kingsClicked.filter(function (king) {
+        return king
+      }).length === 4) {
+        for (var j = 0; j < 3; j++) {
+          card = Deck.Card(52 + j)
+          card.mount(deck.$el)
+          card.$el.style[transform] = 'scale(0)'
+          card.enableMoving()
+          deck.cards.push(card)
+        }
+        deck.sort(true)
+        kingsClicked = false
+      }
     } else {
       acesClicked = []
+      kingsClicked = []
     }
   }
 })
@@ -127,17 +151,19 @@ deck.mount($container)
 deck.intro()
 deck.sort()
 
-setTimeout(function () {
-  printMessage('Psst..Let me tell you a little secret...')
-}, 10000)
+var randomDelay = 10000 + 60000 * Math.random()
 
 setTimeout(function () {
-  printMessage('...try clicking all the aces and nothing in between..')
-}, 15000)
+  printMessage('Psst..I want to share a secret with you...')
+}, randomDelay)
 
 setTimeout(function () {
-  printMessage('...have fun, but keep it a secret..? ;)')
-}, 20000)
+  printMessage('...try clicking all kings and nothing in between...')
+}, randomDelay + 5000)
+
+setTimeout(function () {
+  printMessage('...have fun ;)')
+}, randomDelay + 10000)
 
 function printMessage (text) {
   var $message = document.createElement('p')
