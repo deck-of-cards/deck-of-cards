@@ -5,8 +5,12 @@ Pure vanilla JS (+ CSS3) – no dependencies.
 
 http://pakastin.github.io/deck-of-cards
 
-## Latest changes
+## NOTICE!
+Card graphics are now slightly modified from Chris Aguilar's awesome [Vector Playing Card Graphics Set](http://sourceforge.net/projects/vector-cards/). I want to respect author's license, and decided to change Deck of Cards license from MIT to GPL. Sorry for any cause.
 
+## Latest changes
+- 0.1.0 Realistic face graphics
+- 0.0.4 winning mode, simpler shuffling, CSS box-shadow change
 - 0.0.3 big refactoring – code now easier to follow and in smaller pieces
 - 0.0.2 made intro shorter & added "poker"
 - 0.0.1 initial version
@@ -43,3 +47,8 @@ http://pakastin.github.io/deck-of-cards
 - Make z-index temporary by reordering DOM elements between actions
 - Enhance API, make more flexible
 - Make cards flippable
+
+## License
+
+- 0.1.x GPL
+- 0.0.x MIT

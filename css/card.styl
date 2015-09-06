@@ -12,26 +12,190 @@
 
   .topleft, .bottomright
     position: absolute
-    width: .6rem
-    font-size: .6rem
+    font-size: .7rem
     text-align: center
     line-height: 1
+    letter-spacing: -.1rem
+    font-family: 'Ubuntu Condensed', sans-serif
 
   .topleft
-    top: .25rem
-    left: .1rem
+    top: .5rem
+    left: .25rem
+    transform: translate(-50%, -50%)
 
   .bottomright
-    bottom: .25rem
+    bottom: .5rem
     right: .25rem
-    transform: rotate(180deg)
+    transform: rotate(180deg) translate(-50%, -50%)
 
-  .suit
-    position: absolute
-    top: 50%
-    left: 50%
-    font-size: 2.5rem
-    transform: translate3d(-50%, -50%, 0)
+  .face
+    height: 100%
+    background-position: 50% 50%
+    background-size: 100% 100%
+    background-repeat: no-repeat
 
-  &.red
+  &.spades, &.clubs
+    color: black
+
+  &.hearts, &.diamonds
     color: red
+
+  &.spades1
+    .face
+      background-image: url(faces/0_1.svg)
+  &.spades2
+    .face
+      background-image: url(faces/0_2.svg)
+  &.spades3
+    .face
+      background-image: url(faces/0_3.svg)
+  &.spades4
+    .face
+      background-image: url(faces/0_4.svg)
+  &.spades5
+    .face
+      background-image: url(faces/0_5.svg)
+  &.spades6
+    .face
+      background-image: url(faces/0_6.svg)
+  &.spades7
+    .face
+      background-image: url(faces/0_7.svg)
+  &.spades8
+    .face
+      background-image: url(faces/0_8.svg)
+  &.spades9
+    .face
+      background-image: url(faces/0_9.svg)
+  &.spades10
+    .face
+      background-image: url(faces/0_10.svg)
+  &.spades11
+    .face
+      background-image: url(faces/0_11.svg)
+  &.spades12
+    .face
+      background-image: url(faces/0_12.svg)
+  &.spades13
+    .face
+      background-image: url(faces/0_13.svg)
+
+  &.hearts1
+    .face
+      background-image: url(faces/1_1.svg)
+  &.hearts2
+    .face
+      background-image: url(faces/1_2.svg)
+  &.hearts3
+    .face
+      background-image: url(faces/1_3.svg)
+  &.hearts4
+    .face
+      background-image: url(faces/1_4.svg)
+  &.hearts5
+    .face
+      background-image: url(faces/1_5.svg)
+  &.hearts6
+    .face
+      background-image: url(faces/1_6.svg)
+  &.hearts7
+    .face
+      background-image: url(faces/1_7.svg)
+  &.hearts8
+    .face
+      background-image: url(faces/1_8.svg)
+  &.hearts9
+    .face
+      background-image: url(faces/1_9.svg)
+  &.hearts10
+    .face
+      background-image: url(faces/1_10.svg)
+  &.hearts11
+    .face
+      background-image: url(faces/1_11.svg)
+  &.hearts12
+    .face
+      background-image: url(faces/1_12.svg)
+  &.hearts13
+    .face
+      background-image: url(faces/1_13.svg)
+
+  &.clubs1
+    .face
+      background-image: url(faces/2_1.svg)
+  &.clubs2
+    .face
+      background-image: url(faces/2_2.svg)
+  &.clubs3
+    .face
+      background-image: url(faces/2_3.svg)
+  &.clubs4
+    .face
+      background-image: url(faces/2_4.svg)
+  &.clubs5
+    .face
+      background-image: url(faces/2_5.svg)
+  &.clubs6
+    .face
+      background-image: url(faces/2_6.svg)
+  &.clubs7
+    .face
+      background-image: url(faces/2_7.svg)
+  &.clubs8
+    .face
+      background-image: url(faces/2_8.svg)
+  &.clubs9
+    .face
+      background-image: url(faces/2_9.svg)
+  &.clubs10
+    .face
+      background-image: url(faces/2_10.svg)
+  &.clubs11
+    .face
+      background-image: url(faces/2_11.svg)
+  &.clubs12
+    .face
+      background-image: url(faces/2_12.svg)
+  &.clubs13
+    .face
+      background-image: url(faces/2_13.svg)
+
+  &.diamonds1
+    .face
+      background-image: url(faces/3_1.svg)
+  &.diamonds2
+    .face
+      background-image: url(faces/3_2.svg)
+  &.diamonds3
+    .face
+      background-image: url(faces/3_3.svg)
+  &.diamonds4
+    .face
+      background-image: url(faces/3_4.svg)
+  &.diamonds5
+    .face
+      background-image: url(faces/3_5.svg)
+  &.diamonds6
+    .face
+      background-image: url(faces/3_6.svg)
+  &.diamonds7
+    .face
+      background-image: url(faces/3_7.svg)
+  &.diamonds8
+    .face
+      background-image: url(faces/3_8.svg)
+  &.diamonds9
+    .face
+      background-image: url(faces/3_9.svg)
+  &.diamonds10
+    .face
+      background-image: url(faces/3_10.svg)
+  &.diamonds11
+    .face
+      background-image: url(faces/3_11.svg)
+  &.diamonds12
+    .face
+      background-image: url(faces/3_12.svg)
+  &.diamonds13
+    .face
+      background-image: url(faces/3_13.svg)

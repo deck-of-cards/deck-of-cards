@@ -59,14 +59,19 @@ var Deck = (function () {
     card.poker = function (i, cb) {
       var delay = i * 250;
       var target = {
-        x: (i - 2) * 110,
+        x: (i - 2.05) * 110,
         y: -125
       };
+
+      setTimeout(function () {
+        $el.style.zIndex = 51 + i;
+      }, delay);
+
       setTimeout(function () {
         $el.style[transition] = 'all .25s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
-        $el.style[transitionDelay] = delay / 1000 + 's';
         $el.style[transform] = translate(target.x + '%', target.y + '%');
-      }, 0);
+      }, delay + 25);
+
       setTimeout(function () {
         $el.style[transition] = '';
         cb(i);
@@ -116,7 +121,7 @@ var Deck = (function () {
     card.bysuit = function (cb) {
       var i = card.i;
       var delay = i * 10;
-      var posX = -(7 - value) * 20;
+      var posX = -(6.75 - value) * 13.5;
       var posY = -(1.5 - suit) * 105;
 
       setTimeout(function () {
@@ -244,32 +249,28 @@ var Deck = (function () {
     var value = i % 13 + 1;
     var name = value === 1 ? 'A' : value === 11 ? 'J' : value === 12 ? 'Q' : value === 13 ? 'K' : value;
     var suit = i / 13 | 0;
-    var suitsymbol = suitSymbol(suit);
-    var color = suit % 2 ? 'red' : 'black';
+    var suitName = SuitName(suit);
     var z = (52 - i) / 4;
 
     var $el = createElement('div');
-    var $suit = createElement('div');
     var $topleft = createElement('div');
     var $bottomright = createElement('div');
+    var $face = createElement('div');
 
     var self = { i: i, value: value, suit: suit, pos: i, $el: $el, mount: mount, unmount: unmount };
 
-    var $root;
-
-    $el.classList.add('card', color);
-    $suit.classList.add('suit');
+    $el.classList.add('card', suitName, suitName + value);
     $topleft.classList.add('topleft');
     $bottomright.classList.add('bottomright');
+    $face.classList.add('face');
 
-    $suit.textContent = suitsymbol;
-    $topleft.innerHTML = name + '<br>' + suitsymbol;
-    $bottomright.innerHTML = name + '<br>' + suitsymbol;
+    $topleft.textContent = name;
+    $bottomright.textContent = name;
 
     $el.style.zIndex = 52 - i;
     $el.style[transform] = 'translate(-' + z + 'px, -' + z + 'px)';
 
-    $el.appendChild($suit);
+    $el.appendChild($face);
     $el.appendChild($topleft);
     $el.appendChild($bottomright);
 
@@ -336,17 +337,17 @@ var Deck = (function () {
     function mount(target) {
       target.appendChild($el);
 
-      $root = target;
+      self.$root = target;
     }
 
     function unmount() {
-      $root && $root.removeChild($el);
-      $root = null;
+      self.$root && self.$root.removeChild($el);
+      self.$root = null;
     }
   }
 
-  function suitSymbol(value) {
-    return value === 0 ? '♠︎' : value === 1 ? '♥︎' : value === 2 ? '♣︎' : '♦';
+  function SuitName(value) {
+    return value === 0 ? 'spades' : value === 1 ? 'hearts' : value === 2 ? 'clubs' : 'diamonds';
   }
 
   function addListener(target, name, listener) {
