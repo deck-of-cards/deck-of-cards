@@ -56,7 +56,7 @@ var Deck = (function () {
     var transition = prefix('transition');
     var transitionDelay = prefix('transitionDelay');
 
-    card.poker = function (i, cb) {
+    card.poker = function (i, len, cb) {
       var delay = i * 250;
       var target = {
         x: (i - 2.05) * 110,
@@ -64,7 +64,7 @@ var Deck = (function () {
       };
 
       setTimeout(function () {
-        $el.style.zIndex = 51 + i;
+        $el.style.zIndex = len - 1 + i;
       }, delay);
 
       setTimeout(function () {
@@ -85,10 +85,10 @@ var Deck = (function () {
     var transition = prefix('transition');
     var transitionDelay = prefix('transitionDelay');
 
-    card.fan = function (i, cb) {
+    card.fan = function (i, len, cb) {
       var z = i / 4;
       var delay = i * 10;
-      var rot = i / 51 * 260 - 130;
+      var rot = i / (len - 1) * 260 - 130;
 
       $el.style[transformOrigin] = '50% 110%';
 
@@ -257,6 +257,8 @@ var Deck = (function () {
     var $bottomright = createElement('div');
     var $face = createElement('div');
 
+    var isMovable = false;
+
     var self = { i: i, value: value, suit: suit, pos: i, $el: $el, mount: mount, unmount: unmount };
 
     $el.classList.add('card', suitName, suitName + value);
@@ -264,8 +266,8 @@ var Deck = (function () {
     $bottomright.classList.add('bottomright');
     $face.classList.add('face');
 
-    $topleft.textContent = name;
-    $bottomright.textContent = name;
+    $topleft.textContent = suit < 4 ? name : 'J\nO\nK\nE\nR';
+    $bottomright.textContent = suit < 4 ? name : 'J\nO\nK\nE\nR';
 
     $el.style.zIndex = 52 - i;
     $el.style[transform] = 'translate(-' + z + 'px, -' + z + 'px)';
@@ -281,8 +283,25 @@ var Deck = (function () {
     fan(self, $el);
     poker(self, $el);
 
-    addListener($el, 'mousedown', onMousedown);
-    addListener($el, 'touchstart', onMousedown);
+    self.enableMoving = function () {
+      if (isMovable) {
+        // Already is movable, do nothing
+        return;
+      }
+      $el.style.cursor = 'move';
+      addListener($el, 'mousedown', onMousedown);
+      addListener($el, 'touchstart', onMousedown);
+    };
+
+    self.disableMoving = function () {
+      if (!isMovable) {
+        // Already disabled moving, do nothing
+        return;
+      }
+      $el.style.cursor = '';
+      removeListener($el, 'mousedown', onMousedown);
+      removeListener($el, 'touchstart', onMousedown);
+    };
 
     return self;
 
@@ -347,7 +366,7 @@ var Deck = (function () {
   }
 
   function SuitName(value) {
-    return value === 0 ? 'spades' : value === 1 ? 'hearts' : value === 2 ? 'clubs' : 'diamonds';
+    return value === 0 ? 'spades' : value === 1 ? 'hearts' : value === 2 ? 'clubs' : value === 3 ? 'diamonds' : 'joker';
   }
 
   function addListener(target, name, listener) {
@@ -372,7 +391,7 @@ var Deck = (function () {
 
       cards.forEach(function (card, i) {
         card.intro(i, function (i) {
-          if (i === 51) {
+          if (i === cards.length - 1) {
             next();
           }
         });
@@ -388,7 +407,7 @@ var Deck = (function () {
 
       cards.forEach(function (card) {
         card.bysuit(function (i) {
-          if (i === 51) {
+          if (i === cards.length - 1) {
             next();
           }
         });
@@ -401,9 +420,10 @@ var Deck = (function () {
 
     function poker(next) {
       var cards = deck.cards;
+      var len = cards.length;
 
       cards.slice(-5).reverse().forEach(function (card, i) {
-        card.poker(i, function (i) {
+        card.poker(i, len, function (i) {
           if (i === 4) {
             next();
           }
@@ -417,10 +437,11 @@ var Deck = (function () {
 
     function fan(next) {
       var cards = deck.cards;
+      var len = cards.length;
 
       cards.forEach(function (card, i) {
-        card.fan(i, function (i) {
-          if (i === 51) {
+        card.fan(i, len, function (i) {
+          if (i === cards.length - 1) {
             next();
           }
         });
@@ -444,7 +465,7 @@ var Deck = (function () {
 
       cards.forEach(function (card, i) {
         card.sort(i, function (i) {
-          if (i === 51) {
+          if (i === cards.length - 1) {
             next();
           }
         }, reverse);
@@ -478,7 +499,7 @@ var Deck = (function () {
         card.pos = i;
 
         card.shuffle(function (i) {
-          if (i === 51) {
+          if (i === cards.length - 1) {
             next();
           }
         });
@@ -587,9 +608,8 @@ var Deck = (function () {
     }
   }
 
-  function Deck(n) {
-    n || (n = 1);
-    var cards = new Array(n * 52);
+  function Deck(jokers) {
+    var cards = new Array(jokers ? 55 : 52);
 
     var $el = createElement('div');
     var self = observable({ mount: mount, unmount: unmount, cards: cards, $el: $el });
@@ -608,7 +628,7 @@ var Deck = (function () {
     var card;
 
     for (var i = 0, len = cards.length; i < len; i++) {
-      card = cards[i] = Card(i % 52);
+      card = cards[i] = Card(i);
       card.mount($el);
     }
 
