@@ -8,6 +8,8 @@ http://pakastin.github.io/deck-of-cards
 ## NOTICE!
 Card graphics are now slightly modified from Chris Aguilar's awesome [Vector Playing Card Graphics Set](http://sourceforge.net/projects/vector-cards/). I want to respect author's license, and decided to change Deck of Cards license from MIT to GPL. Sorry for any cause. Versions 0.0.x stay MIT.
 
+Btw..if you're on iOS, try adding to home screen (via Safari's share button) - it should perform better ;)
+
 ## Latest changes
 - 0.1.0 [Realistic face graphics](http://sourceforge.net/projects/vector-cards/)
 - 0.0.4 winning mode, simpler shuffling, CSS box-shadow change
