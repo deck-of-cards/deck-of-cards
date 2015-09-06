@@ -232,7 +232,7 @@ var Deck = (function () {
 
           cb && cb(i);
         }, 1250 + delay);
-      }, 0);
+      }, 500);
     };
   }
 
