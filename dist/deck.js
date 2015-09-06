@@ -121,7 +121,7 @@ var Deck = (function () {
     card.bysuit = function (cb) {
       var i = card.i;
       var delay = i * 10;
-      var posX = -(6.75 - value) * 13.5;
+      var posX = -(6.75 - value) * 15;
       var posY = -(1.5 - suit) * 105;
 
       setTimeout(function () {
@@ -287,7 +287,7 @@ var Deck = (function () {
     return self;
 
     function onMousedown(e) {
-      var middlePoint = $root.getBoundingClientRect();
+      var middlePoint = self.$root.getBoundingClientRect();
       var pos = {};
 
       e.preventDefault();
