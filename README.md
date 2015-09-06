@@ -47,5 +47,5 @@ http://pakastin.github.io/deck-of-cards
 
 ## License
 
-- 0.0.x MIT
 - 0.1.x GPL
+- 0.0.x MIT
