@@ -452,16 +452,27 @@ var Deck = (function () {
     }
   }
 
-  function shuffleable(deck) {
+  function fisherYates(array) {
+    var rnd, temp;
+
+    for (var i = array.length - 1; i; i--) {
+      rnd = Math.random() * i | 0;
+      temp = array[i];
+      array[i] = array[rnd];
+      array[rnd] = temp;
+    }
+
+    return array;
+  }
+
+  function shuffleModule(deck) {
 
     deck.shuffle = deck.queued(shuffle);
 
     function shuffle(next) {
       var cards = deck.cards;
 
-      cards.sort(function () {
-        return Math.random() * 100 - 50;
-      });
+      fisherYates(cards);
 
       cards.forEach(function (card, i) {
         card.pos = i;
@@ -585,7 +596,7 @@ var Deck = (function () {
     var $root;
 
     queue(self);
-    shuffleable(self);
+    shuffleModule(self);
     sortModule(self);
     fanModule(self);
     pokerModule(self);
