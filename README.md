@@ -7,6 +7,7 @@ http://pakastin.github.io/deck-of-cards
 
 ## Latest changes
 
+- 0.0.4 winning mode, simpler shuffling, CSS box-shadow change
 - 0.0.3 big refactoring – code now easier to follow and in smaller pieces
 - 0.0.2 made intro shorter & added "poker"
 - 0.0.1 initial version
