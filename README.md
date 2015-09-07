@@ -22,6 +22,7 @@ Btw..if you're on iOS, try adding to home screen (via Safari's share button) - i
 
 ## Featured on
 - https://reddit.com/r/InternetIsBeautiful/comments/3jmq97/html5_deck_of_cards/
+- https://news.ycombinator.com/item?id=10164513
 - http://tympanus.net/codrops/collective/collective-184/
 - https://github.com/trending?since=weekly
 - http://fex.baidu.com/blog/2015/09/fex-weekly-07/
