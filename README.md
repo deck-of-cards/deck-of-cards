@@ -13,7 +13,7 @@ Btw..if you're on iOS, try adding to home screen (via Safari's share button) - i
 
 
 ## Latest changes
-- 0.1.0 [Realistic face graphics](http://sourceforge.net/projects/vector-cards/)
+- 0.1.0 [Realistic face graphics](http://sourceforge.net/projects/vector-cards/), notice change of license for now..
 - 0.0.4 winning mode, simpler shuffling, CSS box-shadow change
 - 0.0.3 big refactoring – code now easier to follow and in smaller pieces
 - 0.0.2 made intro shorter & added "poker"
