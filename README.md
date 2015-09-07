@@ -22,7 +22,7 @@ Btw..if you're on iOS, try adding to home screen (via Safari's share button) - i
 
 ## Featured on
 - http://tympanus.net/codrops/collective/collective-184/
-
+- http://github.com/trending
 
 ## Download
 
