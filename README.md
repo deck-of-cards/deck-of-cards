@@ -23,6 +23,7 @@ Btw..if you're on iOS, try adding to home screen (via Safari's share button) - i
 ## Featured on
 - http://tympanus.net/codrops/collective/collective-184/
 - https://github.com/trending?since=weekly
+- http://fex.baidu.com/blog/2015/09/fex-weekly-07/
 
 ## Download
 
