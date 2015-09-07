@@ -25,6 +25,8 @@ Btw..if you're on iOS, try adding to home screen (via Safari's share button) - i
 - https://news.ycombinator.com/item?id=10164513
 - http://tympanus.net/codrops/collective/collective-184/
 - https://github.com/trending?since=weekly
+- https://twitter.com/fwa/status/639719192158171136
+- https://twitter.com/search?q=%22html5+deck+of+cards%22
 - http://fex.baidu.com/blog/2015/09/fex-weekly-07/
 
 ## Download
