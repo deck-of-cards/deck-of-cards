@@ -30,6 +30,7 @@ Btw..if you're on iOS, try adding to home screen (via Safari's share button) - i
 - https://twitter.com/search?q=%22html5+deck+of+cards%22
 - https://theslackpost.com/tmpg
 - http://news.js.org/
+- http://www.blogduwebdesign.com/ressources-jeux/ressourcescreer-manipuler-cartes-HTML-Javascript-nodejs-Ruby/1933
 - http://fex.baidu.com/blog/2015/09/fex-weekly-07/
 
 ## Download
