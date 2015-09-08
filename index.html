@@ -38,6 +38,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js"></script>
     <script>
       FastClick.attach(document.body);
+      if (window.location.hostname !== 'deck-of-cards.js.org') {
+        window.location.href = 'https://deck-of-cards.js.org'
+      }
     </script>
   </body>
 </html>
