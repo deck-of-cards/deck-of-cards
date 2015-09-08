@@ -1,14 +1,14 @@
 # HTML5 Deck of Cards
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/pakastin/deck-of-cards?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-Pure vanilla JS (+ CSS3) – no dependencies, by [Juha Lindstedt](http://github.com/pakastin) & [contributors](https://github.com/deck-of-cards/deck-of-cards/graphs/contributors).
+Pure vanilla JS (+ CSS3) – no dependencies, by [Juha Lindstedt](https://github.com/pakastin) & [contributors](https://github.com/deck-of-cards/deck-of-cards/graphs/contributors).
 
-http://deck-of-cards.github.io
+https://deck-of-cards.github.io
 
 
 ## NOTICE!
 
-Moved to http://deck-of-cards.github.io from http://pakastin.github.io/deck-of-cards
+Moved to https://deck-of-cards.github.io from https://pakastin.github.io/deck-of-cards
 
 Card graphics are now slightly modified from Chris Aguilar's awesome [Vector Playing Card Graphics Set](http://sourceforge.net/projects/vector-cards/). I want to respect author's license, and decided to change Deck of Cards license from MIT to LGPL. Sorry for any cause. Versions 0.0.x stay MIT. When theming is ready, I will put Vector Playing Card Graphics Set -theme to another repo, and change back to MIT. If you have something on your mind about this, please use this [issue](https://github.com/pakastin/deck-of-cards/issues/13). Thanks! 
 
@@ -46,7 +46,7 @@ Btw..if you're on iOS, try adding to home screen (via Safari's share button) - i
 
 [dist/](https://github.com/deck-of-cards/deck-of-cards/tree/master/dist) - deck.js & deck.min.js
 
-[example/](https://github.com/deck-of-cards/deck-of-cards/tree/master/example) - http://deck-of-cards.github.io
+[example/](https://github.com/deck-of-cards/deck-of-cards/tree/master/example) - https://deck-of-cards.github.io
 
 [lib/](https://github.com/deck-of-cards/deck-of-cards/tree/master/lib) - JS (ES6) source of dist/deck.js - deck.js is also the main file
 
