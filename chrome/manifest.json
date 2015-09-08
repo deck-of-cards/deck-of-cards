@@ -1,0 +1,24 @@
+{
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  },
+  "manifest_version": 2,
+  "name": "HTML5 Deck of Cards",
+  "version": "0.0.1",
+
+  "description": "Pure vanilla JS (+ CSS3) – no dependencies.",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+
+  "author": "Juha Lindstedt",
+  "short_name": "deck-of-cards",
+
+  "permissions": [
+    "webview"
+  ]
+}
