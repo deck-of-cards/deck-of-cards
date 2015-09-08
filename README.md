@@ -3,7 +3,7 @@
 
 Pure vanilla JS (+ CSS3) – no dependencies, by [Juha Lindstedt](https://github.com/pakastin) & [contributors](https://github.com/pakastin/deck-of-cards/graphs/contributors).
 
-https://pakastin.github.io/deck-of-cards
+https://deck-of-cards.js.org
 
 
 ## NOTICE!
@@ -34,8 +34,8 @@ Btw..if you're on iOS, try adding to home screen (via Safari's share button) - i
 
 ## Download
 
-- [Production version (~5 KB uncompressed)](https://pakastin.github.io/deck-of-cards/dist/deck.min.js)
-- [Development version (~15 KB uncompressed)](https://pakastin.github.io/deck-of-cards/dist/deck.js)
+- [Production version (~5 KB uncompressed)](https://deck-of-cards.js.org/dist/deck.min.js)
+- [Development version (~15 KB uncompressed)](https://deck-of-cards.js.org/dist/deck.js)
 
 ## Where's what?
 
@@ -43,7 +43,7 @@ Btw..if you're on iOS, try adding to home screen (via Safari's share button) - i
 
 [dist/](https://github.com/pakastin/deck-of-cards/tree/master/dist) - deck.js & deck.min.js
 
-[example/](https://github.com/pakastin/deck-of-cards/tree/master/example) - https://pakastin.github.io/deck-of-cards
+[example/](https://github.com/pakastin/deck-of-cards/tree/master/example) - https://deck-of-cards.js.org
 
 [lib/](https://github.com/pakastin/deck-of-cards/tree/master/lib) - JS (ES6) source of dist/deck.js - deck.js is also the main file
 
