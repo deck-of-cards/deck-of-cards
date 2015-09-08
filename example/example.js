@@ -79,7 +79,9 @@ deck.cards.forEach(function (card, i) {
       }
     } else {
       acesClicked = []
-      kingsClicked = []
+      if (kingsClicked) {
+        kingsClicked = []
+      }
     }
   }
 })
