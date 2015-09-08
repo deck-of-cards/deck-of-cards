@@ -30,10 +30,14 @@ $topbar.appendChild($bysuit)
 $topbar.appendChild($fan)
 $topbar.appendChild($poker)
 
+var deck = Deck()
+
+
+// easter eggs start
+
+
 var acesClicked = []
 var kingsClicked = []
-
-var deck = Deck()
 
 deck.cards.forEach(function (card, i) {
   card.enableMoving()
@@ -75,7 +79,9 @@ deck.cards.forEach(function (card, i) {
       }
     } else {
       acesClicked = []
-      kingsClicked = []
+      if (kingsClicked) {
+        kingsClicked = []
+      }
     }
   }
 })
@@ -125,6 +131,10 @@ function addWinningCard ($deck, i) {
   }, 1000 + delay)
 }
 
+
+// easter eggs end
+
+
 $shuffle.addEventListener('click', function () {
   deck.shuffle()
   deck.shuffle()
@@ -150,6 +160,10 @@ deck.mount($container)
 
 deck.intro()
 deck.sort()
+
+
+// secret message..
+
 
 var randomDelay = 10000 + 60000 * Math.random()
 
