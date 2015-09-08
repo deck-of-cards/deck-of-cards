@@ -5,7 +5,7 @@ Pure vanilla JS (+ CSS3) – no dependencies, by [Juha Lindstedt](https://github
 
 https://deck-of-cards.js.org
 
-https://chrome.google.com/webstore/detail/html5-deck-of-cards/ljafdfknpepklmkhomgaocmehgfdcpno
+[Install from Google Chrome Web Store](https://chrome.google.com/webstore/detail/html5-deck-of-cards/ljafdfknpepklmkhomgaocmehgfdcpno)
 
 ## NOTICE!
 
@@ -42,6 +42,8 @@ Btw..if you're on iOS, try adding to home screen (via Safari's share button) - i
 ## Where's what?
 
 [css/](https://github.com/pakastin/deck-of-cards/tree/master/css) - CSS source (stylus + nib) of the example
+
+[chrome/](https://github.com/pakastin/deck-of-cards/tree/master/chrome) - [Chrome Web Store app](https://chrome.google.com/webstore/detail/html5-deck-of-cards/ljafdfknpepklmkhomgaocmehgfdcpno) source
 
 [dist/](https://github.com/pakastin/deck-of-cards/tree/master/dist) - deck.js & deck.min.js
 
