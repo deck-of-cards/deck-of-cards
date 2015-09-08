@@ -1,0 +1,51 @@
+#carbonads {
+  position: fixed;
+  bottom: .5rem;
+  left: .5rem;
+  width: 150px;
+  font-size: .5rem;
+  background-color: #fff;
+  padding: 10px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+#carbonads img {
+  border: 0;
+}
+#carbonads a {
+  text-decoration: none;
+  color: #333;
+}
+#carbonads a:hover {
+  text-decoration: underline;
+}
+#carbonads .carbon-img {
+  display: block;
+}
+#carbonads .carbon-text {
+  margin-top: 5px;
+  display: block;
+}
+#carbonads .carbon-poweredby {
+  color: #888;
+}
+@media (max-width: 480px) {
+  #carbonads {
+    -webkit-transform: scale(.7);
+    transform: scale(.7);
+
+    -webkit-transform-origin: 0 100%;
+    transform-origin: 0 100%;
+  }
+}
+@media (max-height: 480px) {
+  #carbonads {
+    -webkit-transform: scale(.7);
+    transform: scale(.7);
+
+    -webkit-transform-origin: 0 100%;
+    transform-origin: 0 100%;
+  }
+}
