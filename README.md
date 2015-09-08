@@ -3,7 +3,7 @@
 
 Pure vanilla JS (+ CSS3) – no dependencies.
 
-http://pakastin.github.io/deck-of-cards
+http://deck-of-cards.github.io
 
 
 ## NOTICE!
@@ -33,21 +33,21 @@ Btw..if you're on iOS, try adding to home screen (via Safari's share button) - i
 
 ## Download
 
-- [Production version (~5 KB uncompressed)](https://pakastin.github.io/deck-of-cards/dist/deck.min.js)
-- [Development version (~15 KB uncompressed)](https://pakastin.github.io/deck-of-cards/dist/deck.js)
+- [Production version (~5 KB uncompressed)](https://deck-of-cards.github.io/dist/deck.min.js)
+- [Development version (~15 KB uncompressed)](https://deck-of-cards.github.io/dist/deck.js)
 
 
 ## Where's what?
 
-[css/](https://github.com/pakastin/deck-of-cards/tree/master/css) - CSS source (stylus + nib) of the example
+[css/](https://github.com/deck-of-cards/deck-of-cards/tree/master/css) - CSS source (stylus + nib) of the example
 
-[dist/](https://github.com/pakastin/deck-of-cards/tree/master/dist) - deck.js & deck.min.js
+[dist/](https://github.com/deck-of-cards/deck-of-cards/tree/master/dist) - deck.js & deck.min.js
 
-[example/](https://github.com/pakastin/deck-of-cards/tree/master/example) - http://pakastin.github.io/deck-of-cards
+[example/](https://github.com/deck-of-cards/deck-of-cards/tree/master/example) - http://deck-of-cards.github.io
 
-[lib/](https://github.com/pakastin/deck-of-cards/tree/master/lib) - JS (ES6) source of dist/deck.js - deck.js is also the main file
+[lib/](https://github.com/deck-of-cards/deck-of-cards/tree/master/lib) - JS (ES6) source of dist/deck.js - deck.js is also the main file
 
-[views/](https://github.com/pakastin/deck-of-cards/tree/master/views) - HTML source of the example
+[views/](https://github.com/deck-of-cards/deck-of-cards/tree/master/views) - HTML source of the example
 
 
 ## Build instructions
