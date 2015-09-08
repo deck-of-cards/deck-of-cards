@@ -8,7 +8,7 @@ http://deck-of-cards.github.io
 
 ## NOTICE!
 
-Moved from http://pakastin.github.io/deck-of-cards to http://deck-of-cards.github.io
+Moved to http://deck-of-cards.github.io from http://pakastin.github.io/deck-of-cards
 
 Card graphics are now slightly modified from Chris Aguilar's awesome [Vector Playing Card Graphics Set](http://sourceforge.net/projects/vector-cards/). I want to respect author's license, and decided to change Deck of Cards license from MIT to LGPL. Sorry for any cause. Versions 0.0.x stay MIT. When theming is ready, I will put Vector Playing Card Graphics Set -theme to another repo, and change back to MIT. If you have something on your mind about this, please use this [issue](https://github.com/pakastin/deck-of-cards/issues/13). Thanks! 
 
