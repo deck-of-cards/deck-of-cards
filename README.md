@@ -9,7 +9,7 @@ https://deck-of-cards.js.org
 
 ## Update
 
-I will make just one more update, which will be a minor braking change. After that the API will be about ready to be published and there will be documentation and tutorials as well. Keep tuned! If you have any questions, shoot them @ gitter or add an issue.
+I will make just one more update, which will be a minor braking change. After that the API will be about ready to be published and there will be documentation and tutorials as well. Keep tuned! If you have any questions, hit them @ gitter or add an issue.
 
 ## NOTICE!
 
