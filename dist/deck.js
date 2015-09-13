@@ -46,18 +46,20 @@ var Deck = (function () {
     }
   }
 
-  var transform = prefix('transform');
-  var $p = document.createElement('p');
+  var has3d;
 
-  document.body.appendChild($p);
+  document.addEventListener('DOMContentLoaded', function () {
+    var transform = prefix('transform');
+    var $p = document.createElement('p');
 
-  $p.style[transform] = 'translate3d(1px,1px,1px)';
+    document.body.appendChild($p);
+    $p.style[transform] = 'translate3d(1px,1px,1px)';
 
-  var has3d = $p.style[transform];
+    has3d = $p.style[transform];
+    has3d = has3d != null && has3d.length && has3d !== 'none';
 
-  has3d = has3d != null && has3d.length && has3d !== 'none';
-
-  document.body.removeChild($p);
+    document.body.removeChild($p);
+  }, false);
 
   function translate(a, b, c) {
     c = c || 0;
