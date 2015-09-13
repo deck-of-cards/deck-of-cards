@@ -412,7 +412,7 @@ var Deck = (function () {
       var transition = prefix('transition');
       var transitionDelay = prefix('transition-delay');
 
-      var value = _card6.value;
+      var rank = _card6.rank;
       var suit = _card6.suit;
 
       var $el = _card6.$el;
@@ -420,7 +420,7 @@ var Deck = (function () {
       _card6.bysuit = function (cb) {
         var i = _card6.i;
         var delay = i * 10;
-        var posX = -Math.round((6.75 - value) * 8 * fontSize / 16);
+        var posX = -Math.round((6.75 - rank) * 8 * fontSize / 16);
         var posY = -Math.round((1.5 - suit) * 92 * fontSize / 16);
 
         setTimeout(function () {
