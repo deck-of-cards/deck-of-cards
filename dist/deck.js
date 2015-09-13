@@ -527,22 +527,19 @@ var Deck = (function () {
 
         $el.style[transition] = '';
         $el.style[transform] = translate(self.x + pos.x - startPos.x + 'px', self.y + pos.y - startPos.y + 'px');
+
+        self.x = self.x + pos.x - startPos.x;
+        self.y = self.y + pos.y - startPos.y;
       }
 
       function onMouseup(e) {
         if (e.type === 'mouseup') {
-          pos.x = e.clientX;
-          pos.y = e.clientY;
           removeListener(window, 'mousemove', onMousemove);
           removeListener(window, 'mouseup', onMouseup);
         } else {
-          pos.x = e.touches[0].clientX;
-          pos.y = e.touches[0].clientY;
           removeListener(window, 'touchmove', onMousemove);
           removeListener(window, 'touchend', onMouseup);
         }
-        self.x = self.x + pos.x - startPos.x;
-        self.y = self.y + pos.y - startPos.y;
         $el.style[transition] = '';
       }
     }
