@@ -35,7 +35,7 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  background-color: #265941;
+  background-color: #334d41;
   padding: 0.25rem;
   text-align: center;
 }
@@ -72,8 +72,8 @@ body {
   width: 3.875rem;
   height: 5.5rem;
   background-color: #fff;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
   -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.15);
   box-shadow: 0 1px 1px rgba(0,0,0,0.15);
   cursor: default;
@@ -113,6 +113,24 @@ body {
   -moz-background-size: 100% 100%;
   background-size: 100% 100%;
   background-repeat: no-repeat;
+}
+.card .back {
+  position: absolute;
+  background-color: #fff;
+  background-image: url("faces/back.svg");
+  -webkit-background-size: 0.5rem 0.5rem;
+  -moz-background-size: 0.5rem 0.5rem;
+  background-size: 0.5rem 0.5rem;
+  background-position: 50% 50%;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  top: 4px;
+  left: 4px;
+  -webkit-box-shadow: inset 0 0 0 2px #fff;
+  box-shadow: inset 0 0 0 2px #fff;
+  border: 1px solid #f03a49;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
 }
 .card.joker .topleft,
 .card.joker .bottomright {

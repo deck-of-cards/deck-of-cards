@@ -17,18 +17,21 @@ var $shuffle = document.createElement('button')
 var $bysuit = document.createElement('button')
 var $fan = document.createElement('button')
 var $poker = document.createElement('button')
+var $flip = document.createElement('button')
 
 $shuffle.textContent = 'Shuffle'
 $sort.textContent = 'Sort'
 $bysuit.textContent = 'By suit'
 $fan.textContent = 'Fan'
 $poker.textContent = 'Poker'
+$flip.textContent = 'Flip'
 
 $topbar.appendChild($shuffle)
 $topbar.appendChild($sort)
 $topbar.appendChild($bysuit)
 $topbar.appendChild($fan)
 $topbar.appendChild($poker)
+$topbar.appendChild($flip)
 
 var deck = Deck()
 
@@ -41,6 +44,7 @@ var kingsClicked = []
 
 deck.cards.forEach(function (card, i) {
   card.enableMoving()
+  card.enableFlipping()
 
   card.$el.addEventListener('mousedown', onTouch)
   card.$el.addEventListener('touchstart', onTouch)
@@ -149,7 +153,18 @@ $bysuit.addEventListener('click', function () {
 $fan.addEventListener('click', function () {
   deck.fan()
 })
+$flip.addEventListener('click', function () {
+  deck.flip()
+})
 $poker.addEventListener('click', function () {
+  deck.queue(function (next) {
+    deck.cards.forEach(function (card, i) {
+      setTimeout(function () {
+        card.setSide('back')
+      }, i * 7.5)
+    })
+    next()
+  })
   deck.shuffle()
   deck.shuffle()
   deck.shuffle()
