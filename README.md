@@ -11,7 +11,9 @@ https://deck-of-cards.js.org
 
 Frontside card graphics are now slightly modified from Chris Aguilar's awesome [Vector Playing Card Graphics Set](http://sourceforge.net/projects/vector-cards/). I want to respect author's license, and decided to change Deck of Cards license from MIT to LGPL. Sorry for any cause. Versions 0.0.x stay MIT. When theming is ready, I will put Vector Playing Card Graphics Set -theme to another repo, and change back to MIT. If you have something on your mind about this, please use this [issue](https://github.com/pakastin/deck-of-cards/issues/13). Thanks!
 
-Backside graphics by Juha Lindstedt. If you're on iOS, try adding to home screen (via Safari's share button) - it should perform better ;)
+Backside graphics by Juha Lindstedt.
+
+If you're on iOS, try adding to home screen (via Safari's share button) - it should perform better ;)
 
 
 ## Latest changes
