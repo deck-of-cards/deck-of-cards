@@ -250,8 +250,8 @@ var Deck = (function () {
       _card3.poker = function (i, len, cb) {
         var delay = i * 250;
         var target = {
-          x: (i - 2.05) * 70 * _fontSize / 16,
-          y: -110 * _fontSize / 16
+          x: Math.round((i - 2.05) * 70 * _fontSize / 16),
+          y: Math.round(-110 * _fontSize / 16)
         };
 
         setTimeout(function () {
@@ -420,8 +420,8 @@ var Deck = (function () {
       _card6.bysuit = function (cb) {
         var i = _card6.i;
         var delay = i * 10;
-        var posX = -(6.75 - value) * 8 * fontSize / 16;
-        var posY = -(1.5 - suit) * 92 * fontSize / 16;
+        var posX = -Math.round((6.75 - value) * 8 * fontSize / 16);
+        var posY = -Math.round((1.5 - suit) * 92 * fontSize / 16);
 
         setTimeout(function () {
           $el.style[transition] = 'all .5s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
@@ -452,10 +452,9 @@ var Deck = (function () {
     var transform = prefix('transform');
     var transformOrigin = prefix('transformOrigin');
 
-    var value = i % 13 + 1;
-    var name = value === 1 ? 'A' : value === 11 ? 'J' : value === 12 ? 'Q' : value === 13 ? 'K' : value;
+    var rank = i % 13 + 1;
+    var name = rank === 1 ? 'A' : rank === 11 ? 'J' : rank === 12 ? 'Q' : rank === 13 ? 'K' : rank;
     var suit = i / 13 | 0;
-    var suitName = SuitName(suit);
     var z = (52 - i) / 4;
 
     var $el = createElement('div');
@@ -467,19 +466,15 @@ var Deck = (function () {
     var isMovable = false;
     var isFlippable = false;
 
-    var self = { i: i, value: value, suit: suit, pos: i, $el: $el, mount: mount, unmount: unmount, setSide: setSide };
+    var self = { i: i, rank: rank, suit: suit, pos: i, $el: $el, mount: mount, unmount: unmount, setSide: setSide };
 
     var modules = Deck.modules;
     var module;
 
-    $el.classList.add('card', suitName, suitName + value);
     $topleft.classList.add('topleft');
     $bottomright.classList.add('bottomright');
     $face.classList.add('face');
     $back.classList.add('back');
-
-    $topleft.textContent = suit < 4 ? name : 'J\nO\nK\nE\nR';
-    $bottomright.textContent = suit < 4 ? name : 'J\nO\nK\nE\nR';
 
     $el.style.zIndex = 52 - i;
     $el.style[transform] = 'translate(-' + z + 'px, -' + z + 'px)';
@@ -492,6 +487,15 @@ var Deck = (function () {
     for (module in modules) {
       addModule(modules[module]);
     }
+
+    self.setRankSuit = function (rank, suit) {
+      var suitName = SuitName(suit);
+      $el.setAttribute('class', 'card ' + suitName + ' ' + (suitName + rank));
+      $topleft.textContent = suit < 4 ? name : 'J\nO\nK\nE\nR';
+      $bottomright.textContent = suit < 4 ? name : 'J\nO\nK\nE\nR';
+    };
+
+    self.setRankSuit(rank, suit);
 
     self.enableMoving = function () {
       if (isMovable) {
@@ -529,14 +533,6 @@ var Deck = (function () {
 
     function addModule(module) {
       module.card && module.card(self);
-    }
-
-    function onClick() {
-      if (self.side === 'front') {
-        setSide('back');
-      } else {
-        setSide('front');
-      }
     }
 
     function onMousedown(e) {
@@ -624,7 +620,7 @@ var Deck = (function () {
         $el.appendChild($face);
         $el.appendChild($topleft);
         $el.appendChild($bottomright);
-        $el.classList.add('card', suitName, suitName + value);
+        self.setRankSuit(self.rank, self.suit);
       } else {
         if (self.side === 'front') {
           $el.removeChild($face);
@@ -638,8 +634,8 @@ var Deck = (function () {
     }
   }
 
-  function SuitName(value) {
-    return value === 0 ? 'spades' : value === 1 ? 'hearts' : value === 2 ? 'clubs' : value === 3 ? 'diamonds' : 'joker';
+  function SuitName(suit) {
+    return suit === 0 ? 'spades' : suit === 1 ? 'hearts' : suit === 2 ? 'clubs' : suit === 3 ? 'diamonds' : 'joker';
   }
 
   function addListener(target, name, listener) {
