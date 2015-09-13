@@ -26,12 +26,12 @@ $fan.textContent = 'Fan'
 $poker.textContent = 'Poker'
 $flip.textContent = 'Flip'
 
+$topbar.appendChild($flip)
 $topbar.appendChild($shuffle)
-$topbar.appendChild($sort)
 $topbar.appendChild($bysuit)
 $topbar.appendChild($fan)
 $topbar.appendChild($poker)
-$topbar.appendChild($flip)
+$topbar.appendChild($sort)
 
 var deck = Deck()
 
@@ -75,6 +75,7 @@ deck.cards.forEach(function (card, i) {
           card = Deck.Card(52 + j)
           card.mount(deck.$el)
           card.$el.style[transform] = 'scale(0)'
+          card.setSide('front')
           card.enableMoving()
           deck.cards.push(card)
         }
