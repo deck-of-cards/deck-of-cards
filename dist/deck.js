@@ -500,13 +500,13 @@ var Deck = (function () {
       e.preventDefault();
 
       if (e.type === 'mousedown') {
-        startPos.x = e.clientX;
-        startPos.y = e.clientY;
+        startPos.x = pos.x = e.clientX;
+        startPos.y = pos.y = e.clientY;
         addListener(window, 'mousemove', onMousemove);
         addListener(window, 'mouseup', onMouseup);
       } else {
-        startPos.x = e.touches[0].clientX;
-        startPos.y = e.touches[0].clientY;
+        startPos.x = pos.x = e.touches[0].clientX;
+        startPos.y = pos.y = e.touches[0].clientY;
         addListener(window, 'touchmove', onMousemove);
         addListener(window, 'touchend', onMouseup);
       }
@@ -527,9 +527,6 @@ var Deck = (function () {
 
         $el.style[transition] = '';
         $el.style[transform] = translate(self.x + pos.x - startPos.x + 'px', self.y + pos.y - startPos.y + 'px');
-
-        self.x = self.x + pos.x - startPos.x;
-        self.y = self.y + pos.y - startPos.y;
       }
 
       function onMouseup(e) {
@@ -541,6 +538,9 @@ var Deck = (function () {
           removeListener(window, 'touchend', onMouseup);
         }
         $el.style[transition] = '';
+
+        self.x = self.x + pos.x - startPos.x;
+        self.y = self.y + pos.y - startPos.y;
       }
     }
 
