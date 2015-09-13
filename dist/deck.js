@@ -3,6 +3,23 @@
 var Deck = (function () {
   'use strict';
 
+  var flip = {
+    deck: function deck(_deck) {
+      _deck.flip = _deck.queued(flip);
+
+      function flip(next) {
+        var flipped = _deck.cards.filter(function (card) {
+          return card.side === 'front';
+        }).length / _deck.cards.length;
+
+        _deck.cards.forEach(function (card, i) {
+          card.setSide(flipped > 0.5 ? 'back' : 'front');
+        });
+        next();
+      }
+    }
+  };
+
   var style = document.createElement('p').style;
   var memoized = {};
 
@@ -52,11 +69,11 @@ var Deck = (function () {
   }
 
   var sort = {
-    deck: function deck(_deck) {
-      _deck.sort = _deck.queued(sort);
+    deck: function deck(_deck2) {
+      _deck2.sort = _deck2.queued(sort);
 
       function sort(next, reverse) {
-        var cards = _deck.cards;
+        var cards = _deck2.cards;
 
         cards.sort(function (a, b) {
           if (reverse) {
@@ -137,11 +154,11 @@ var Deck = (function () {
   var __fontSize;
 
   var shuffle = {
-    deck: function deck(_deck2) {
-      _deck2.shuffle = _deck2.queued(shuffle);
+    deck: function deck(_deck3) {
+      _deck3.shuffle = _deck3.queued(shuffle);
 
       function shuffle(next) {
-        var cards = _deck2.cards;
+        var cards = _deck3.cards;
 
         __fontSize = getFontSize();
 
@@ -205,17 +222,18 @@ var Deck = (function () {
   var _fontSize;
 
   var poker = {
-    deck: function deck(_deck3) {
-      _deck3.poker = _deck3.queued(poker);
+    deck: function deck(_deck4) {
+      _deck4.poker = _deck4.queued(poker);
 
       function poker(next) {
-        var cards = _deck3.cards;
+        var cards = _deck4.cards;
         var len = cards.length;
 
         _fontSize = getFontSize();
 
         cards.slice(-5).reverse().forEach(function (card, i) {
           card.poker(i, len, function (i) {
+            card.setSide('front');
             if (i === 4) {
               next();
             }
@@ -257,14 +275,18 @@ var Deck = (function () {
   };
 
   var intro = {
-    deck: function deck(_deck4) {
-      _deck4.intro = _deck4.queued(intro);
+    deck: function deck(_deck5) {
+      _deck5.intro = _deck5.queued(intro);
 
       function intro(next) {
-        var cards = _deck4.cards;
+        var cards = _deck5.cards;
 
         cards.forEach(function (card, i) {
+          card.setSide('front');
           card.intro(i, function (i) {
+            setTimeout(function () {
+              card.setSide('back');
+            }, 500);
             if (i === cards.length - 1) {
               next();
             }
@@ -310,11 +332,11 @@ var Deck = (function () {
   };
 
   var fan = {
-    deck: function deck(_deck5) {
-      _deck5.fan = _deck5.queued(fan);
+    deck: function deck(_deck6) {
+      _deck6.fan = _deck6.queued(fan);
 
       function fan(next) {
-        var cards = _deck5.cards;
+        var cards = _deck6.cards;
         var len = cards.length;
 
         cards.forEach(function (card, i) {
@@ -368,11 +390,11 @@ var Deck = (function () {
   var fontSize;
 
   var bysuit = {
-    deck: function deck(_deck6) {
-      _deck6.bysuit = _deck6.queued(bysuit);
+    deck: function deck(_deck7) {
+      _deck7.bysuit = _deck7.queued(bysuit);
 
       function bysuit(next) {
-        var cards = _deck6.cards;
+        var cards = _deck7.cards;
 
         fontSize = getFontSize();
 
@@ -440,10 +462,12 @@ var Deck = (function () {
     var $topleft = createElement('div');
     var $bottomright = createElement('div');
     var $face = createElement('div');
+    var $back = createElement('div');
 
     var isMovable = false;
+    var isFlippable = false;
 
-    var self = { i: i, value: value, suit: suit, pos: i, $el: $el, mount: mount, unmount: unmount };
+    var self = { i: i, value: value, suit: suit, pos: i, $el: $el, mount: mount, unmount: unmount, setSide: setSide };
 
     var modules = Deck.modules;
     var module;
@@ -452,6 +476,7 @@ var Deck = (function () {
     $topleft.classList.add('topleft');
     $bottomright.classList.add('bottomright');
     $face.classList.add('face');
+    $back.classList.add('back');
 
     $topleft.textContent = suit < 4 ? name : 'J\nO\nK\nE\nR';
     $bottomright.textContent = suit < 4 ? name : 'J\nO\nK\nE\nR';
@@ -459,9 +484,10 @@ var Deck = (function () {
     $el.style.zIndex = 52 - i;
     $el.style[transform] = 'translate(-' + z + 'px, -' + z + 'px)';
 
-    $el.appendChild($face);
-    $el.appendChild($topleft);
-    $el.appendChild($bottomright);
+    self.setSide('back');
+
+    addListener($el, 'mousedown', onMousedown);
+    addListener($el, 'touchstart', onMousedown);
 
     for (module in modules) {
       addModule(modules[module]);
@@ -472,9 +498,22 @@ var Deck = (function () {
         // Already is movable, do nothing
         return;
       }
+      isMovable = true;
       $el.style.cursor = 'move';
-      addListener($el, 'mousedown', onMousedown);
-      addListener($el, 'touchstart', onMousedown);
+    };
+
+    self.enableFlipping = function () {
+      if (isFlippable) {
+        return;
+      }
+      isFlippable = true;
+    };
+
+    self.disableFlipping = function () {
+      if (!isFlippable) {
+        return;
+      }
+      isFlippable = false;
     };
 
     self.disableMoving = function () {
@@ -482,9 +521,8 @@ var Deck = (function () {
         // Already disabled moving, do nothing
         return;
       }
+      isMovable = false;
       $el.style.cursor = '';
-      removeListener($el, 'mousedown', onMousedown);
-      removeListener($el, 'touchstart', onMousedown);
     };
 
     return self;
@@ -493,9 +531,18 @@ var Deck = (function () {
       module.card && module.card(self);
     }
 
+    function onClick() {
+      if (self.side === 'front') {
+        setSide('back');
+      } else {
+        setSide('front');
+      }
+    }
+
     function onMousedown(e) {
       var startPos = {};
       var pos = {};
+      var starttime = Date.now();
 
       e.preventDefault();
 
@@ -511,12 +558,19 @@ var Deck = (function () {
         addListener(window, 'touchend', onMouseup);
       }
 
+      if (!isMovable) {
+        return;
+      }
+
       $el.style[transition] = 'all .2s';
       $el.style[transform] = translate(self.x + 'px', self.y + 'px');
       $el.style[transformOrigin] = '50% 50%';
       $el.style.zIndex = maxZ++;
 
       function onMousemove(e) {
+        if (!isMovable) {
+          return;
+        }
         if (e.type === 'mousemove') {
           pos.x = e.clientX;
           pos.y = e.clientY;
@@ -526,10 +580,16 @@ var Deck = (function () {
         }
 
         $el.style[transition] = '';
-        $el.style[transform] = translate(self.x + pos.x - startPos.x + 'px', self.y + pos.y - startPos.y + 'px');
+        $el.style[transform] = translate(Math.round(self.x + pos.x - startPos.x) + 'px', Math.round(self.y + pos.y - startPos.y) + 'px');
       }
 
       function onMouseup(e) {
+        if (isFlippable && Date.now() - starttime < 200) {
+          self.setSide(self.side === 'front' ? 'back' : 'front');
+        }
+        if (!isMovable) {
+          return;
+        }
         if (e.type === 'mouseup') {
           removeListener(window, 'mousemove', onMousemove);
           removeListener(window, 'mouseup', onMouseup);
@@ -553,6 +613,28 @@ var Deck = (function () {
     function unmount() {
       self.$root && self.$root.removeChild($el);
       self.$root = null;
+    }
+
+    function setSide(newSide) {
+      if (newSide === 'front') {
+        if (self.side === 'back') {
+          $el.removeChild($back);
+        }
+        self.side = 'front';
+        $el.appendChild($face);
+        $el.appendChild($topleft);
+        $el.appendChild($bottomright);
+        $el.classList.add('card', suitName, suitName + value);
+      } else {
+        if (self.side === 'front') {
+          $el.removeChild($face);
+          $el.removeChild($topleft);
+          $el.removeChild($bottomright);
+        }
+        self.side = 'back';
+        $el.appendChild($back);
+        $el.setAttribute('class', 'card');
+      }
     }
   }
 
@@ -714,7 +796,7 @@ var Deck = (function () {
       module.deck && module.deck(self);
     }
   }
-  Deck.modules = { bysuit: bysuit, fan: fan, intro: intro, poker: poker, shuffle: shuffle, sort: sort };
+  Deck.modules = { bysuit: bysuit, fan: fan, intro: intro, poker: poker, shuffle: shuffle, sort: sort, flip: flip };
   Deck.Card = Card;
   Deck.easing = easing;
   Deck.prefix = prefix;
