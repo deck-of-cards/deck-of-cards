@@ -479,6 +479,9 @@ var Deck = (function () {
     $el.style.zIndex = 52 - i;
     $el.style[transform] = 'translate(-' + z + 'px, -' + z + 'px)';
 
+    self.x = -z;
+    self.y = -z;
+
     self.setSide('back');
 
     addListener($el, 'mousedown', onMousedown);
