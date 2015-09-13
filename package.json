@@ -1,6 +1,6 @@
 {
   "name": "deck-of-cards",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "HTML5 Deck of Cards",
   "main": "dist/deck.min.js",
   "scripts": {
