@@ -77,6 +77,7 @@ deck.cards.forEach(function (card, i) {
           card.$el.style[transform] = 'scale(0)'
           card.setSide('front')
           card.enableMoving()
+          card.enableFlipping()
           deck.cards.push(card)
         }
         deck.sort(true)
