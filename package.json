@@ -3,6 +3,7 @@
   "version": "0.1.2",
   "description": "HTML5 Deck of Cards",
   "main": "dist/deck.min.js",
+  "jsnext:main": "lib/deck.js",
   "scripts": {
     "start": "node index",
     "build-js": "rollup --name Deck -f iife lib/deck.js | babel -o dist/deck.js && uglifyjs dist/deck.js -cmo dist/deck.min.js",
