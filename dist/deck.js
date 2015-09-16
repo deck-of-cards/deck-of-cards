@@ -646,14 +646,11 @@ var Deck = (function () {
 
     // calculate rank/suit, etc..
     var rank = i % 13 + 1;
-    var name = rank === 1 ? 'A' : rank === 11 ? 'J' : rank === 12 ? 'Q' : rank === 13 ? 'K' : rank;
     var suit = i / 13 | 0;
     var z = (52 - i) / 4;
 
     // create elements
     var $el = createElement('div');
-    var $topleft = createElement('div');
-    var $bottomright = createElement('div');
     var $face = createElement('div');
     var $back = createElement('div');
 
@@ -668,8 +665,6 @@ var Deck = (function () {
     var module;
 
     // add classes
-    $topleft.classList.add('topleft');
-    $bottomright.classList.add('bottomright');
     $face.classList.add('face');
     $back.classList.add('back');
 
@@ -697,9 +692,7 @@ var Deck = (function () {
     // set rank & suit
     self.setRankSuit = function (rank, suit) {
       var suitName = SuitName(suit);
-      $el.setAttribute('class', 'card ' + suitName + ' ' + (suitName + rank));
-      $topleft.textContent = suit < 4 ? name : 'J\nO\nK\nE\nR';
-      $bottomright.textContent = suit < 4 ? name : 'J\nO\nK\nE\nR';
+      $el.setAttribute('class', 'card ' + suitName + ' rank' + rank);
     };
 
     self.setRankSuit(rank, suit);
@@ -836,14 +829,10 @@ var Deck = (function () {
         }
         self.side = 'front';
         $el.appendChild($face);
-        $el.appendChild($topleft);
-        $el.appendChild($bottomright);
         self.setRankSuit(self.rank, self.suit);
       } else {
         if (self.side === 'front') {
           $el.removeChild($face);
-          $el.removeChild($topleft);
-          $el.removeChild($bottomright);
         }
         self.side = 'back';
         $el.appendChild($back);
