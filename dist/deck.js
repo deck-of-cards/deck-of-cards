@@ -122,6 +122,8 @@ var Deck = (function () {
 
   function animationFrames(delay, duration) {
     var now = Date.now();
+
+    // calculate animation start/end times
     var start = now + delay;
     var end = start + duration;
 
@@ -130,22 +132,27 @@ var Deck = (function () {
       end: end
     };
 
+    // add animation
     animations.push(animation);
 
     if (!ticking) {
+      // start ticking
       ticking = true;
       requestAnimationFrame(tick);
     }
     var self = {
       start: function start(cb) {
+        // add start callback (just one)
         animation.startcb = cb;
         return self;
       },
       progress: function progress(cb) {
+        // add progress callback (just one)
         animation.progresscb = cb;
         return self;
       },
       end: function end(cb) {
+        // add end callback (just one)
         animation.endcb = cb;
         return self;
       }
@@ -159,13 +166,14 @@ var Deck = (function () {
     var now = Date.now();
 
     if (now - previousTick < 1000 / 60) {
-      // maintain 60 fps
+      // do not run over 60 fps
       requestAnimationFrame(tick);
       return;
     }
     previousTick = now;
 
     if (!animations.length) {
+      // stop ticking
       ticking = false;
       return;
     }
@@ -173,16 +181,19 @@ var Deck = (function () {
     for (var i = 0, animation; i < animations.length; i++) {
       animation = animations[i];
       if (now < animation.start) {
+        // animation not yet started..
         continue;
       }
       if (!animation.started) {
+        // animation starts
         animation.started = true;
         animation.startcb && animation.startcb();
       }
+      // animation progress
       var t = (now - animation.start) / (animation.end - animation.start);
       animation.progresscb && animation.progresscb(t < 1 ? t : 1);
       if (now > animation.end) {
-        // Animation ended
+        // animation ended
         animation.endcb && animation.endcb();
         animations.splice(i--, 1);
         continue;
@@ -633,44 +644,57 @@ var Deck = (function () {
   function Card(i) {
     var transform = prefix('transform');
 
+    // calculate rank/suit, etc..
     var rank = i % 13 + 1;
     var name = rank === 1 ? 'A' : rank === 11 ? 'J' : rank === 12 ? 'Q' : rank === 13 ? 'K' : rank;
     var suit = i / 13 | 0;
     var z = (52 - i) / 4;
 
+    // create elements
     var $el = createElement('div');
     var $topleft = createElement('div');
     var $bottomright = createElement('div');
     var $face = createElement('div');
     var $back = createElement('div');
 
-    var isMovable = false;
+    // states
+    var isDraggable = false;
     var isFlippable = false;
 
+    // self = card
     var self = { i: i, rank: rank, suit: suit, pos: i, $el: $el, mount: mount, unmount: unmount, setSide: setSide };
 
     var modules = Deck.modules;
     var module;
 
+    // add classes
     $topleft.classList.add('topleft');
     $bottomright.classList.add('bottomright');
     $face.classList.add('face');
     $back.classList.add('back');
 
-    $el.style[transform] = 'translate(-' + z + 'px, -' + z + 'px)';
+    // add default transform
+    $el.style[transform] = translate(-z + 'px', -z + 'px');
 
+    // add default values
     self.x = -z;
     self.y = -z;
+    self.z = z;
+    self.rot = 0;
 
+    // set default side to back
     self.setSide('back');
 
+    // add drag/click listeners
     addListener($el, 'mousedown', onMousedown);
     addListener($el, 'touchstart', onMousedown);
 
+    // load modules
     for (module in modules) {
       addModule(modules[module]);
     }
 
+    // set rank & suit
     self.setRankSuit = function (rank, suit) {
       var suitName = SuitName(suit);
       $el.setAttribute('class', 'card ' + suitName + ' ' + (suitName + rank));
@@ -680,17 +704,19 @@ var Deck = (function () {
 
     self.setRankSuit(rank, suit);
 
-    self.enableMoving = function () {
-      if (isMovable) {
-        // Already is movable, do nothing
+    self.enableDragging = function () {
+      // this activates dragging
+      if (isDraggable) {
+        // already is draggable, do nothing
         return;
       }
-      isMovable = true;
+      isDraggable = true;
       $el.style.cursor = 'move';
     };
 
     self.enableFlipping = function () {
       if (isFlippable) {
+        // already is flippable, do nothing
         return;
       }
       isFlippable = true;
@@ -698,23 +724,25 @@ var Deck = (function () {
 
     self.disableFlipping = function () {
       if (!isFlippable) {
+        // already disabled flipping, do nothing
         return;
       }
       isFlippable = false;
     };
 
-    self.disableMoving = function () {
-      if (!isMovable) {
-        // Already disabled moving, do nothing
+    self.disableDragging = function () {
+      if (!isDraggable) {
+        // already disabled dragging, do nothing
         return;
       }
-      isMovable = false;
+      isDraggable = false;
       $el.style.cursor = '';
     };
 
     return self;
 
     function addModule(module) {
+      // add card module
       module.card && module.card(self);
     }
 
@@ -725,6 +753,7 @@ var Deck = (function () {
 
       e.preventDefault();
 
+      // get start coordinates and start listening window events
       if (e.type === 'mousedown') {
         startPos.x = pos.x = e.clientX;
         startPos.y = pos.y = e.clientY;
@@ -737,15 +766,18 @@ var Deck = (function () {
         addListener(window, 'touchend', onMouseup);
       }
 
-      if (!isMovable) {
+      if (!isDraggable) {
+        // is not draggable, do nothing
         return;
       }
 
+      // move card
       $el.style[transform] = translate(self.x + 'px', self.y + 'px') + (self.rot ? ' rotate(' + self.rot + 'deg)' : '');
       $el.style.zIndex = maxZ++;
 
       function onMousemove(e) {
-        if (!isMovable) {
+        if (!isDraggable) {
+          // is not draggable, do nothing
           return;
         }
         if (e.type === 'mousemove') {
@@ -756,15 +788,14 @@ var Deck = (function () {
           pos.y = e.touches[0].clientY;
         }
 
+        // move card
         $el.style[transform] = translate(Math.round(self.x + pos.x - startPos.x) + 'px', Math.round(self.y + pos.y - startPos.y) + 'px') + (self.rot ? ' rotate(' + self.rot + 'deg)' : '');
       }
 
       function onMouseup(e) {
         if (isFlippable && Date.now() - starttime < 200) {
+          // flip sides
           self.setSide(self.side === 'front' ? 'back' : 'front');
-        }
-        if (!isMovable) {
-          return;
         }
         if (e.type === 'mouseup') {
           removeListener(window, 'mousemove', onMousemove);
@@ -773,24 +804,32 @@ var Deck = (function () {
           removeListener(window, 'touchmove', onMousemove);
           removeListener(window, 'touchend', onMouseup);
         }
+        if (!isDraggable) {
+          // is not draggable, do nothing
+          return;
+        }
 
+        // set current position
         self.x = self.x + pos.x - startPos.x;
         self.y = self.y + pos.y - startPos.y;
       }
     }
 
     function mount(target) {
+      // mount card to target (deck)
       target.appendChild($el);
 
       self.$root = target;
     }
 
     function unmount() {
+      // unmount from root (deck)
       self.$root && self.$root.removeChild($el);
       self.$root = null;
     }
 
     function setSide(newSide) {
+      // flip sides
       if (newSide === 'front') {
         if (self.side === 'back') {
           $el.removeChild($back);
@@ -814,6 +853,7 @@ var Deck = (function () {
   }
 
   function SuitName(suit) {
+    // return suit name from suit value
     return suit === 0 ? 'spades' : suit === 1 ? 'hearts' : suit === 2 ? 'clubs' : suit === 3 ? 'diamonds' : 'joker';
   }
 
@@ -932,6 +972,7 @@ var Deck = (function () {
   }
 
   function Deck(jokers) {
+    // init cards array
     var cards = new Array(jokers ? 55 : 52);
 
     var $el = createElement('div');
@@ -941,16 +982,20 @@ var Deck = (function () {
     var modules = Deck.modules;
     var module;
 
+    // make queueable
     queue(self);
 
+    // load modules
     for (module in modules) {
       addModule(modules[module]);
     }
 
+    // add class
     $el.classList.add('deck');
 
     var card;
 
+    // create cards
     for (var i = cards.length; i; i--) {
       card = cards[i - 1] = Card(i - 1);
       card.mount($el);
@@ -959,11 +1004,13 @@ var Deck = (function () {
     return self;
 
     function mount(root) {
+      // mount deck to root
       $root = root;
       $root.appendChild($el);
     }
 
     function unmount() {
+      // unmount deck from root
       $root.removeChild($el);
     }
 
