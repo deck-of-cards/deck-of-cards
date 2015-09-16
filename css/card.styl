@@ -10,24 +10,24 @@
   box-shadow: 0 1px 1px rgba(#000, .15)
   cursor: default
 
-  .topleft, .bottomright
+  &:before, &:after
     position: absolute
     font-size: .7rem
     text-align: center
-    line-height: 1
-    letter-spacing: -.1rem
+    line-height: .7rem
     font-family: 'Ubuntu Condensed', sans-serif
-    white-space: pre
+    white-space: pre-line
+    width: .55rem
+    letter-spacing: -.1rem
 
-  .topleft
-    top: .25rem
-    left: .25rem
-    transform: translate(-50%, 0)
+  &:before
+    top: .15rem
+    left: 0
 
-  .bottomright
-    bottom: .25rem
-    right: .25rem
-    transform: rotate(180deg) translate(-50%, 0)
+  &:after
+    bottom: .1rem
+    right: 0
+    transform: rotate(180deg)
 
   .face
     height: 100%
@@ -46,182 +46,233 @@
     top: 0
     left: 0
 
-  &.joker
-    .topleft, .bottomright
-      font-size: .4rem
-
   &.spades, &.clubs, &.joker
-    color: #000
+    color: #000000
 
-  &.hearts, &.diamonds
+  &.hearts, &.diamonds, &.joker.rank3
     color: #d40000
 
-  &.spades1
-    .face
-      background-image: url(faces/0_1.svg)
-  &.spades2
-    .face
-      background-image: url(faces/0_2.svg)
-  &.spades3
-    .face
-      background-image: url(faces/0_3.svg)
-  &.spades4
-    .face
-      background-image: url(faces/0_4.svg)
-  &.spades5
-    .face
-      background-image: url(faces/0_5.svg)
-  &.spades6
-    .face
-      background-image: url(faces/0_6.svg)
-  &.spades7
-    .face
-      background-image: url(faces/0_7.svg)
-  &.spades8
-    .face
-      background-image: url(faces/0_8.svg)
-  &.spades9
-    .face
-      background-image: url(faces/0_9.svg)
-  &.spades10
-    .face
-      background-image: url(faces/0_10.svg)
-  &.spades11
-    .face
-      background-image: url(faces/0_11.svg)
-  &.spades12
-    .face
-      background-image: url(faces/0_12.svg)
-  &.spades13
-    .face
-      background-image: url(faces/0_13.svg)
+  &.joker
+    &.rank1, &.rank2, &.rank3
+      &:before, &:after
+        content: "J\a O\a K\a E\a R"
+        letter-spacing: 0
+        font-size: .4rem
+        line-height: .4rem
+        padding: .15rem .05rem
+        width: .5rem
 
-  &.hearts1
-    .face
-      background-image: url(faces/1_1.svg)
-  &.hearts2
-    .face
-      background-image: url(faces/1_2.svg)
-  &.hearts3
-    .face
-      background-image: url(faces/1_3.svg)
-  &.hearts4
-    .face
-      background-image: url(faces/1_4.svg)
-  &.hearts5
-    .face
-      background-image: url(faces/1_5.svg)
-  &.hearts6
-    .face
-      background-image: url(faces/1_6.svg)
-  &.hearts7
-    .face
-      background-image: url(faces/1_7.svg)
-  &.hearts8
-    .face
-      background-image: url(faces/1_8.svg)
-  &.hearts9
-    .face
-      background-image: url(faces/1_9.svg)
-  &.hearts10
-    .face
-      background-image: url(faces/1_10.svg)
-  &.hearts11
-    .face
-      background-image: url(faces/1_11.svg)
-  &.hearts12
-    .face
-      background-image: url(faces/1_12.svg)
-  &.hearts13
-    .face
-      background-image: url(faces/1_13.svg)
+  &.rank1
+    &:before, &:after
+      content: "A"
+  &.rank2
+    &:before, &:after
+      content: "2"
+  &.rank3
+    &:before, &:after
+      content: "3"
+  &.rank4
+    &:before, &:after
+      content: "4"
+  &.rank5
+    &:before, &:after
+      content: "5"
+  &.rank6
+    &:before, &:after
+      content: "6"
+  &.rank7
+    &:before, &:after
+      content: "7"
+  &.rank8
+    &:before, &:after
+      content: "8"
+  &.rank9
+    &:before, &:after
+      content: "9"
+  &.rank10
+    &:before, &:after
+      content: "10"
+  &.rank11
+    &:before, &:after
+      content: "J"
+  &.rank12
+    &:before, &:after
+      content: "Q"
+  &.rank13
+    &:before, &:after
+      content: "K"
 
-  &.clubs1
-    .face
-      background-image: url(faces/2_1.svg)
-  &.clubs2
-    .face
-      background-image: url(faces/2_2.svg)
-  &.clubs3
-    .face
-      background-image: url(faces/2_3.svg)
-  &.clubs4
-    .face
-      background-image: url(faces/2_4.svg)
-  &.clubs5
-    .face
-      background-image: url(faces/2_5.svg)
-  &.clubs6
-    .face
-      background-image: url(faces/2_6.svg)
-  &.clubs7
-    .face
-      background-image: url(faces/2_7.svg)
-  &.clubs8
-    .face
-      background-image: url(faces/2_8.svg)
-  &.clubs9
-    .face
-      background-image: url(faces/2_9.svg)
-  &.clubs10
-    .face
-      background-image: url(faces/2_10.svg)
-  &.clubs11
-    .face
-      background-image: url(faces/2_11.svg)
-  &.clubs12
-    .face
-      background-image: url(faces/2_12.svg)
-  &.clubs13
-    .face
-      background-image: url(faces/2_13.svg)
+  &.spades
+    &.rank1
+      .face
+        background-image: url(faces/0_1.svg)
+    &.rank2
+      .face
+        background-image: url(faces/0_2.svg)
+    &.rank3
+      .face
+        background-image: url(faces/0_3.svg)
+    &.rank4
+      .face
+        background-image: url(faces/0_4.svg)
+    &.rank5
+      .face
+        background-image: url(faces/0_5.svg)
+    &.rank6
+      .face
+        background-image: url(faces/0_6.svg)
+    &.rank7
+      .face
+        background-image: url(faces/0_7.svg)
+    &.rank8
+      .face
+        background-image: url(faces/0_8.svg)
+    &.rank9
+      .face
+        background-image: url(faces/0_9.svg)
+    &.rank10
+      .face
+        background-image: url(faces/0_10.svg)
+    &.rank11
+      .face
+        background-image: url(faces/0_11.svg)
+    &.rank12
+      .face
+        background-image: url(faces/0_12.svg)
+    &.rank13
+      .face
+        background-image: url(faces/0_13.svg)
 
-  &.diamonds1
-    .face
-      background-image: url(faces/3_1.svg)
-  &.diamonds2
-    .face
-      background-image: url(faces/3_2.svg)
-  &.diamonds3
-    .face
-      background-image: url(faces/3_3.svg)
-  &.diamonds4
-    .face
-      background-image: url(faces/3_4.svg)
-  &.diamonds5
-    .face
-      background-image: url(faces/3_5.svg)
-  &.diamonds6
-    .face
-      background-image: url(faces/3_6.svg)
-  &.diamonds7
-    .face
-      background-image: url(faces/3_7.svg)
-  &.diamonds8
-    .face
-      background-image: url(faces/3_8.svg)
-  &.diamonds9
-    .face
-      background-image: url(faces/3_9.svg)
-  &.diamonds10
-    .face
-      background-image: url(faces/3_10.svg)
-  &.diamonds11
-    .face
-      background-image: url(faces/3_11.svg)
-  &.diamonds12
-    .face
-      background-image: url(faces/3_12.svg)
-  &.diamonds13
-    .face
-      background-image: url(faces/3_13.svg)
+  &.hearts
+    &.rank1
+      .face
+        background-image: url(faces/1_1.svg)
+    &.rank2
+      .face
+        background-image: url(faces/1_2.svg)
+    &.rank3
+      .face
+        background-image: url(faces/1_3.svg)
+    &.rank4
+      .face
+        background-image: url(faces/1_4.svg)
+    &.rank5
+      .face
+        background-image: url(faces/1_5.svg)
+    &.rank6
+      .face
+        background-image: url(faces/1_6.svg)
+    &.rank7
+      .face
+        background-image: url(faces/1_7.svg)
+    &.rank8
+      .face
+        background-image: url(faces/1_8.svg)
+    &.rank9
+      .face
+        background-image: url(faces/1_9.svg)
+    &.rank10
+      .face
+        background-image: url(faces/1_10.svg)
+    &.rank11
+      .face
+        background-image: url(faces/1_11.svg)
+    &.rank12
+      .face
+        background-image: url(faces/1_12.svg)
+    &.rank13
+      .face
+        background-image: url(faces/1_13.svg)
 
-  &.joker1
-    .face
-      background-image: url(faces/4_1.svg)
-  &.joker2
-    .face
-      background-image: url(faces/4_2.svg)
-  &.joker3
-    .face
-      background-image: url(faces/4_3.svg)
+  &.clubs
+    &.rank1
+      .face
+        background-image: url(faces/2_1.svg)
+    &.rank2
+      .face
+        background-image: url(faces/2_2.svg)
+    &.rank3
+      .face
+        background-image: url(faces/2_3.svg)
+    &.rank4
+      .face
+        background-image: url(faces/2_4.svg)
+    &.rank5
+      .face
+        background-image: url(faces/2_5.svg)
+    &.rank6
+      .face
+        background-image: url(faces/2_6.svg)
+    &.rank7
+      .face
+        background-image: url(faces/2_7.svg)
+    &.rank8
+      .face
+        background-image: url(faces/2_8.svg)
+    &.rank9
+      .face
+        background-image: url(faces/2_9.svg)
+    &.rank10
+      .face
+        background-image: url(faces/2_10.svg)
+    &.rank11
+      .face
+        background-image: url(faces/2_11.svg)
+    &.rank12
+      .face
+        background-image: url(faces/2_12.svg)
+    &.rank13
+      .face
+        background-image: url(faces/2_13.svg)
+
+  &.diamonds
+    &.rank1
+      .face
+        background-image: url(faces/3_1.svg)
+    &.rank2
+      .face
+        background-image: url(faces/3_2.svg)
+    &.rank3
+      .face
+        background-image: url(faces/3_3.svg)
+    &.rank4
+      .face
+        background-image: url(faces/3_4.svg)
+    &.rank5
+      .face
+        background-image: url(faces/3_5.svg)
+    &.rank6
+      .face
+        background-image: url(faces/3_6.svg)
+    &.rank7
+      .face
+        background-image: url(faces/3_7.svg)
+    &.rank8
+      .face
+        background-image: url(faces/3_8.svg)
+    &.rank9
+      .face
+        background-image: url(faces/3_9.svg)
+    &.rank10
+      .face
+        background-image: url(faces/3_10.svg)
+    &.rank11
+      .face
+        background-image: url(faces/3_11.svg)
+    &.rank12
+      .face
+        background-image: url(faces/3_12.svg)
+    &.rank13
+      .face
+        background-image: url(faces/3_13.svg)
+
+  &.joker
+    &.rank1
+      .face
+        background-image: url(faces/4_1.svg)
+    &.rank2
+      .face
+        background-image: url(faces/4_2.svg)
+    &.rank3
+      .face
+        background-image: url(faces/4_3.svg)
