@@ -169,7 +169,6 @@ $poker.addEventListener('click', function () {
   })
   deck.shuffle()
   deck.shuffle()
-  deck.shuffle()
   deck.poker()
 })
 
