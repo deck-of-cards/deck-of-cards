@@ -865,12 +865,6 @@ var Deck = (function () {
     target.removeEventListener(name, listener);
   }
 
-  function easing(name) {
-    if (name === 'cubicInOut') {
-      return 'cubic-bezier(0.645, 0.045, 0.355, 1.000)';
-    }
-  }
-
   function queue(target) {
     var array = Array.prototype;
 
@@ -1020,7 +1014,6 @@ var Deck = (function () {
   }
   Deck.modules = { bysuit: bysuit, fan: fan, intro: intro, poker: poker, shuffle: shuffle, sort: sort, flip: flip };
   Deck.Card = Card;
-  Deck.easing = easing;
   Deck.prefix = prefix;
   Deck.translate = translate;
 

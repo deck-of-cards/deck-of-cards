@@ -145,7 +145,7 @@ body {
 }
 .card.hearts,
 .card.diamonds {
-  color: #f00;
+  color: #d40000;
 }
 .card.spades1 .face {
   background-image: url("faces/0_1.svg");
