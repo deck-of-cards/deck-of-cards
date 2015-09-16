@@ -71,6 +71,124 @@ var Deck = (function () {
     has3d = has3d != null && has3d.length && has3d !== 'none';
 
     document.body.removeChild($p);
+
+    return has3d;
+  }
+
+  var ease = {
+    linear: function linear(t) {
+      return t;
+    },
+    quadIn: function quadIn(t) {
+      return t * t;
+    },
+    quadOut: function quadOut(t) {
+      return t * (2 - t);
+    },
+    quadInOut: function quadInOut(t) {
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    },
+    cubicIn: function cubicIn(t) {
+      return t * t * t;
+    },
+    cubicOut: function cubicOut(t) {
+      return --t * t * t + 1;
+    },
+    cubicInOut: function cubicInOut(t) {
+      return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+    },
+    quartIn: function quartIn(t) {
+      return t * t * t * t;
+    },
+    quartOut: function quartOut(t) {
+      return 1 - --t * t * t * t;
+    },
+    quartInOut: function quartInOut(t) {
+      return t < 0.5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t;
+    },
+    quintIn: function quintIn(t) {
+      return t * t * t * t * t;
+    },
+    quintOut: function quintOut(t) {
+      return 1 + --t * t * t * t * t;
+    },
+    quintInOut: function quintInOut(t) {
+      return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
+    }
+  };
+
+  var ticking;
+  var animations = [];
+
+  function animationFrames(delay, duration) {
+    var now = Date.now();
+    var start = now + delay;
+    var end = start + duration;
+
+    var animation = {
+      start: start,
+      end: end
+    };
+
+    animations.push(animation);
+
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(tick);
+    }
+    var self = {
+      start: function start(cb) {
+        animation.startcb = cb;
+        return self;
+      },
+      progress: function progress(cb) {
+        animation.progresscb = cb;
+        return self;
+      },
+      end: function end(cb) {
+        animation.endcb = cb;
+        return self;
+      }
+    };
+    return self;
+  }
+
+  var previousTick = 0;
+
+  function tick() {
+    var now = Date.now();
+
+    if (now - previousTick < 1000 / 60) {
+      // maintain 60 fps
+      requestAnimationFrame(tick);
+      return;
+    }
+    previousTick = now;
+
+    if (!animations.length) {
+      ticking = false;
+      return;
+    }
+
+    for (var i = 0, animation; i < animations.length; i++) {
+      animation = animations[i];
+      if (now < animation.start) {
+        continue;
+      }
+      if (!animation.started) {
+        animation.started = true;
+        animation.startcb && animation.startcb();
+      }
+      var t = (now - animation.start) / (animation.end - animation.start);
+      animation.progresscb && animation.progresscb(t < 1 ? t : 1);
+      if (now > animation.end) {
+        // Animation ended
+        animation.endcb && animation.endcb();
+        animations.splice(i--, 1);
+        continue;
+      }
+    }
+    requestAnimationFrame(tick);
   }
 
   var sort = {
@@ -89,7 +207,7 @@ var Deck = (function () {
         });
 
         cards.forEach(function (card, i) {
-          card.sort(i, function (i) {
+          card.sort(i, cards.length, function (i) {
             if (i === cards.length - 1) {
               next();
             }
@@ -99,36 +217,48 @@ var Deck = (function () {
     },
     card: function card(_card) {
       var transform = prefix('transform');
-      var transition = prefix('transition');
 
       var $el = _card.$el;
 
-      _card.sort = function (n, cb, reverse) {
-        var z = n / 4;
-        var delay = n * 10;
+      _card.sort = function (i, len, cb, reverse) {
+        var z = i / 4;
+        var delay = i * 10;
 
-        setTimeout(function () {
-          $el.style[transition] = 'all .4s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
-          $el.style[transform] = translate(-z + 'px', '-150px');
-          _card.x = -z;
-          _card.y = -150;
-        }, delay);
+        var xStart;
+        var yStart;
+        var rotStart;
 
-        setTimeout(function () {
-          $el.style.zIndex = n;
-        }, 200 + delay);
+        var xDiff;
+        var yDiff;
+        var rotDiff;
 
-        setTimeout(function () {
-          $el.style[transform] = translate(-z + 'px', -z + 'px');
+        animationFrames(delay, 400).start(function () {
+          xStart = _card.x;
+          yStart = _card.y;
+          rotStart = _card.rot;
+          xDiff = -z - xStart;
+          yDiff = -150 - yStart;
+          rotDiff = 0 - rotStart;
+        }).progress(function (t) {
+          t = ease.quadOut(t);
+          _card.x = xStart + xDiff * t;
+          _card.y = yStart + yDiff * t;
+          _card.rot = rotStart + rotDiff * t;
+          $el.style[transform] = translate(_card.x + 'px', _card.y + 'px') + (_card.rot ? ' rotate(' + _card.rot + 'deg)' : '');
+        }).end(function () {
+          $el.style.zIndex = i;
+        });
 
-          _card.x = -z;
-          _card.y = -z;
-
-          setTimeout(function () {
-            $el.style[transition] = '';
-            cb(n);
-          }, 500);
-        }, 400 + delay);
+        animationFrames(delay + 500, 400).start(function () {
+          yStart = _card.y;
+          yDiff = -z - yStart;
+        }).progress(function (t) {
+          t = ease.quadOut(t);
+          _card.y = yStart + yDiff * t;
+          $el.style[transform] = translate(-z + 'px', _card.y + 'px');
+        }).end(function () {
+          cb(i);
+        });
       };
     }
   };
@@ -156,7 +286,7 @@ var Deck = (function () {
     return window.getComputedStyle(document.body).getPropertyValue('font-size').slice(0, -2);
   }
 
-  var __fontSize;
+  var ___fontSize;
 
   var shuffle = {
     deck: function deck(_deck3) {
@@ -165,7 +295,7 @@ var Deck = (function () {
       function shuffle(next) {
         var cards = _deck3.cards;
 
-        __fontSize = getFontSize();
+        ___fontSize = getFontSize();
 
         fisherYates(cards);
 
@@ -184,47 +314,64 @@ var Deck = (function () {
 
     card: function card(_card2) {
       var transform = prefix('transform');
-      var transition = prefix('transition');
-      var transitionDelay = prefix('transition-delay');
 
       var $el = _card2.$el;
 
       _card2.shuffle = function (cb) {
         var i = _card2.pos;
         var z = i / 4;
-        var offsetX = plusMinus(Math.random() * 40 + 20) * __fontSize / 16;
+        var offsetX = plusMinus(Math.random() * 40 + 20) * ___fontSize / 16;
         var delay = i * 2;
 
-        $el.style[transition] = 'all .2s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
-        $el.style[transitionDelay] = delay / 1000 + 's';
+        var xStart;
+        var yStart;
+        var rotStart;
 
-        setTimeout(function () {
-          $el.style[transform] = translate(offsetX + 'px', -z + 'px');
-          _card2.x = offsetX;
-          _card2.y = -z;
-        }, 0);
+        var xDiff;
+        var yDiff;
+        var rotDiff;
 
-        setTimeout(function () {
-          $el.style[transitionDelay] = '';
+        animationFrames(delay, 200).start(function () {
+          xStart = _card2.x;
+          yStart = _card2.y;
+          rotStart = _card2.rot || 0;
+
+          xDiff = offsetX - xStart;
+          yDiff = -z - yStart;
+          rotDiff = 0 - rotStart;
+        }).progress(function (t) {
+          t = ease.quadOut(t);
+          _card2.x = xStart + xDiff * t;
+          _card2.y = yStart + yDiff * t;
+          _card2.rot = rotStart + rotDiff * t;
+          $el.style[transform] = translate(_card2.x + 'px', _card2.y + 'px') + (_card2.rot ? ' rotate(' + _card2.rot + 'deg)' : '');
+        });
+        animationFrames(200 + delay, 200).start(function () {
+          xStart = _card2.x;
+          yStart = _card2.y;
+          rotStart = _card2.rot || 0;
+
+          xDiff = -z - xStart;
+          yDiff = -z - yStart;
+          rotDiff = 0 - rotStart;
+
           $el.style.zIndex = i;
-        }, 100 + delay);
-
-        setTimeout(function () {
-          $el.style[transform] = translate(-z + 'px', -z + 'px');
-
-          _card2.x = -z;
-          _card2.y = -z;
-
+        }).progress(function (t) {
+          t = ease.quadOut(t);
+          _card2.x = xStart + xDiff * t;
+          _card2.y = yStart + yDiff * t;
+          _card2.rot = rotStart + rotDiff * t;
+          $el.style[transform] = translate(_card2.x + 'px', _card2.y + 'px') + (_card2.rot ? ' rotate(' + _card2.rot + 'deg)' : '');
+        }).end(function () {
           setTimeout(function () {
-            $el.style[transition] = '';
             cb(i);
-          }, 200);
-        }, 200 + delay);
+          }, 0);
+        });
       };
     }
   };
 
-  var _fontSize;
+  var __fontSize;
 
   var poker = {
     deck: function deck(_deck4) {
@@ -234,7 +381,7 @@ var Deck = (function () {
         var cards = _deck4.cards;
         var len = cards.length;
 
-        _fontSize = getFontSize();
+        __fontSize = getFontSize();
 
         cards.slice(-5).reverse().forEach(function (card, i) {
           card.poker(i, len, function (i) {
@@ -248,33 +395,38 @@ var Deck = (function () {
     },
     card: function card(_card3) {
       var transform = prefix('transform');
-      var transition = prefix('transition');
 
       var $el = _card3.$el;
 
       _card3.poker = function (i, len, cb) {
         var delay = i * 250;
         var target = {
-          x: Math.round((i - 2.05) * 70 * _fontSize / 16),
-          y: Math.round(-110 * _fontSize / 16)
+          x: Math.round((i - 2.05) * 70 * __fontSize / 16),
+          y: Math.round(-110 * __fontSize / 16)
         };
 
-        setTimeout(function () {
+        var xStart, yStart, rotStart;
+        var xDiff, yDiff, rotDiff;
+
+        animationFrames(delay, 250).start(function () {
+          xStart = _card3.x;
+          yStart = _card3.y;
+          rotStart = _card3.rot || 0;
+
+          xDiff = target.x - xStart;
+          yDiff = target.y - yStart;
+          rotDiff = 0 - rotStart;
           $el.style.zIndex = len - 1 + i;
-        }, delay);
+        }).progress(function (t) {
+          t = ease.quadOut(t);
+          _card3.x = xStart + xDiff * t;
+          _card3.y = yStart + yDiff * t;
+          _card3.rot = rotStart + rotDiff * t;
 
-        setTimeout(function () {
-          $el.style[transition] = 'all .25s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
-          $el.style[transform] = translate(target.x + 'px', target.y + 'px');
-
-          _card3.x = target.x;
-          _card3.y = target.y;
-        }, delay + 25);
-
-        setTimeout(function () {
-          $el.style[transition] = '';
+          $el.style[transform] = translate(_card3.x + 'px', _card3.y + 'px') + (_card3.rot ? ' rotate(' + _card3.rot + 'deg)' : '');
+        }).end(function () {
           cb(i);
-        }, delay + 250);
+        });
       };
     }
   };
@@ -289,9 +441,9 @@ var Deck = (function () {
         cards.forEach(function (card, i) {
           card.setSide('front');
           card.intro(i, function (i) {
-            setTimeout(function () {
+            animationFrames(250, 0).start(function () {
               card.setSide('back');
-            }, 500);
+            });
             if (i === cards.length - 1) {
               next();
             }
@@ -301,40 +453,36 @@ var Deck = (function () {
     },
     card: function card(_card4) {
       var transform = prefix('transform');
-      var transition = prefix('transition');
-      var transitionDelay = prefix('transition-delay');
 
       var $el = _card4.$el;
 
       _card4.intro = function (i, cb) {
-        var delay = i * 10 + 250;
+        var delay = 500 + i * 10;
         var z = i / 4;
 
         $el.style[transform] = translate(-z + 'px', '-250px');
         $el.style.opacity = 0;
-        $el.style.zIndex = i;
 
         _card4.x = -z;
-        _card4.y = -250;
 
-        setTimeout(function () {
-          $el.style[transition] = 'all 1s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
-          $el.style[transitionDelay] = delay / 1000 + 's';
-          $el.style[transform] = translate(-z + 'px', -z + 'px');
-          $el.style.opacity = 1;
+        var yDiff = -z - -250;
 
-          _card4.x = -z;
-          _card4.y = -z;
-
-          setTimeout(function () {
-            $el.style[transition] = '';
-
-            cb && cb(i);
-          }, 1250 + delay);
-        }, 500);
+        animationFrames(delay, 1000).start(function () {
+          $el.style.zIndex = i;
+        }).progress(function (t) {
+          $el.style.opacity = t;
+          t = ease.quartOut(t);
+          _card4.y = -250 + yDiff * t;
+          $el.style[transform] = translate(-z + 'px', _card4.y + 'px');
+        }).end(function () {
+          $el.style.opacity = '';
+          cb && cb(i);
+        });
       };
     }
   };
+
+  var _fontSize;
 
   var fan = {
     deck: function deck(_deck6) {
@@ -343,6 +491,8 @@ var Deck = (function () {
       function fan(next) {
         var cards = _deck6.cards;
         var len = cards.length;
+
+        _fontSize = getFontSize();
 
         cards.forEach(function (card, i) {
           card.fan(i, len, function (i) {
@@ -355,9 +505,6 @@ var Deck = (function () {
     },
     card: function card(_card5) {
       var transform = prefix('transform');
-      var transformOrigin = prefix('transform-origin');
-      var transition = prefix('transition');
-      var transitionDelay = prefix('transition-delay');
 
       var $el = _card5.$el;
 
@@ -366,31 +513,55 @@ var Deck = (function () {
         var delay = i * 10;
         var rot = i / (len - 1) * 260 - 130;
 
-        $el.style[transformOrigin] = '50% 110%';
+        var xStart;
+        var yStart;
+        var rotStart;
 
-        setTimeout(function () {
-          $el.style[transition] = 'all .3s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
-          $el.style[transitionDelay] = delay / 1000 + 's';
-          $el.style[transform] = translate(-z + 'px', -z + 'px');
-          $el.style.zIndex = i;
+        var xDiff;
+        var yDiff;
+        var rotDiff;
 
-          _card5.x = -z;
-          _card5.y = -z;
+        animationFrames(delay, 300).start(function () {
+          xStart = _card5.x;
+          yStart = _card5.y;
+          rotStart = _card5.rot || 0;
 
-          setTimeout(function () {
-            $el.style[transitionDelay] = '';
-            $el.style[transform] = translate(0, 0) + 'rotate(' + rot + 'deg)';
-            _card5.x = 0;
-            _card5.y = 0;
-          }, 300 + delay);
-        }, 0);
+          xDiff = -z - xStart;
+          yDiff = -z - yStart;
 
-        setTimeout(function () {
+          rotDiff = 0 - rotStart;
+        }).progress(function (t) {
+          t = ease.quadOut(t);
+          _card5.x = xStart + xDiff * t;
+          _card5.y = yStart + yDiff * t;
+          _card5.rot = rotStart + rotDiff * t;
+          $el.style[transform] = translate(_card5.x + 'px', _card5.y + 'px') + (_card5.rot ? ' rotate(' + _card5.rot + 'deg)' : '');
+        });
+        animationFrames(300 + delay, 300).start(function () {
+          xStart = _card5.x;
+          yStart = _card5.y;
+          rotStart = _card5.rot || 0;
+
+          xDiff = Math.cos(deg2rad(rot - 90)) * 55 * _fontSize / 16 - xStart;
+          yDiff = Math.sin(deg2rad(rot - 90)) * 55 * _fontSize / 16 - yStart;
+          rotDiff = rot - rotStart;
+        }).progress(function (t) {
+          t = ease.quadOut(t);
+          _card5.x = xStart + xDiff * t;
+          _card5.y = yStart + yDiff * t;
+          _card5.rot = rotStart + rotDiff * t;
+
+          $el.style[transform] = translate(_card5.x + 'px', _card5.y + 'px') + (_card5.rot ? ' rotate(' + _card5.rot + 'deg)' : '');
+        }).end(function () {
           cb(i);
-        }, 1000 + delay);
+        });
       };
     }
   };
+
+  function deg2rad(degrees) {
+    return degrees * Math.PI / 180;
+  }
 
   var fontSize;
 
@@ -414,8 +585,6 @@ var Deck = (function () {
     },
     card: function card(_card6) {
       var transform = prefix('transform');
-      var transition = prefix('transition');
-      var transitionDelay = prefix('transition-delay');
 
       var rank = _card6.rank;
       var suit = _card6.suit;
@@ -428,20 +597,29 @@ var Deck = (function () {
         var posX = -Math.round((6.75 - rank) * 8 * fontSize / 16);
         var posY = -Math.round((1.5 - suit) * 92 * fontSize / 16);
 
-        setTimeout(function () {
-          $el.style[transition] = 'all .5s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
-          $el.style[transitionDelay] = delay / 1000 + 's';
-          $el.style[transform] = translate(posX + 'px', posY + 'px');
-          $el.style.zIndex = i;
+        var xStart;
+        var yStart;
+        var xDiff;
+        var yDiff;
+        var rotStart;
+        var rotDiff;
 
-          _card6.x = posX;
-          _card6.y = posY;
-
-          setTimeout(function () {
-            $el.style[transition] = '';
-            cb(i);
-          }, 500 + delay);
-        }, 0);
+        animationFrames(delay, 400).start(function () {
+          xStart = _card6.x;
+          yStart = _card6.y;
+          rotStart = _card6.rot || 0;
+          xDiff = posX - xStart;
+          yDiff = posY - yStart;
+          rotDiff = 0 - rotStart;
+        }).progress(function (t) {
+          t = ease.quadOut(t);
+          _card6.x = xStart + xDiff * t;
+          _card6.y = yStart + yDiff * t;
+          _card6.rot = rotStart + rotDiff * t;
+          $el.style[transform] = translate(_card6.x + 'px', _card6.y + 'px') + (_card6.rot ? ' rotate(' + _card6.rot + 'deg)' : '');
+        }).end(function () {
+          cb(i);
+        });
       };
     }
   };
@@ -453,9 +631,7 @@ var Deck = (function () {
   var maxZ = 52;
 
   function Card(i) {
-    var transition = prefix('transition');
     var transform = prefix('transform');
-    var transformOrigin = prefix('transformOrigin');
 
     var rank = i % 13 + 1;
     var name = rank === 1 ? 'A' : rank === 11 ? 'J' : rank === 12 ? 'Q' : rank === 13 ? 'K' : rank;
@@ -481,7 +657,6 @@ var Deck = (function () {
     $face.classList.add('face');
     $back.classList.add('back');
 
-    $el.style.zIndex = 52 - i;
     $el.style[transform] = 'translate(-' + z + 'px, -' + z + 'px)';
 
     self.x = -z;
@@ -566,9 +741,7 @@ var Deck = (function () {
         return;
       }
 
-      $el.style[transition] = 'all .2s';
-      $el.style[transform] = translate(self.x + 'px', self.y + 'px');
-      $el.style[transformOrigin] = '50% 50%';
+      $el.style[transform] = translate(self.x + 'px', self.y + 'px') + (self.rot ? ' rotate(' + self.rot + 'deg)' : '');
       $el.style.zIndex = maxZ++;
 
       function onMousemove(e) {
@@ -583,8 +756,7 @@ var Deck = (function () {
           pos.y = e.touches[0].clientY;
         }
 
-        $el.style[transition] = '';
-        $el.style[transform] = translate(Math.round(self.x + pos.x - startPos.x) + 'px', Math.round(self.y + pos.y - startPos.y) + 'px');
+        $el.style[transform] = translate(Math.round(self.x + pos.x - startPos.x) + 'px', Math.round(self.y + pos.y - startPos.y) + 'px') + (self.rot ? ' rotate(' + self.rot + 'deg)' : '');
       }
 
       function onMouseup(e) {
@@ -601,7 +773,6 @@ var Deck = (function () {
           removeListener(window, 'touchmove', onMousemove);
           removeListener(window, 'touchend', onMouseup);
         }
-        $el.style[transition] = '';
 
         self.x = self.x + pos.x - startPos.x;
         self.y = self.y + pos.y - startPos.y;
@@ -780,8 +951,8 @@ var Deck = (function () {
 
     var card;
 
-    for (var i = 0, len = cards.length; i < len; i++) {
-      card = cards[i] = Card(i);
+    for (var i = cards.length; i; i--) {
+      card = cards[i - 1] = Card(i - 1);
       card.mount($el);
     }
 
