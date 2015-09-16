@@ -17,6 +17,7 @@ If you're on iOS, try adding to home screen (via Safari's share button) - it sho
 
 
 ## Latest changes
+- 0.1.3 JS animations (instead of CSS transitions)
 - 0.1.2 Backside graphics + setRankSuit (+ card.value -> card.rank!)
 - 0.1.1 Better organized modules + Chrome app 
 - 0.1.0 [Realistic face graphics](http://sourceforge.net/projects/vector-cards/), notice change of license for now..
