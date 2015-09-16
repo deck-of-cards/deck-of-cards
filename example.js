@@ -100,41 +100,53 @@ function startWinning () {
 
   $container.appendChild($winningDeck)
 
-  for (var i = 0; i < 52; i++) {
-    addWinningCard($winningDeck, i)
+  var side = Math.floor(Math.random() * 2) ? 'front' : 'back'
+
+  for (var i = 0; i < 55; i++) {
+    addWinningCard($winningDeck, i, side)
   }
 
-  setTimeout(startWinning, 500)
+  setTimeout(startWinning, Math.round(Math.random() * 1000))
 }
 
-function addWinningCard ($deck, i) {
-  var card = Deck.Card(i)
-  var delay = (52 - i) * 20
+function addWinningCard ($deck, i, side) {
+  var card = Deck.Card(54 - i)
+  var delay = (55 - i) * 20
+  var animationFrames = Deck.animationFrames
+  var ease = Deck.ease
 
-  var $xMovement = document.createElement('div')
-  $xMovement.style.position = 'absolute'
-  $xMovement.style[transform] = translate(0, 0)
+  card.enableFlipping()
 
-  card.$el.style[boxShadow] = 'none'
+  if (side === 'front') {
+    card.setSide('front')
+  } else {
+    card.setSide('back')
+  }
 
-  card.mount($xMovement)
-  $deck.appendChild($xMovement)
+  card.mount($deck)
+  card.$el.style.display = 'none'
 
-  card.$el.style[transform] = translate(0, 0)
+  var xStart = 0
+  var yStart = 0
+  var xDiff = -500
+  var yDiff = 500
 
-  setTimeout(function () {
-    $xMovement.style[transition] = 'all 1s linear'
-    $xMovement.style[transitionDelay] = delay / 1000 + 's'
-
-    card.$el.style[transition] = 'all 1s ' + easing('cubicInOut')
-    card.$el.style[transitionDelay] = delay / 1000 + 's'
-
-    $xMovement.style[transform] = translate('-500px', 0)
-    card.$el.style[transform] = translate(0, '500px')
-  }, 0)
-  setTimeout(function () {
-    card.unmount()
-  }, 1000 + delay)
+  animationFrames(delay, 1000)
+    .start(function () {
+      card.x = 0
+      card.y = 0
+      card.$el.style.display = ''
+    })
+    .progress(function (t) {
+      var tx = t
+      var ty = ease.cubicInOut(t)
+      card.x = xStart + xDiff * tx
+      card.y = yStart + yDiff * ty
+      card.$el.style[transform] = translate(card.x + 'px', card.y + 'px')
+    })
+    .end(function () {
+      card.unmount()
+    })
 }
 
 
