@@ -3,120 +3,6 @@
 var Deck = (function () {
   'use strict';
 
-  var flip = {
-    deck: function deck(_deck) {
-      _deck.flip = _deck.queued(flip);
-
-      function flip(next) {
-        var flipped = _deck.cards.filter(function (card) {
-          return card.side === 'front';
-        }).length / _deck.cards.length;
-
-        _deck.cards.forEach(function (card, i) {
-          card.setSide(flipped > 0.5 ? 'back' : 'front');
-        });
-        next();
-      }
-    }
-  };
-
-  var style = document.createElement('p').style;
-  var memoized = {};
-
-  function prefix(param) {
-    if (typeof memoized[param] !== 'undefined') {
-      return memoized[param];
-    }
-
-    if (typeof style[param] !== 'undefined') {
-      memoized[param] = param;
-      return param;
-    }
-
-    var camelCase = param[0].toUpperCase() + param.slice(1);
-    var prefixes = ['webkit', 'moz', 'Moz', 'ms', 'o'];
-    var test;
-
-    for (var i = 0, len = prefixes.length; i < len; i++) {
-      test = prefixes[i] + camelCase;
-      if (typeof style[test] !== 'undefined') {
-        memoized[param] = test;
-        return test;
-      }
-    }
-  }
-
-  var has3d;
-
-  function translate(a, b, c) {
-    typeof has3d !== 'undefined' || (has3d = check3d());
-
-    c = c || 0;
-
-    if (has3d) {
-      return 'translate3d(' + a + ', ' + b + ', ' + c + ')';
-    } else {
-      return 'translate(' + a + ', ' + b + ')';
-    }
-  }
-
-  function check3d() {
-    var transform = prefix('transform');
-    var $p = document.createElement('p');
-
-    document.body.appendChild($p);
-    $p.style[transform] = 'translate3d(1px,1px,1px)';
-
-    has3d = $p.style[transform];
-    has3d = has3d != null && has3d.length && has3d !== 'none';
-
-    document.body.removeChild($p);
-
-    return has3d;
-  }
-
-  var ease = {
-    linear: function linear(t) {
-      return t;
-    },
-    quadIn: function quadIn(t) {
-      return t * t;
-    },
-    quadOut: function quadOut(t) {
-      return t * (2 - t);
-    },
-    quadInOut: function quadInOut(t) {
-      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-    },
-    cubicIn: function cubicIn(t) {
-      return t * t * t;
-    },
-    cubicOut: function cubicOut(t) {
-      return --t * t * t + 1;
-    },
-    cubicInOut: function cubicInOut(t) {
-      return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-    },
-    quartIn: function quartIn(t) {
-      return t * t * t * t;
-    },
-    quartOut: function quartOut(t) {
-      return 1 - --t * t * t * t;
-    },
-    quartInOut: function quartInOut(t) {
-      return t < 0.5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t;
-    },
-    quintIn: function quintIn(t) {
-      return t * t * t * t * t;
-    },
-    quintOut: function quintOut(t) {
-      return 1 + --t * t * t * t * t;
-    },
-    quintInOut: function quintInOut(t) {
-      return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
-    }
-  };
-
   var ticking;
   var animations = [];
 
@@ -200,6 +86,120 @@ var Deck = (function () {
       }
     }
     requestAnimationFrame(tick);
+  }
+
+  var ease = {
+    linear: function linear(t) {
+      return t;
+    },
+    quadIn: function quadIn(t) {
+      return t * t;
+    },
+    quadOut: function quadOut(t) {
+      return t * (2 - t);
+    },
+    quadInOut: function quadInOut(t) {
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    },
+    cubicIn: function cubicIn(t) {
+      return t * t * t;
+    },
+    cubicOut: function cubicOut(t) {
+      return --t * t * t + 1;
+    },
+    cubicInOut: function cubicInOut(t) {
+      return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+    },
+    quartIn: function quartIn(t) {
+      return t * t * t * t;
+    },
+    quartOut: function quartOut(t) {
+      return 1 - --t * t * t * t;
+    },
+    quartInOut: function quartInOut(t) {
+      return t < 0.5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t;
+    },
+    quintIn: function quintIn(t) {
+      return t * t * t * t * t;
+    },
+    quintOut: function quintOut(t) {
+      return 1 + --t * t * t * t * t;
+    },
+    quintInOut: function quintInOut(t) {
+      return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
+    }
+  };
+
+  var flip = {
+    deck: function deck(_deck) {
+      _deck.flip = _deck.queued(flip);
+
+      function flip(next) {
+        var flipped = _deck.cards.filter(function (card) {
+          return card.side === 'front';
+        }).length / _deck.cards.length;
+
+        _deck.cards.forEach(function (card, i) {
+          card.setSide(flipped > 0.5 ? 'back' : 'front');
+        });
+        next();
+      }
+    }
+  };
+
+  var style = document.createElement('p').style;
+  var memoized = {};
+
+  function prefix(param) {
+    if (typeof memoized[param] !== 'undefined') {
+      return memoized[param];
+    }
+
+    if (typeof style[param] !== 'undefined') {
+      memoized[param] = param;
+      return param;
+    }
+
+    var camelCase = param[0].toUpperCase() + param.slice(1);
+    var prefixes = ['webkit', 'moz', 'Moz', 'ms', 'o'];
+    var test;
+
+    for (var i = 0, len = prefixes.length; i < len; i++) {
+      test = prefixes[i] + camelCase;
+      if (typeof style[test] !== 'undefined') {
+        memoized[param] = test;
+        return test;
+      }
+    }
+  }
+
+  var has3d;
+
+  function translate(a, b, c) {
+    typeof has3d !== 'undefined' || (has3d = check3d());
+
+    c = c || 0;
+
+    if (has3d) {
+      return 'translate3d(' + a + ', ' + b + ', ' + c + ')';
+    } else {
+      return 'translate(' + a + ', ' + b + ')';
+    }
+  }
+
+  function check3d() {
+    var transform = prefix('transform');
+    var $p = document.createElement('p');
+
+    document.body.appendChild($p);
+    $p.style[transform] = 'translate3d(1px,1px,1px)';
+
+    has3d = $p.style[transform];
+    has3d = has3d != null && has3d.length && has3d !== 'none';
+
+    document.body.removeChild($p);
+
+    return has3d;
   }
 
   var sort = {
@@ -1001,6 +1001,8 @@ var Deck = (function () {
       module.deck && module.deck(self);
     }
   }
+  Deck.animationFrames = animationFrames;
+  Deck.ease = ease;
   Deck.modules = { bysuit: bysuit, fan: fan, intro: intro, poker: poker, shuffle: shuffle, sort: sort, flip: flip };
   Deck.Card = Card;
   Deck.prefix = prefix;
