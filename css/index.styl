@@ -2,6 +2,8 @@
 
 *
   box-sizing: border-box
+  margin: 0
+  padding: 0
 
 html, body
   height: 100%
@@ -15,7 +17,7 @@ body
   text-size-adjust: 100%
 
 #container
-  position: absolute
+  position: fixed
   top: calc(50% + 1.5rem)
   left: 50%
   transform: translate3d(-50%, -50%, 0)
@@ -33,10 +35,10 @@ body
     background: none
     border: 1px solid #fff
     outline: none
-    margin: .25rem
-    padding: .5rem
+    margin: .1rem
+    padding: .4rem
     font: inherit
-    font-size: .875rem
+    font-size: .75rem
     line-height: 1
     color: #fff
     cursor: pointer
