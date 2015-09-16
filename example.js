@@ -43,7 +43,7 @@ var acesClicked = []
 var kingsClicked = []
 
 deck.cards.forEach(function (card, i) {
-  card.enableMoving()
+  card.enableDragging()
   card.enableFlipping()
 
   card.$el.addEventListener('mousedown', onTouch)
@@ -76,7 +76,7 @@ deck.cards.forEach(function (card, i) {
           card.mount(deck.$el)
           card.$el.style[transform] = 'scale(0)'
           card.setSide('front')
-          card.enableMoving()
+          card.enableDragging()
           card.enableFlipping()
           deck.cards.push(card)
         }
