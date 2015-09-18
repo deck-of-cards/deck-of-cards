@@ -193,7 +193,7 @@ deck.sort()
 // secret message..
 
 
-var randomDelay = 10000 + 60000 * Math.random()
+var randomDelay = 10000 + 30000 * Math.random()
 
 setTimeout(function () {
   printMessage('Psst..I want to share a secret with you...')
@@ -208,6 +208,8 @@ setTimeout(function () {
 }, randomDelay + 10000)
 
 function printMessage (text) {
+  var animationFrames = Deck.animationFrames
+  var ease = Deck.ease
   var $message = document.createElement('p')
   $message.classList.add('message')
   $message.textContent = text
@@ -216,16 +218,23 @@ function printMessage (text) {
 
   $message.style[transform] = translate(window.innerWidth + 'px', 0)
 
-  setTimeout(function () {
-    $message.style[transition] = 'all .7s ' + easing('cubicInOut')
-    $message.style[transform] = translate(0, 0)
-  }, 1000)
+  var diffX = window.innerWidth
 
-  setTimeout(function () {
-    $message.style[transform] = translate(-window.innerWidth + 'px', 0)
-  }, 6000)
+  animationFrames(1000, 700)
+    .progress(function (t) {
+      t = ease.cubicInOut(t)
+      $message.style[transform] = translate((diffX - diffX * t) + 'px', 0)
+    })
 
-  setTimeout(function () {
-    document.body.removeChild($message)
-  }, 7000)
+  animationFrames(6000, 700)
+    .start(function () {
+      diffX = window.innerWidth
+    })
+    .progress(function (t) {
+      t = ease.cubicInOut(t)
+      $message.style[transform] = translate((-diffX * t) + 'px', 0)
+    })
+    .end(function () {
+      document.body.removeChild($message)
+    })
 }
