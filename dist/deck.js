@@ -188,6 +188,14 @@ var Deck = (function () {
   }
 
   function check3d() {
+    // I admit, this line is stealed from the great Velocity.js!
+    // http://julian.com/research/velocity/
+    var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    if (!isMobile) {
+      return false;
+    }
+
     var transform = prefix('transform');
     var $p = document.createElement('p');
 
