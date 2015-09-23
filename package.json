@@ -1,6 +1,6 @@
 {
   "name": "deck-of-cards",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "HTML5 Deck of Cards",
   "main": "dist/deck.min.js",
   "jsnext:main": "lib/deck.js",
