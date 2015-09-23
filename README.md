@@ -9,6 +9,11 @@ https://deck-of-cards.js.org
 
 Frontside card graphics are slightly modified from Chris Aguilar's awesome [Vector Playing Card Graphics Set](http://sourceforge.net/projects/vector-cards/).
 
+## License
+
+- 0.1.x LGPL
+- 0.0.x MIT
+
 ## Download
 
 - [Production version (~5 KB uncompressed)](https://deck-of-cards.js.org/dist/deck.min.js)
@@ -73,9 +78,3 @@ Frontside card graphics are slightly modified from Chris Aguilar's awesome [Vect
 - http://muz.li/
 - http://www.blogduwebdesign.com/ressources-jeux/ressourcescreer-manipuler-cartes-HTML-Javascript-nodejs-Ruby/1933
 - http://fex.baidu.com/blog/2015/09/fex-weekly-07/
-
-## License
-
-- 0.1.x LGPL
-- 0.0.x MIT
-
