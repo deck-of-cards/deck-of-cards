@@ -58,7 +58,6 @@ Frontside card graphics are slightly modified from Chris Aguilar's awesome [Vect
 
 - Make z-index temporary by reordering DOM elements between actions
 - Enhance API, make more flexible
-- Make cards flippable
 
 
 ## Featured on
