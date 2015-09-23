@@ -14,7 +14,7 @@ Frontside card graphics are slightly modified from Chris Aguilar's awesome [Vect
 - [Production version (~5 KB uncompressed)](https://deck-of-cards.js.org/dist/deck.min.js)
 - [Development version (~15 KB uncompressed)](https://deck-of-cards.js.org/dist/deck.js)
 
-## Installation from node package manager
+## Installation from npm
 ```
     npm install deck-of-cards
 ```
