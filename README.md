@@ -7,9 +7,7 @@ https://deck-of-cards.js.org
 
 [Install from Google Chrome Web Store](https://chrome.google.com/webstore/detail/html5-deck-of-cards/ljafdfknpepklmkhomgaocmehgfdcpno)
 
-Frontside card graphics are slightly modified from Chris Aguilar's awesome [Vector Playing Card Graphics Set](http://sourceforge.net/projects/vector-cards/).
-
-Backside graphics by Juha Lindstedt.
+Frontside card graphics are slightly modified from Chris Aguilar's awesome [Vector Playing Card Graphics Set](http://sourceforge.net/projects/vector-cards/). Backside graphics by Juha Lindstedt.
 
 ## Download
 
