@@ -7,16 +7,22 @@ https://deck-of-cards.js.org
 
 [Install from Google Chrome Web Store](https://chrome.google.com/webstore/detail/html5-deck-of-cards/ljafdfknpepklmkhomgaocmehgfdcpno)
 
-## NOTICE!
-
-Frontside card graphics are now slightly modified from Chris Aguilar's awesome [Vector Playing Card Graphics Set](http://sourceforge.net/projects/vector-cards/). I want to respect author's license, and decided to change Deck of Cards license from MIT to LGPL. Sorry for any cause. Versions 0.0.x stay MIT. When theming is ready, I will put Vector Playing Card Graphics Set -theme to another repo, and change back to MIT. If you have something on your mind about this, please use this [issue](https://github.com/pakastin/deck-of-cards/issues/13). Thanks!
+Frontside card graphics are slightly modified from Chris Aguilar's awesome [Vector Playing Card Graphics Set](http://sourceforge.net/projects/vector-cards/).
 
 Backside graphics by Juha Lindstedt.
 
-If you're on iOS, try adding to home screen (via Safari's share button) - it should perform better ;)
+## Download
 
+- [Production version (~5 KB uncompressed)](https://deck-of-cards.js.org/dist/deck.min.js)
+- [Development version (~15 KB uncompressed)](https://deck-of-cards.js.org/dist/deck.js)
+
+## Installation from node package manager
+```
+    npm install deck-of-cards
+```
 
 ## Latest changes
+- 0.1.4 card.animateTo() -method added –> simplier modules!
 - 0.1.3 JS animations (instead of CSS transitions)
 - 0.1.2 Backside graphics + setRankSuit (+ card.value -> card.rank!)
 - 0.1.1 Better organized modules + Chrome app 
@@ -26,25 +32,6 @@ If you're on iOS, try adding to home screen (via Safari's share button) - it sho
 - 0.0.2 made intro shorter & added "poker"
 - 0.0.1 initial version
 
-
-## Featured on
-- https://reddit.com/r/InternetIsBeautiful/comments/3jmq97/html5_deck_of_cards/
-- https://news.ycombinator.com/item?id=10164513
-- http://tympanus.net/codrops/collective/collective-184/
-- https://github.com/trending?since=weekly
-- https://twitter.com/fwa/status/639719192158171136
-- https://twitter.com/search?q=%22html5+deck+of+cards%22
-- https://theslackpost.com/tmpg
-- http://news.js.org/
-- http://boredmachine.com/go/rKv6A
-- http://muz.li/
-- http://www.blogduwebdesign.com/ressources-jeux/ressourcescreer-manipuler-cartes-HTML-Javascript-nodejs-Ruby/1933
-- http://fex.baidu.com/blog/2015/09/fex-weekly-07/
-
-## Download
-
-- [Production version (~5 KB uncompressed)](https://deck-of-cards.js.org/dist/deck.min.js)
-- [Development version (~15 KB uncompressed)](https://deck-of-cards.js.org/dist/deck.js)
 
 ## Where's what?
 
@@ -76,7 +63,22 @@ If you're on iOS, try adding to home screen (via Safari's share button) - it sho
 - Make cards flippable
 
 
+## Featured on
+- https://reddit.com/r/InternetIsBeautiful/comments/3jmq97/html5_deck_of_cards/
+- https://news.ycombinator.com/item?id=10164513
+- http://tympanus.net/codrops/collective/collective-184/
+- https://github.com/trending?since=weekly
+- https://twitter.com/fwa/status/639719192158171136
+- https://twitter.com/search?q=%22html5+deck+of+cards%22
+- https://theslackpost.com/tmpg
+- http://news.js.org/
+- http://boredmachine.com/go/rKv6A
+- http://muz.li/
+- http://www.blogduwebdesign.com/ressources-jeux/ressourcescreer-manipuler-cartes-HTML-Javascript-nodejs-Ruby/1933
+- http://fex.baidu.com/blog/2015/09/fex-weekly-07/
+
 ## License
 
 - 0.1.x LGPL
 - 0.0.x MIT
+
