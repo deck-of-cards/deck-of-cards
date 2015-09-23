@@ -20,9 +20,14 @@ Frontside card graphics are slightly modified from Chris Aguilar's awesome [Vect
 - [Development version (~15 KB uncompressed)](https://deck-of-cards.js.org/dist/deck.js)
 
 ## Installation from npm
-```
     npm install deck-of-cards
-```
+
+## Build instructions
+
+    npm install
+    npm start
+
+(starts watching for changes..)
 
 ## Latest changes
 - 0.1.4 card.animateTo() -method added –> simplier modules!
@@ -49,14 +54,6 @@ Frontside card graphics are slightly modified from Chris Aguilar's awesome [Vect
 [lib/](https://github.com/pakastin/deck-of-cards/tree/master/lib) - JS (ES6) source of dist/deck.js - deck.js is also the main file
 
 [views/](https://github.com/pakastin/deck-of-cards/tree/master/views) - HTML source of the example
-
-
-## Build instructions
-
-    npm install
-    npm start
-
-(starts watching for changes..)
 
 
 ## Note to self: todo
