@@ -1,11 +1,9 @@
 
-var easing = Deck.easing
+/* global Deck */
+
 var prefix = Deck.prefix
 
 var transform = prefix('transform')
-var transition = prefix('transition')
-var transitionDelay = prefix('transitionDelay')
-var boxShadow = prefix('boxShadow')
 
 var translate = Deck.translate
 
@@ -35,9 +33,7 @@ $topbar.appendChild($sort)
 
 var deck = Deck()
 
-
 // easter eggs start
-
 
 var acesClicked = []
 var kingsClicked = []
@@ -139,7 +135,7 @@ function addWinningCard ($deck, i, side) {
     })
     .progress(function (t) {
       var tx = t
-      var ty = ease.cubicInOut(t)
+      var ty = ease.cubicIn(t)
       card.x = xStart + xDiff * tx
       card.y = yStart + yDiff * ty
       card.$el.style[transform] = translate(card.x + 'px', card.y + 'px')
@@ -149,9 +145,7 @@ function addWinningCard ($deck, i, side) {
     })
 }
 
-
 // easter eggs end
-
 
 $shuffle.addEventListener('click', function () {
   deck.shuffle()
@@ -189,9 +183,7 @@ deck.mount($container)
 deck.intro()
 deck.sort()
 
-
 // secret message..
-
 
 var randomDelay = 10000 + 30000 * Math.random()
 
