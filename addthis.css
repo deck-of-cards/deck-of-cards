@@ -9,3 +9,13 @@
   box-shadow: 0 1px 2px rgba(0,0,0,0.2);
   font-size: 0;
 }
+
+@media (max-width: 480px) {
+  .addthis_sharing_toolbox {
+    -webkit-transform: scale(.7);
+    transform: scale(.7);
+
+    -webkit-transform-origin: 100% 100%;
+    transform-origin: 100% 100%;
+  }
+}
