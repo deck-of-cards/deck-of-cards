@@ -30,7 +30,7 @@ Frontside card graphics are slightly modified from Chris Aguilar's awesome [Vect
 (starts watching for changes..)
 
 ## Latest changes
-- 0.1.4 card.animateTo() -method added –> simplier modules!
+- 0.1.4 card.animateTo() -method added –> simplier modules! [Simple example of usage](http://jsfiddle.net/x0gjood1/)
 - 0.1.3 JS animations (instead of CSS transitions)
 - 0.1.2 Backside graphics + setRankSuit (+ card.value -> card.rank!)
 - 0.1.1 Better organized modules + Chrome app 
