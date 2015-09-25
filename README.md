@@ -72,6 +72,7 @@ Frontside card graphics are slightly modified from Chris Aguilar's awesome [Vect
 - https://theslackpost.com/tmpg
 - http://news.js.org/
 - http://boredmachine.com/go/rKv6A
+- http://www.moongift.jp/2015/09/html5-deck-of-cards-html5%E8%A3%BD%E3%81%AE%E3%83%88%E3%83%A9%E3%83%B3%E3%83%97/
 - http://muz.li/
 - http://www.blogduwebdesign.com/ressources-jeux/ressourcescreer-manipuler-cartes-HTML-Javascript-nodejs-Ruby/1933
 - http://fex.baidu.com/blog/2015/09/fex-weekly-07/
