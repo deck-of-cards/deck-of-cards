@@ -837,6 +837,8 @@ var Deck = (function () {
       }
     },
     card: function card(_card6) {
+      var $el = _card6.$el;
+
       _card6.fan = function (i, len, cb) {
         var z = i / 4;
         var delay = i * 10;
@@ -857,6 +859,10 @@ var Deck = (function () {
           x: Math.cos(deg2rad(rot - 90)) * 55 * _fontSize / 16,
           y: Math.sin(deg2rad(rot - 90)) * 55 * _fontSize / 16,
           rot: rot,
+
+          onStart: function onStart() {
+            $el.style.zIndex = i;
+          },
 
           onComplete: function onComplete() {
             cb(i);
