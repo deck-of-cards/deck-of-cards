@@ -6,7 +6,7 @@ var Deck = (function () {
   var ticking;
   var animations = [];
 
-  function animationframes(delay, duration) {
+  function animationFrames(delay, duration) {
     var now = Date.now();
 
     // calculate animation start/end times
@@ -155,96 +155,6 @@ var Deck = (function () {
 
     return has3d;
   }
-
-  var _ticking;
-  var _animations = [];
-
-  function animationFrames(delay, duration) {
-    var now = Date.now();
-
-    // calculate animation start/end times
-    var start = now + delay;
-    var end = start + duration;
-
-    var animation = {
-      start: start,
-      end: end
-    };
-
-    // add animation
-    _animations.push(animation);
-
-    if (!_ticking) {
-      // start ticking
-      _ticking = true;
-      requestAnimationFrame(_tick);
-    }
-    var self = {
-      start: function start(cb) {
-        // add start callback (just one)
-        animation.startcb = cb;
-        return self;
-      },
-      progress: function progress(cb) {
-        // add progress callback (just one)
-        animation.progresscb = cb;
-        return self;
-      },
-      end: function end(cb) {
-        // add end callback (just one)
-        animation.endcb = cb;
-        return self;
-      }
-    };
-    return self;
-  }
-
-  var _previousTick = 0;
-
-  function _tick() {
-    var now = Date.now();
-
-    if (now - _previousTick < 1000 / 60) {
-      // do not run over 60 fps
-      requestAnimationFrame(_tick);
-      return;
-    }
-    _previousTick = now;
-
-    if (!_animations.length) {
-      // stop ticking
-      _ticking = false;
-      return;
-    }
-
-    for (var i = 0, animation; i < _animations.length; i++) {
-      animation = _animations[i];
-      if (now < animation.start) {
-        // animation not yet started..
-        continue;
-      }
-      if (!animation.started) {
-        // animation starts
-        animation.started = true;
-        animation.startcb && animation.startcb();
-      }
-      // animation progress
-      var t = (now - animation.start) / (animation.end - animation.start);
-      animation.progresscb && animation.progresscb(t < 1 ? t : 1);
-      if (now > animation.end) {
-        // animation ended
-        animation.endcb && animation.endcb();
-        _animations.splice(i--, 1);
-        continue;
-      }
-    }
-    requestAnimationFrame(_tick);
-  }
-
-  // fallback
-  window.requestAnimationFrame || (window.requestAnimationFrame = function (cb) {
-    setTimeout(cb, 0);
-  });
 
   function createElement(type) {
     return document.createElement(type);
@@ -767,7 +677,7 @@ var Deck = (function () {
         cards.forEach(function (card, i) {
           card.setSide('front');
           card.intro(i, function (i) {
-            animationframes(250, 0).start(function () {
+            animationFrames(250, 0).start(function () {
               card.setSide('back');
             });
             if (i === cards.length - 1) {
@@ -837,6 +747,8 @@ var Deck = (function () {
       }
     },
     card: function card(_card6) {
+      var $el = _card6.$el;
+
       _card6.fan = function (i, len, cb) {
         var z = i / 4;
         var delay = i * 10;
@@ -857,6 +769,10 @@ var Deck = (function () {
           x: Math.cos(deg2rad(rot - 90)) * 55 * _fontSize / 16,
           y: Math.sin(deg2rad(rot - 90)) * 55 * _fontSize / 16,
           rot: rot,
+
+          onStart: function onStart() {
+            $el.style.zIndex = i;
+          },
 
           onComplete: function onComplete() {
             cb(i);
@@ -1061,7 +977,7 @@ var Deck = (function () {
       module.deck && module.deck(self);
     }
   }
-  Deck.animationFrames = animationframes;
+  Deck.animationFrames = animationFrames;
   Deck.ease = ease;
   Deck.modules = { bysuit: bysuit, fan: fan, intro: intro, poker: poker, shuffle: shuffle, sort: sort, flip: flip };
   Deck.Card = _card;
