@@ -9,6 +9,8 @@ https://deck-of-cards.js.org
 
 Frontside card graphics are slightly modified from Chris Aguilar's awesome [Vector Playing Card Graphics Set](http://sourceforge.net/projects/vector-cards/).
 
+Also check out my cool new javascript view library, FRZR: https://frzr.js.org/
+
 ## License
 
 - 0.1.x LGPL
