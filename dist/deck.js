@@ -46,17 +46,8 @@ var Deck = (function () {
     return self;
   }
 
-  var previousTick = 0;
-
   function tick() {
     var now = Date.now();
-
-    if (now - previousTick < 1000 / 60) {
-      // do not run over 60 fps
-      requestAnimationFrame(tick);
-      return;
-    }
-    previousTick = now;
 
     if (!animations.length) {
       // stop ticking
