@@ -13,8 +13,7 @@ Also check out my cool new javascript view library, FRZR: https://frzr.js.org/ a
 
 ## License
 
-- 0.1.x LGPL
-- 0.0.x MIT
+LGPL if you use Chris Aguilar's [vector playing cards](http://sourceforge.net/projects/vector-cards/). Otherwise MIT.
 
 ## Download
 
