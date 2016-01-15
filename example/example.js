@@ -39,6 +39,7 @@ var acesClicked = []
 var kingsClicked = []
 
 deck.cards.forEach(function (card, i) {
+  var rank = card.getRank();
   card.enableDragging()
   card.enableFlipping()
 
@@ -46,9 +47,10 @@ deck.cards.forEach(function (card, i) {
   card.$el.addEventListener('touchstart', onTouch)
 
   function onTouch () {
+
     var card
 
-    if (i % 13 === 0) {
+    if (rank === "Ace") {
       acesClicked[i] = true
       if (acesClicked.filter(function (ace) {
         return ace
@@ -59,7 +61,7 @@ deck.cards.forEach(function (card, i) {
           startWinning()
         }, 250)
       }
-    } else if (i % 13 === 12) {
+    } else if (rank === "King") {
       if (!kingsClicked) {
         return
       }
@@ -68,7 +70,7 @@ deck.cards.forEach(function (card, i) {
         return king
       }).length === 4) {
         for (var j = 0; j < 3; j++) {
-          card = Deck.Card(52 + j)
+          card = Deck.Card(52 + j) //52 is first joker, 53 is second, 54 is third
           card.mount(deck.$el)
           card.$el.style[transform] = 'scale(0)'
           card.setSide('front')
@@ -98,7 +100,7 @@ function startWinning () {
 
   var side = Math.floor(Math.random() * 2) ? 'front' : 'back'
 
-  for (var i = 0; i < 55; i++) {
+  for (var i = 0; i < deck.cards.length; i++) {
     addWinningCard($winningDeck, i, side)
   }
 
