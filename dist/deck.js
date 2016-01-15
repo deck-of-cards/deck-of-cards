@@ -151,7 +151,7 @@ var Deck = (function () {
     return document.createElement(type);
   }
 
-  var maxZ = 0; //previously 52, but become broken once more than one deck per Deck was implemented
+  var maxZ = 0; //previously 52, but became broken once more than one deck per Deck was implemented
 
   var cardNames = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"];
   var upperCaseCardNames = cardNames.map(function (e) {
@@ -161,7 +161,7 @@ var Deck = (function () {
   // Arguments: index
   //        or  string: e.g. 'Ace of Spades'
   //        or  two strings: e.g. 'Ace','Spades'
-  function _card(arg0, arg1, z) {
+  function _card(arg0, arg1) {
     var i;
     if (arguments.length >= 2) {
       // e.g. Card('Ace','Spades') -> 'Ace of Spades'
@@ -260,7 +260,8 @@ var Deck = (function () {
         self.y = startY + diffY * et;
         self.rot = startRot + diffRot * et;
 
-        $el.style[transform] = translate(self.x + 'px', self.y + 'px') + (diffRot ? 'rotate(' + self.rot + 'deg)' : '');
+        $el.style[transform] = translate(self.x + 'px', self.y + 'px') + (self.rot ? 'rotate(' + self.rot + 'deg)' : '');
+        console.log('hehe: ' + self.x);
       }).end(function () {
         onComplete && onComplete();
       });
