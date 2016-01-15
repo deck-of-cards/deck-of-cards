@@ -242,6 +242,7 @@ var Deck = (function () {
       var startX, startY, startRot;
       var diffX, diffY, diffRot;
 
+      delay = delay || 0;
       animationFrames(delay, duration).start(function () {
         startX = self.x || 0;
         startY = self.y || 0;
