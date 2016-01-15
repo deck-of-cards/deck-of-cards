@@ -261,7 +261,6 @@ var Deck = (function () {
         self.rot = startRot + diffRot * et;
 
         $el.style[transform] = translate(self.x + 'px', self.y + 'px') + (self.rot ? 'rotate(' + self.rot + 'deg)' : '');
-        console.log('hehe: ' + self.x);
       }).end(function () {
         onComplete && onComplete();
       });
