@@ -151,14 +151,38 @@ var Deck = (function () {
     return document.createElement(type);
   }
 
-  var maxZ = 52;
+  var maxZ = 0; //previously 52, but become broken once more than one deck per Deck was implemented
 
-  function _card(i) {
+  var cardNames = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"];
+  var upperCaseCardNames = cardNames.map(function (e) {
+    return e.toUpperCase();
+  });
+
+  // Arguments: index
+  //        or  string: e.g. 'Ace of Spades'
+  //        or  two strings: e.g. 'Ace','Spades'
+  function _card(arg0, arg1, z) {
+    var i;
+    if (arguments.length >= 2) {
+      // e.g. Card('Ace','Spades') -> 'Ace of Spades'
+      i = CardNameToIndex(arguments[0] + ' of ' + arguments[1]);
+    } else {
+      if (typeof arg0 === 'string') {
+        i = CardNameToIndex(arg0);
+      } else if (typeof arg0 == 'number') {
+        i = arg0;
+      }
+    }
+
+    maxZ++; //FIXME: Not fully sure if this works. For one Deck it is sure to work
+
     var transform = prefix('transform');
 
     // calculate rank/suit, etc..
     var rank = i % 13 + 1;
     var suit = i / 13 | 0;
+
+    // z is only used for the default animation. We want to make cards come from the "top-left"
     var z = (52 - i) / 4;
 
     // create elements
@@ -248,6 +272,13 @@ var Deck = (function () {
       $el.setAttribute('class', 'card ' + suitName + ' rank' + rank);
     };
 
+    self.getName = function () {
+      return CardName(self.rank, self.suit);
+    };
+    self.getRank = function () {
+      return CardName(self.rank, self.suit).split('of')[0].trim();
+    };
+
     self.setRankSuit(rank, suit);
 
     self.enableDragging = function () {
@@ -319,6 +350,8 @@ var Deck = (function () {
 
       // move card
       $el.style[transform] = translate(self.x + 'px', self.y + 'px') + (self.rot ? ' rotate(' + self.rot + 'deg)' : '');
+
+      // Card goes to top of area. maxZ always increases because we always want a card to be on top
       $el.style.zIndex = maxZ++;
 
       function onMousemove(e) {
@@ -392,6 +425,46 @@ var Deck = (function () {
         $el.setAttribute('class', 'card');
       }
     }
+  }
+
+  function CardName(rank, suit) {
+    if (suit === 4) {
+      return "Joker";
+    } else {
+      return cardNames[rank - 1] + " of " + SuitName(suit);
+    }
+  }
+
+  function CardNameToIndex(arg0) {
+    var words = arg0.split('of').map(function (e) {
+      return e.trim().toUpperCase();
+    });
+    if (words.length === 1) return words[0] === 'JOKER' ? 52 : undefined; //FIXME: All jokers are converted to 52 (the first joker)
+
+    if (words.length > 2) return undefined;
+
+    var rank = upperCaseCardNames.indexOf(words[0]) + 1;
+    var suit;
+    switch (words[1]) {
+      case 'SPADES':
+        suit = 0;
+        break;
+      case 'HEARTS':
+        suit = 1;
+        break;
+      case 'CLUBS':
+        suit = 2;
+        break;
+      case 'DIAMONDS':
+        suit = 3;
+        break;
+      default:
+        suit = 4;
+        break;
+    }
+
+    var i = suit * 13 + rank - 1;
+    return i;
   }
 
   function SuitName(suit) {
@@ -569,7 +642,7 @@ var Deck = (function () {
             if (i === cards.length - 1) {
               next();
             }
-          });
+          }, i);
         });
         return;
       }
@@ -578,8 +651,7 @@ var Deck = (function () {
     card: function card(_card3) {
       var $el = _card3.$el;
 
-      _card3.shuffle = function (cb) {
-        var i = _card3.pos;
+      _card3.shuffle = function (cb, i) {
         var z = i / 4;
         var delay = i * 2;
 
@@ -779,6 +851,7 @@ var Deck = (function () {
 
   var ___fontSize;
 
+  // FIXME: Currently does not deal with more than one deck. Cards with same rank/suit all get stacked
   var bysuit = {
     deck: function deck(_deck7) {
       _deck7.bysuit = _deck7.queued(bysuit);
@@ -788,12 +861,12 @@ var Deck = (function () {
 
         ___fontSize = fontSize();
 
-        cards.forEach(function (card) {
+        cards.forEach(function (card, i) {
           card.bysuit(function (i) {
             if (i === cards.length - 1) {
               next();
             }
-          });
+          }, i);
         });
       }
     },
@@ -801,8 +874,7 @@ var Deck = (function () {
       var rank = _card7.rank;
       var suit = _card7.suit;
 
-      _card7.bysuit = function (cb) {
-        var i = _card7.i;
+      _card7.bysuit = function (cb, i) {
         var delay = i * 10;
 
         _card7.animateTo({
@@ -921,9 +993,30 @@ var Deck = (function () {
     }
   }
 
-  function Deck(jokers) {
+  // The Deck constructor accepts three kinds of arguments:
+  // 1. A dictionary of the form {jokers: <boolean>, numDecks: <num decks>}
+  // 2. A single boolean value (jokers)
+  // 3. Either of 1. or 2. with some argument missing (default values are used: no jokers, 1 deck)
+  function Deck(arg0) {
+    // Arguments and their default values
+    var args;
+
+    // Default to 1 deck, no jokers
+    arg0 = arg0 || false;
+
+    if (typeof arg0 === 'boolean') {
+      // For backwards compatibility with previous versions, still accept a boolean indicating jokers or not
+      args = { jokers: arg0, numDecks: 1 };
+    } else {
+      // map: {jokers: ..., numDecks: ...}
+      args = arg0 || {};
+      args.jokers = args.jokers || false;
+      args.numDecks = args.numDecks || 1;
+    }
+
     // init cards array
-    var cards = new Array(jokers ? 55 : 52);
+    var cardsPerDeck = args.jokers ? 55 : 52;
+    var cards = new Array(args.numDecks * cardsPerDeck);
 
     var $el = createElement('div');
     var self = observable({ mount: mount, unmount: unmount, cards: cards, $el: $el });
@@ -946,9 +1039,11 @@ var Deck = (function () {
     var card;
 
     // create cards
-    for (var i = cards.length; i; i--) {
-      card = cards[i - 1] = _card(i - 1);
-      card.mount($el);
+    for (var j = 0; j < args.numDecks; j++) {
+      for (var i = 1; i <= cardsPerDeck; i++) {
+        cards[j * cardsPerDeck + i - 1] = card = _card(i - 1);
+        card.mount($el);
+      }
     }
 
     return self;
