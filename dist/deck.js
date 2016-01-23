@@ -453,13 +453,13 @@ var Deck = (function () {
     deck: function deck(_deck) {
       _deck.flip = _deck.queued(flip);
 
-      function flip(next) {
+      function flip(next, side) {
         var flipped = _deck.cards.filter(function (card) {
           return card.side === 'front';
         }).length / _deck.cards.length;
 
         _deck.cards.forEach(function (card, i) {
-          card.setSide(flipped > 0.5 ? 'back' : 'front');
+          card.setSide(side ? side : flipped > 0.5 ? 'back' : 'front');
         });
         next();
       }
