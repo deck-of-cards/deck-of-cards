@@ -50,7 +50,7 @@ deck.cards.forEach(function (card, i) {
 
     var card
 
-    if (rank === "Ace") {
+    if (rank === "ace") {
       acesClicked[i] = true
       if (acesClicked.filter(function (ace) {
         return ace
@@ -61,7 +61,7 @@ deck.cards.forEach(function (card, i) {
           startWinning()
         }, 250)
       }
-    } else if (rank === "King") {
+    } else if (rank === "king") {
       if (!kingsClicked) {
         return
       }
