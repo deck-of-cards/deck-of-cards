@@ -8,6 +8,7 @@ var transform = prefix('transform')
 var translate = Deck.translate
 
 var $container = document.getElementById('container')
+var $deckspot = document.getElementById('deckspot')
 var $topbar = document.getElementById('topbar')
 
 var $sort = document.createElement('button')
@@ -16,6 +17,7 @@ var $bysuit = document.createElement('button')
 var $fan = document.createElement('button')
 var $poker = document.createElement('button')
 var $flip = document.createElement('button')
+var $select = document.createElement('button')
 
 $shuffle.textContent = 'Shuffle'
 $sort.textContent = 'Sort'
@@ -23,6 +25,7 @@ $bysuit.textContent = 'By suit'
 $fan.textContent = 'Fan'
 $poker.textContent = 'Poker'
 $flip.textContent = 'Flip'
+$select.textContent = 'Select'
 
 $topbar.appendChild($flip)
 $topbar.appendChild($shuffle)
@@ -30,6 +33,7 @@ $topbar.appendChild($bysuit)
 $topbar.appendChild($fan)
 $topbar.appendChild($poker)
 $topbar.appendChild($sort)
+$topbar.appendChild($select)
 
 var deck = Deck()
 
@@ -94,7 +98,7 @@ function startWinning () {
 
   $winningDeck.style[transform] = translate(Math.random() * window.innerWidth - window.innerWidth / 2 + 'px', Math.random() * window.innerHeight - window.innerHeight / 2 + 'px')
 
-  $container.appendChild($winningDeck)
+  $deckspot.appendChild($winningDeck)
 
   var side = Math.floor(Math.random() * 2) ? 'front' : 'back'
 
@@ -148,23 +152,29 @@ function addWinningCard ($deck, i, side) {
 // easter eggs end
 
 $shuffle.addEventListener('click', function () {
+  removeSelecting()
   deck.shuffle()
   deck.shuffle()
 })
 $sort.addEventListener('click', function () {
+  removeSelecting()
   deck.sort()
 })
 $bysuit.addEventListener('click', function () {
+  removeSelecting()
   deck.sort(true) // sort reversed
   deck.bysuit()
 })
 $fan.addEventListener('click', function () {
+  removeSelecting()
   deck.fan()
 })
 $flip.addEventListener('click', function () {
+  removeSelecting()
   deck.flip()
 })
 $poker.addEventListener('click', function () {
+  removeSelecting()
   deck.queue(function (next) {
     deck.cards.forEach(function (card, i) {
       setTimeout(function () {
@@ -177,8 +187,39 @@ $poker.addEventListener('click', function () {
   deck.shuffle()
   deck.poker()
 })
+$select.addEventListener('click', function () {
+  deck.cards.forEach(function (card, i) {
+    card.disableFlipping()
+    card.enableSelecting()
+  })
+  selectingEnabled = true
+})
+$container.addEventListener('click', function (event) {
+  //console.log('click:', event.clientX, ",", event.clientY)
+  var animateinformation = {
+    delay: 10,
+    duration: 400,
+    x: event.clientX,
+    y: event.clientY,
+    rot: 90,
+    onComplete: function () {
+      //console.log('moved!')
+    }
+  }
+  moveSelectedCards(translateToCenterBasedLayout(animateinformation))  
+  removeSelecting()
+})
 
-deck.mount($container)
+function removeSelecting () {
+  deck.cards.forEach(function (card, i) {
+    card.setSelected(false)
+    card.enableFlipping()
+    card.disableSelecting()
+  })
+  selectingEnabled = false
+}
+
+deck.mount($deckspot)
 
 deck.intro()
 deck.sort()
@@ -229,4 +270,20 @@ function printMessage (text) {
     .end(function () {
       document.body.removeChild($message)
     })
+}
+
+function moveSelectedCards (data) {
+  deck.cards.forEach(function (card, i) {
+    if ( card.selected ){
+      card.animateTo(data)
+    }
+  })  
+}
+
+function translateToCenterBasedLayout (data) {
+  var rect = document.getElementById('deckspot').getBoundingClientRect();
+  //console.log('deckspot:', rect.right, rect.top)
+  data.x = data.x - rect.right
+  data.y = data.y - rect.top
+  return data;
 }

@@ -31,6 +31,7 @@ LGPL if you use Chris Aguilar's [vector playing cards](http://sourceforge.net/pr
 (starts watching for changes..)
 
 ## Latest changes
+- 0.1.5 Added card selection feature (mtheus)
 - 0.1.4 card.animateTo() -method added –> simplier modules! [Simple example of usage](http://jsfiddle.net/x0gjood1/)
 - 0.1.3 JS animations (instead of CSS transitions)
 - 0.1.2 Backside graphics + setRankSuit (+ card.value -> card.rank!)

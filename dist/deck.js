@@ -169,9 +169,10 @@ var Deck = (function () {
     // states
     var isDraggable = false;
     var isFlippable = false;
+    var isSelectable = false;
 
     // self = card
-    var self = { i: i, rank: rank, suit: suit, pos: i, $el: $el, mount: mount, unmount: unmount, setSide: setSide };
+    var self = { i: i, rank: rank, suit: suit, pos: i, $el: $el, mount: mount, unmount: unmount, setSide: setSide, selected: false };
 
     var modules = Deck.modules;
     var module;
@@ -189,9 +190,6 @@ var Deck = (function () {
     self.z = z;
     self.rot = 0;
 
-    // set default side to back
-    self.setSide('back');
-
     // add drag/click listeners
     addListener($el, 'mousedown', onMousedown);
     addListener($el, 'touchstart', onMousedown);
@@ -200,6 +198,27 @@ var Deck = (function () {
     for (module in modules) {
       addModule(modules[module]);
     }
+
+    // set rank & suit
+    self.paintCard = function () {
+      var suitName = SuitName(self.suit);
+      var selectedName = self.selected ? 'selected' : '';
+      if (self.side === 'front') {
+        $el.setAttribute('class', 'card ' + suitName + ' rank' + self.rank + ' ' + selectedName);
+      } else if (self.side === 'back') {
+        $el.setAttribute('class', 'card ' + selectedName);
+      }
+      if (isDraggable) {
+        $el.style.cursor = 'move';
+      } else if (isSelectable) {
+        $el.style.cursor = 'pointer';
+      } else {
+        $el.style.cursor = 'default';
+      }
+    };
+
+    // set default side to back and paint the card
+    self.setSide('back');
 
     self.animateTo = function (params) {
       var delay = params.delay;
@@ -242,14 +261,6 @@ var Deck = (function () {
       });
     };
 
-    // set rank & suit
-    self.setRankSuit = function (rank, suit) {
-      var suitName = SuitName(suit);
-      $el.setAttribute('class', 'card ' + suitName + ' rank' + rank);
-    };
-
-    self.setRankSuit(rank, suit);
-
     self.enableDragging = function () {
       // this activates dragging
       if (isDraggable) {
@@ -257,7 +268,7 @@ var Deck = (function () {
         return;
       }
       isDraggable = true;
-      $el.style.cursor = 'move';
+      self.paintCard();
     };
 
     self.enableFlipping = function () {
@@ -266,6 +277,16 @@ var Deck = (function () {
         return;
       }
       isFlippable = true;
+      self.paintCard();
+    };
+
+    self.enableSelecting = function () {
+      if (isSelectable) {
+        // already is Selectable, do nothing
+        return;
+      }
+      isSelectable = true;
+      self.paintCard();
     };
 
     self.disableFlipping = function () {
@@ -274,6 +295,7 @@ var Deck = (function () {
         return;
       }
       isFlippable = false;
+      self.paintCard();
     };
 
     self.disableDragging = function () {
@@ -282,7 +304,27 @@ var Deck = (function () {
         return;
       }
       isDraggable = false;
-      $el.style.cursor = '';
+      self.paintCard();
+    };
+
+    self.disableSelecting = function () {
+      if (!isSelectable) {
+        // already disabled selecting, do nothing
+        return;
+      }
+      isSelectable = false;
+      self.paintCard();
+    };
+
+    self.setSelected = function (newState) {
+      if (isSelectable) {
+        if (newState) {
+          self.selected = true;
+        } else {
+          self.selected = false;
+        }
+        self.paintCard();
+      }
     };
 
     return self;
@@ -343,6 +385,9 @@ var Deck = (function () {
           // flip sides
           self.setSide(self.side === 'front' ? 'back' : 'front');
         }
+        if (isSelectable && Date.now() - starttime < 200) {
+          self.setSelected(!self.selected);
+        }
         if (e.type === 'mouseup') {
           removeListener(window, 'mousemove', onMousemove);
           removeListener(window, 'mouseup', onMouseup);
@@ -382,15 +427,14 @@ var Deck = (function () {
         }
         self.side = 'front';
         $el.appendChild($face);
-        self.setRankSuit(self.rank, self.suit);
       } else {
         if (self.side === 'front') {
           $el.removeChild($face);
         }
         self.side = 'back';
         $el.appendChild($back);
-        $el.setAttribute('class', 'card');
       }
+      self.paintCard();
     }
   }
 
