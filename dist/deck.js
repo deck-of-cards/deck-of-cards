@@ -948,6 +948,7 @@ var Deck = (function () {
     // create cards
     for (var i = cards.length; i; i--) {
       card = cards[i - 1] = _card(i - 1);
+      card.setSide('back');
       card.mount($el);
     }
 
