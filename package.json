@@ -3,6 +3,7 @@
   "version": "0.1.7",
   "description": "HTML5 Deck of Cards",
   "main": "dist/deck.min.js",
+  "module": "lib/deck.js",
   "jsnext:main": "lib/deck.js",
   "scripts": {
     "start": "node index",
