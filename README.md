@@ -116,7 +116,7 @@ deck.fan();
 deck.unmount();
 ```
 
-Shuffle cards and fan example: http://jsfiddle.net/favbdkta/
+Shuffle cards and fan: http://jsfiddle.net/favbdkta/
 
 Deck with jokers:
 
@@ -151,14 +151,14 @@ card.setSide('front');
 card.setSide('back');
 ```
 
-Draggable and flippable card example: http://jsfiddle.net/cgz9mjts/
+Draggable and flippable card: http://jsfiddle.net/cgz9mjts/
 
 
 #### Card in deck
 
 Remove a card from a deck
 
-```
+``` js
 var deck = Deck();
 
 // Remove 10 cards starting from the 6th
@@ -169,7 +169,7 @@ removedCards.forEach(function (removedCard) {
 });
 ```
 
-Example with a deck without Clubs: http://jsfiddle.net/L25facxj/
+Deck without Clubs: http://jsfiddle.net/L25facxj/
 
 
 ## Build instructions
