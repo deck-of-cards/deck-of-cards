@@ -35,21 +35,33 @@
   margin-left: 140px;
   font-size: 10px;
 }
-@media (max-width: 480px) {
+@media (max-width: 800px), (max-height: 640px) {
   #carbonads {
-    -webkit-transform: scale(.7);
-    transform: scale(.7);
+    -webkit-transform: scale(.75);
+    -moz-transform: scale(.75);
+    -ms-transform: scale(.75);
+    -o-transform: scale(.75);
+    transform: scale(.75);
 
     -webkit-transform-origin: 0 100%;
+    -moz-transform-origin: 0 100%;
+    -ms-transform-origin: 0 100%;
+    -o-transform-origin: 0 100%;
     transform-origin: 0 100%;
   }
 }
-@media (max-height: 480px) {
+@media (max-width: 480px), (max-height: 320px) {
   #carbonads {
-    -webkit-transform: scale(.7);
-    transform: scale(.7);
+    -webkit-transform: scale(.5);
+    -moz-transform: scale(.5);
+    -ms-transform: scale(.5);
+    -o-transform: scale(.5);
+    transform: scale(.5);
 
     -webkit-transform-origin: 0 100%;
+    -moz-transform-origin: 0 100%;
+    -ms-transform-origin: 0 100%;
+    -o-transform-origin: 0 100%;
     transform-origin: 0 100%;
   }
 }
