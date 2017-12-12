@@ -52,6 +52,17 @@
       if ((window.location.protocol !== 'file:') && (window.location.hostname !== 'deck-of-cards.js.org')) {
         window.location.href = 'https://deck-of-cards.js.org'
       }
+
+      window.addEventListener('keydown', function (e) {
+        if ((e.key === 'h') && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          var carbonads = document.getElementById('carbonads');
+          var addthis = document.getElementsByClassName('addthis_sharing_toolbox');
+
+          carbonads && (carbonads.style.display = 'none');
+          addthis && addthis[0] && (addthis[0].style.display = 'none');
+        }
+      });
     </script>
   </body>
 </html>
