@@ -92,7 +92,7 @@ Available on JsFiddle: http://jsfiddle.net/x0gjood1/
 #### Deck
 
 ``` js
-// Instanciate a deck
+// Instantiate a deck
 var deck = Deck();
 
 // display it in a html container
