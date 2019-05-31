@@ -3,7 +3,7 @@
 
 ## NEW VERSION COMING UP!
 
-The new multiplayer Deck of Cards is released https://deck.of.cards, but will have it's cards library open sourced soon here!
+The new **multiplayer** Deck of Cards is released https://deck.of.cards, but will have it's cards library open sourced soon here!
 
 ## Old version
 
