@@ -17,9 +17,6 @@ Frontside card graphics are slightly modified from Chris Aguilar's awesome [Vect
 
 Also check out my [RE:DOM](https://redom.js.org) and [HTML5 Node Garden](https://nodegarden.js.org) projects!
 
-## Note
-I'm currently rewriting the Deck of Cards. Lots of cool stuff coming soon! 😉
-
 ## License
 
 LGPL if you use Chris Aguilar's [vector playing cards](http://sourceforge.net/projects/vector-cards/). Otherwise MIT.
