@@ -1,9 +1,15 @@
 # HTML5 Deck of Cards
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/pakastin/deck-of-cards?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
+## NEW VERSION COMING UP!
+
+The new multiplayer Deck of Cards is released https://deck.of.cards, but will have it's cards library open sourced soon here!
+
+## Old version
+
 Pure vanilla JS (+ CSS3) – no dependencies, by [Juha Lindstedt](https://github.com/pakastin) & [contributors](https://github.com/pakastin/deck-of-cards/graphs/contributors).
 
-https://deck-of-cards.js.org
+https://deck.of.cards/old
 
 [Install from Google Chrome Web Store](https://chrome.google.com/webstore/detail/html5-deck-of-cards/ljafdfknpepklmkhomgaocmehgfdcpno)
 
