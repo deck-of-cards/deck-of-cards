@@ -1,5 +1,5 @@
 # HTML5 Deck of Cards
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/pakastin/deck-of-cards?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Financial Contributors on Open Collective](https://opencollective.com/deck-of-cards/all/badge.svg?label=financial+contributors)](https://opencollective.com/deck-of-cards) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/pakastin/deck-of-cards?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## NEW VERSION COMING UP!
 
@@ -16,6 +16,36 @@ https://deck.of.cards/old
 Frontside card graphics are slightly modified from Chris Aguilar's awesome [Vector Playing Card Graphics Set](http://sourceforge.net/projects/vector-cards/).
 
 Also check out my [RE:DOM](https://redom.js.org) and [HTML5 Node Garden](https://nodegarden.js.org) projects!
+
+## Contributors
+
+### Code Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/deck-of-cards/deck-of-cards/graphs/contributors"><img src="https://opencollective.com/deck-of-cards/contributors.svg?width=890&button=false" /></a>
+
+### Financial Contributors
+
+Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/deck-of-cards/contribute)]
+
+#### Individuals
+
+<a href="https://opencollective.com/deck-of-cards"><img src="https://opencollective.com/deck-of-cards/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/deck-of-cards/contribute)]
+
+<a href="https://opencollective.com/deck-of-cards/organization/0/website"><img src="https://opencollective.com/deck-of-cards/organization/0/avatar.svg"></a>
+<a href="https://opencollective.com/deck-of-cards/organization/1/website"><img src="https://opencollective.com/deck-of-cards/organization/1/avatar.svg"></a>
+<a href="https://opencollective.com/deck-of-cards/organization/2/website"><img src="https://opencollective.com/deck-of-cards/organization/2/avatar.svg"></a>
+<a href="https://opencollective.com/deck-of-cards/organization/3/website"><img src="https://opencollective.com/deck-of-cards/organization/3/avatar.svg"></a>
+<a href="https://opencollective.com/deck-of-cards/organization/4/website"><img src="https://opencollective.com/deck-of-cards/organization/4/avatar.svg"></a>
+<a href="https://opencollective.com/deck-of-cards/organization/5/website"><img src="https://opencollective.com/deck-of-cards/organization/5/avatar.svg"></a>
+<a href="https://opencollective.com/deck-of-cards/organization/6/website"><img src="https://opencollective.com/deck-of-cards/organization/6/avatar.svg"></a>
+<a href="https://opencollective.com/deck-of-cards/organization/7/website"><img src="https://opencollective.com/deck-of-cards/organization/7/avatar.svg"></a>
+<a href="https://opencollective.com/deck-of-cards/organization/8/website"><img src="https://opencollective.com/deck-of-cards/organization/8/avatar.svg"></a>
+<a href="https://opencollective.com/deck-of-cards/organization/9/website"><img src="https://opencollective.com/deck-of-cards/organization/9/avatar.svg"></a>
 
 ## License
 
