@@ -22,8 +22,11 @@
 
 
     <div id="table" class="table">
-      <div v-for="player in players">
-        <div>{{ player.name }} - {{ player.stack }}$</div>
+      <div v-for="(player, i) in players">
+        <div class="player">
+          {{ player.name }} - {{ player.stack }}$ 
+          <button class="delete" @click="removePlayer(i)">X</button>
+        </div>
       </div>
     </div>
 

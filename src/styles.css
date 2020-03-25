@@ -25,8 +25,28 @@
   margin-top: 15px;
 }
 
+.player {
+  min-width: 200px;
+  position: relative;
+  padding-right: 30px;
+}
+
 .table {
   position: absolute;
   top: 20px;
   left: 20px;
+}
+
+.delete {
+  background: #056133;
+  padding: 3px 6px;
+  border: none;
+  color: white;
+  position: absolute;
+  right: 0;
+  top: 3px;
+}
+
+.delete:hover {
+  background: #033c1f;
 }

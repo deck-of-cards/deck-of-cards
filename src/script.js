@@ -34,6 +34,9 @@ const table = new Vue({
   methods: {
     addPlayer(player) {
       this.players.push(player);
+    },
+    removePlayer(index) {
+      this.players.splice(index, 1);
     }
   }
 });
