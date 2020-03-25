@@ -1,0 +1,32 @@
+.players-box {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  width: 250px;
+  min-height: 200px;
+  background: white;
+  padding: 20px;
+}
+
+.players-box .title {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.players-box input {
+  width: 100%;
+  padding: 4px 12px;
+  font-size: 18px;
+  margin: 7px 0;
+}
+
+.players-box input[type="submit"] {
+  margin-top: 15px;
+}
+
+.table {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
