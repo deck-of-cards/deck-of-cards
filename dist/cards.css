@@ -1,1 +1,34 @@
-.card {}
+* {
+  box-sizing: inherit;
+}
+body {
+  background-color: #eee;
+  box-sizing: border-box;
+}
+.cards {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+.card {
+  position: absolute;
+  width: 80px;
+  height: 112px;
+
+  margin-left: -40px;
+  margin-top: -56px;
+
+  overflow: hidden;
+
+  border-radius: 6px;
+
+  background-color: #fff;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .0625);
+}
+.card-back {
+  margin: 3px;
+  height: calc(100% - 6px);
+  background-image: url(img/bg.png);
+  background-size: 8px 8px;
+  border-radius: 3px;
+}
