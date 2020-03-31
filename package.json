@@ -4,6 +4,9 @@
   "description": "Deck of Cards",
   "main": "index.js",
   "scripts": {
+    "dev": "node dev",
+    "build-css": "postcss -w lib/index.css -o dist/cards.css",
+    "build-js": "rollup -c -w -i lib/index.js -o dist/cards.js"
   },
   "repository": {
     "type": "git",
@@ -14,5 +17,14 @@
   "bugs": {
     "url": "https://github.com/pakastin/deck-of-cards/issues"
   },
-  "homepage": "https://github.com/pakastin/deck-of-cards#readme"
+  "homepage": "https://github.com/pakastin/deck-of-cards#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@rollup/plugin-buble": "^0.21.1",
+    "@rollup/plugin-node-resolve": "^7.1.1",
+    "postcss-cli": "^7.1.0",
+    "postcss-import": "^12.0.1",
+    "rollup": "^2.2.0",
+    "rollup-plugin-terser": "^5.3.0"
+  }
 }
