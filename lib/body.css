@@ -1,0 +1,7 @@
+* {
+  box-sizing: inherit;
+}
+body {
+  background-color: #eee;
+  box-sizing: border-box;
+}
