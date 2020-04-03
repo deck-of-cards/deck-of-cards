@@ -25,6 +25,18 @@ body {
   background-color: #fff;
   box-shadow: 0 1px 1px rgba(0, 0, 0, .0625);
 }
+.card-front, .card-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.card-front {
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+}
 .card-back {
   margin: 3px;
   height: calc(100% - 6px);
