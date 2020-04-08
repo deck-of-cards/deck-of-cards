@@ -11,8 +11,7 @@ body {
   left: 50%;
 }
 .standard-card {
-  position: absolute;
-}
+  position: absolute;}
 .game {
   position: fixed;
   top: 50%;
