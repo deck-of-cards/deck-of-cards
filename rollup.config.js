@@ -4,7 +4,9 @@ import { terser } from 'rollup-plugin-terser';
 
 export default {
   plugins: [
-    buble(),
+    buble({
+      objectAssign: true
+    }),
     nodeResolve(),
     terser()
   ]
