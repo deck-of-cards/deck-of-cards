@@ -4,17 +4,4 @@
 body {
   background-color: #eee;
   box-sizing: border-box;
-  touch-action: none;
-}
-.cards {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-}
-.standard-card {
-  position: absolute;}
-.game {
-  position: fixed;
-  top: 50%;
-  left: 50%;
 }
