@@ -1,1 +1,688 @@
-function t(e){for(var i="",n=0;n<10;n++)i+="0123456789abcdefghjkmnpqrstvwxyz"[32*Math.random()|0];for(var r=i;e[r];)return t(e);return i}function e(t,e,i){for(var n in t.animate||(t.animate={}),i)t.animate[n]={duration:e,from:t[n],to:i[n]},t[n]=i[n]}function i(t,e,i){t._events||(t._events=[]),t._events.push({eventName:e,handler:i})}function n(t,e,i){t._events||(t._events=[]),t._events.filter((function(t){return t.eventName===e})).forEach((function(t){return t.handler(i)}))}var r=function(t){void 0===t&&(t={});var e=t.width;void 0===e&&(e=1920);var i=t.height;void 0===i&&(i=1080),this.width=e,this.height=i,this.cards=[],this.piles=[],this._uids={},this._cards={},this._moving=[]};function o(t,e){var i=t.x,n=t.y,r=t.width,o=t.height,s=e.x,a=e.y,h=e.width,c=e.height;return i+r>=s&&i<=s+h&&n+o>=a&&n<=a+c}r.prototype.trigger=function(t,e){n(this,t,e)},r.prototype.addDeck=function(t){this.addPile(t)},r.prototype.addPile=function(e){e.game=this,this.piles.push(e);for(var i=0;i<e.cards.length;i++){var n=e.cards[i];n.game=this,n.id=t(this._uids),this.cards.push(n),this._cards[n.id]=n}},r.prototype.pile=function(){!function(t){t.cards.sort((function(e,i){var n=t.getPos(e).z,r=t.getPos(i).z;return n>r?1:r>n?-1:0}))}(this)},r.prototype.getCard=function(t){return this._cards[t]},r.prototype.getPos=function(t,e){var i=t.x,n=t.y,r=t.z,o=t.pile,s=t.animate;void 0===s&&(s={});var a=e?function(t,e){var i=Date.now(),n={};for(var r in e){var o=e[r],s=o.duration,a=o.to,h=e[r],c=h.start,u=h.end,d=h.from;c||(c=e[r].start=Date.now(),u=e[r].end=c+s),i<u&&(n[r]=(u-Date.now())/s*(d-a))}return n}(0,s):{};return o?{x:i+(a.x||0)+o.x,y:n+(a.y||0)+o.y,z:r+(a.z||0)+o.z}:{x:i+(a.x||0),y:n+(a.y||0),z:r+(a.z||0)}};var s=function(t){void 0===t&&(t={});var e=t.x;void 0===e&&(e=0);var i=t.y;void 0===i&&(i=0);var n=t.z;void 0===n&&(n=0),this.x=e,this.y=i,this.z=n,this.cards=[]};s.prototype.intersecting=function(t,e){return o(t,e)},s.prototype.moveBack=function(t){var i=this.cards.indexOf(t);if(2===this.cards.length){var n=this.cards.find((function(e){return e!==t})),r=Math.abs(t.x-n.x),o=Math.abs(t.y-n.y);this.vertical=o>r}this.vertical?e(t,200,{x:0,y:30*i}):e(t,200,{x:15*i,y:0})},s.prototype.push=function(t){t.pile=this,t.x=t.x-this.x,t.y=t.y-this.y,this.cards.push(t),this.moveBack(t),t.z=this.cards.length},s.prototype.move=function(t){var e=this;this.cards.filter((function(e){return e!==t})).filter((function(i){return e.intersecting(t,i)})).length||this.remove(t)},s.prototype.remove=function(t){for(var i=!1,n=0;n<this.cards.length;n++){var r=this.cards[n];t===r?(t.pile=null,t.x+=this.x,t.y+=this.y,e(t,150,{z:0}),this.cards.splice(n--,1),i=!0):i&&(this.moveBack(r),r.z--)}1===this.cards.length&&this.remove(this.cards[0])};var a=function(t){var e=t.game;this.game=e,this.el=document.createElement("img"),this.el.draggable=!1,this.el.style.touchAction="none",this.el.style.position="absolute"};a.prototype.update=function(t){var e=this.game,i=t.i,n=t.side,r=t.graphics,o=t.width,s=t.height,a=r.front,h=r.back,c=e.getPos(t,!0),u=c.x,d=c.y;this.card=t;var v="back"===n?h:a[i],f="translate("+Math.round(u)+"px, "+Math.round(d)+"px)";v!==this.src&&(this.el.src=v,this.src=v),o===this.width&&s===this.height||(this.el.width=o,this.el.height=s,this.el.style.marginLeft=-o/2+"px",this.el.style.marginTop=-s/2+"px",this.width=this.width,this.height=this.height),f!==this.transform&&(this.el.style.transform=f,this.transform=f)};for(var h=new Array(54),c=0;c<h.length;c++)h[c]="img/front-"+c+".png";var u={width:102,height:144,back:"img/back.png",front:h,View:a};function d(t,e){var i=t.game.getPos(t),n=i.x,r=i.y,s=t.game.getPos(e),a=s.x,h=s.y;return o({x:n,y:r,width:e.width,height:e.height},{x:a,y:h,width:e.width,height:e.height})}var v=function(t){var n=this;void 0===t&&(t={});var r=t.i;void 0===r&&(r=0);var o=t.x;void 0===o&&(o=0);var a=t.y;void 0===a&&(a=0);var h=t.z;void 0===h&&(h=0);var c=t.graphics;void 0===c&&(c=u);var d=t.pile;this.i=r,this.x=o,this.y=a,this.z=h,this.graphics=c,this.pile=d,i(this,"move",(function(t){var i=n,r=i.game;if(i.x+=t.x,i.y+=t.y,i.pile)i.pile.move(i);else{var o=r.cards.filter((function(t){return!t.pile})).filter((function(t){return i!==t})).filter((function(t){return i.intersecting(t)})),s=r.piles.filter((function(t){return t.cards.find((function(t){return i.intersecting(t)}))})).map((function(t){return Object.assign({},t,{z:Math.max.apply(Math,t.cards.map((function(t){return t.z})))})})),a=Math.max.apply(Math,[-1].concat(o.concat(s).map((function(t){return t.z}))))+1;i.z!==a&&e(i,150,{z:a}),r.pile()}})),i(this,"moveend",(function(){var t=n,e=t.game;if(t.pile)t.pile.moveBack(t);else{var i=e.piles.find((function(e){return e.cards.find((function(e){return t.intersecting(e)}))}));if(i)return i.push(t),void e.pile();var r=e.cards.filter((function(e){return t!==e})).filter((function(t){return!t.pile})).find((function(e){return t.intersecting(e)}));if(r){var o=new s;o.x=r.x,o.y=r.y;var a=t.x-r.x,h=t.y-r.y;Math.abs(h)>Math.abs(a)&&(o.vertical=!0),o.push(r),o.push(t),e.addPile(o),e.pile()}}}))},f={width:{configurable:!0},height:{configurable:!0}};v.prototype.intersecting=function(t){return d(this,t)},f.width.get=function(){return this.graphics.width},f.height.get=function(){return this.graphics.height},Object.defineProperties(v.prototype,f);var p=function(t){function i(e){var i=this;void 0===e&&(e={});var n=e.graphics;void 0===n&&(n=u),t.call(this,Object.assign({},e,{graphics:n})),this.cards=n.front.map((function(t,e){return new v({graphics:n,pile:i,i:53-e,x:-e/4,y:-e/4,z:e})}))}return t&&(i.__proto__=t),i.prototype=Object.create(t&&t.prototype),i.prototype.constructor=i,i.prototype.shuffle=function(){!function(t){if(!t.length)return t;for(var e=t.length-1;e;e--){var i=Math.floor(Math.random()*(e+1)),n=t[e];t[e]=t[i],t[i]=n}}(this.cards),this.cards.forEach((function(t,e){t.x=-e/4,t.y=-e/4,t.z=e})),this.game.pile()},i.prototype.moveBack=function(t){var i=this.cards.indexOf(t);e(t,200,{x:-i/4,y:-i/4})},i.prototype.push=function(t){t.pile=this,t.x=t.x-this.x,t.y=t.y-this.y,e(t,200,{x:-this.cards.length/4,y:-this.cards.length/4}),this.cards.push(t),t.z=this.cards.length-1},i}(s),l=function(t){var e=t.game;this.game=e,this.container=document.createElement("div"),this.container.style.width=e.width+"px",this.container.style.height=e.height+"px",this.container.style.top="50%",this.container.style.left="50%",this.container.style.position="absolute",this.container.style.transform="translate(-50%, -50%)",this.views=[],this.viewsLookup={}};function g(t,e){var i=new t({game:e});return i.el.addEventListener("mousedown",n),i.el.addEventListener("touchstart",n),i;function n(t){e.trigger("cardmousedown",{view:i,e:t})}}l.prototype.mountTo=function(t){t.appendChild(this.container)},l.prototype.render=function(){for(var t=this.game,e=this.container,i=t.cards,n=new Array(i.length),r={},o=0;o<i.length;o++){var s=i[o],a=s.id,h=s.graphics.View,c=this.viewsLookup[a]||g(h,t);c.id=a,n[o]=c,r[a]=c,c.update(s)}for(var u=e.firstChild,d=0;d<n.length;d++){var v=n[d];u===v.el?u=u.nextSibling:u?e.insertBefore(v.el,u):e.appendChild(v.el)}for(;u;){var f=u.nextSibling;e.removeChild(u),u=f}this.views=n,this.viewsLookup=r};var y=new r({container:document.querySelector("#cards"),width:1920,height:1080}),m=new l({game:y}),w=new p({x:960,y:540});y.addDeck(w),function(t,e){i(t,"cardmousedown",(function(e){var i=e.view,r=e.e,o=i.id;if(!o)return;var s={x:(r.touches?r.touches[0]:r).pageX,y:(r.touches?r.touches[0]:r).pageY},a=t.getCard(o);if(a){n(a,"movestart");var h=function(t){var e=(t.touches?t.touches[0]:t).pageX,i=(t.touches?t.touches[0]:t).pageY;n(a,"move",{x:e-s.x,y:i-s.y}),s.x=e,s.y=i},c=function(t){window.removeEventListener("mousemove",h),window.removeEventListener("touchmove",h),window.removeEventListener("mouseup",c),window.removeEventListener("touchend",c),n(a,"moveend")};window.addEventListener("mousemove",h),window.addEventListener("touchmove",h),window.addEventListener("mouseup",c),window.addEventListener("touchend",c)}}))}(y),w.shuffle(),m.mountTo(document.body),function t(){requestAnimationFrame(t),m.render()}();
+var chars = '0123456789abcdefghjkmnpqrstvwxyz';
+
+function generateUID (lookup) {
+  var str = '';
+
+  for (var i = 0; i < 10; i++) {
+    str += chars[(Math.random() * 32) | 0];
+  }
+  var uid = str;
+
+  while (lookup[uid]) {
+    return generateUID(lookup);
+  }
+
+  return str;
+}
+
+function pile (game) {
+  var cards = game.cards;
+
+  cards.sort(function (c1, c2) {
+    var ref = game.getPos(c1);
+    var z1 = ref.z;
+    var ref$1 = game.getPos(c2);
+    var z2 = ref$1.z;
+
+    if (z1 > z2) {
+      return 1;
+    } else if (z2 > z1) {
+      return -1;
+    } else {
+      return 0;
+    }
+  });
+}
+
+function animate (target, duration, properties) {
+  target.animate || (target.animate = {});
+
+  for (var prop in properties) {
+    target.animate[prop] = {
+      duration: duration,
+      from: target[prop],
+      to: properties[prop]
+    };
+
+    target[prop] = properties[prop];
+  }
+}
+
+function animations (card, animate) {
+  var now = Date.now();
+
+  var diff = {};
+
+  for (var key in animate) {
+    var ref = animate[key];
+    var duration = ref.duration;
+    var to = ref.to;
+    var ref$1 = animate[key];
+    var start = ref$1.start;
+    var end = ref$1.end;
+    var from = ref$1.from;
+
+    if (!start) {
+      start = animate[key].start = Date.now();
+      end = animate[key].end = start + duration;
+    }
+
+    if (now < end) {
+      diff[key] = (end - Date.now()) / duration * (from - to);
+    }
+  }
+
+  return diff;
+}
+
+function on (target, eventName, handler) {
+  target._events || (target._events = []);
+
+  target._events.push({
+    eventName: eventName,
+    handler: handler
+  });
+}
+
+function trigger (target, eventName, value) {
+  target._events || (target._events = []);
+
+  target._events
+    .filter(function (event) { return event.eventName === eventName; })
+    .forEach(function (event) { return event.handler(value); });
+}
+
+var Game = function Game (options) {
+  if ( options === void 0 ) options = {};
+
+  var width = options.width; if ( width === void 0 ) width = 1920;
+  var height = options.height; if ( height === void 0 ) height = 1080;
+
+  this.width = width;
+  this.height = height;
+  this.cards = [];
+  this.piles = [];
+  this._uids = {};
+  this._cards = {};
+  this._moving = [];
+};
+
+Game.prototype.trigger = function trigger$1 (eventName, value) {
+  trigger(this, eventName, value);
+};
+
+Game.prototype.addDeck = function addDeck (deck) {
+  this.addPile(deck);
+};
+
+Game.prototype.addPile = function addPile (pile) {
+  pile.game = this;
+  this.piles.push(pile);
+  for (var i = 0; i < pile.cards.length; i++) {
+    var card = pile.cards[i];
+    if (card.game === this) {
+      continue;
+    }
+    card.game = this;
+    card.id = generateUID(this._uids);
+    this.cards.push(card);
+    this._cards[card.id] = card;
+  }
+};
+
+Game.prototype.pile = function pile$1 () {
+  pile(this);
+};
+
+Game.prototype.getCard = function getCard (id) {
+  return this._cards[id];
+};
+
+Game.prototype.getPos = function getPos (card, doAnimations) {
+  var x = card.x;
+    var y = card.y;
+    var z = card.z;
+    var pile = card.pile;
+    var animate = card.animate; if ( animate === void 0 ) animate = {};
+
+  var diff = doAnimations ? animations(card, animate) : {};
+
+  if (pile) {
+    return {
+      x: x + (diff.x || 0) + pile.x,
+      y: y + (diff.y || 0) + pile.y,
+      z: z + (diff.z || 0) + pile.z
+    };
+  } else {
+    return {
+      x: x + (diff.x || 0),
+      y: y + (diff.y || 0),
+      z: z + (diff.z || 0)
+    };
+  }
+};
+
+function intersecting (r1, r2) {
+  var x1 = r1.x;
+  var y1 = r1.y;
+  var w1 = r1.width;
+  var h1 = r1.height;
+
+  var x2 = r2.x;
+  var y2 = r2.y;
+  var w2 = r2.width;
+  var h2 = r2.height;
+
+  return (
+    (x1 + w1 >= x2) &&
+    (x1 <= x2 + w2) &&
+    (y1 + h1 >= y2) &&
+    (y1 <= y2 + h2)
+  );
+}
+
+var Pile = function Pile (options) {
+  if ( options === void 0 ) options = {};
+
+  var x = options.x; if ( x === void 0 ) x = 0;
+  var y = options.y; if ( y === void 0 ) y = 0;
+  var z = options.z; if ( z === void 0 ) z = 0;
+
+  this.x = x;
+  this.y = y;
+  this.z = z;
+
+  this.cards = [];
+};
+
+Pile.prototype.intersecting = function intersecting$1 (card, card2) {
+  return intersecting(card, card2);
+};
+
+Pile.prototype.moveBack = function moveBack (card) {
+  var cardIndex = this.cards.indexOf(card);
+  if (this.cards.length === 2) {
+    var anotherCard = this.cards.find(function (card2) { return card2 !== card; });
+    var diffX = Math.abs(card.x - anotherCard.x);
+    var diffY = Math.abs(card.y - anotherCard.y);
+
+    this.vertical = diffY > diffX;
+  }
+  if (this.vertical) {
+    animate(card, 200, { x: 0, y: cardIndex * 30 });
+  } else {
+    animate(card, 200, { x: cardIndex * 15, y: 0 });
+  }
+};
+
+Pile.prototype.push = function push (card) {
+  card.pile = this;
+  card.x = card.x - this.x;
+  card.y = card.y - this.y;
+
+  this.cards.push(card);
+  this.moveBack(card);
+  card.z = this.cards.length;
+};
+
+Pile.prototype.move = function move (card) {
+    var this$1 = this;
+
+  var intersectingCards = this.cards
+    .filter(function (card2) { return card2 !== card; })
+    .filter(function (card2) { return this$1.intersecting(card, card2); });
+
+  if (!intersectingCards.length) {
+    this.remove(card);
+  }
+};
+
+Pile.prototype.remove = function remove (card) {
+  var removed = false;
+  for (var i = 0; i < this.cards.length; i++) {
+    var card2 = this.cards[i];
+
+    if (card === card2) {
+      card.pile = null;
+      card.x += this.x;
+      card.y += this.y;
+      animate(card, 150, { z: 0 });
+      this.cards.splice(i--, 1);
+      removed = true;
+    } else if (removed) {
+      this.moveBack(card2);
+      card2.z--;
+    }
+  }
+  if (this.cards.length === 1) {
+    this.remove(this.cards[0]);
+  }
+};
+
+var StandardCard = function StandardCard (ref) {
+  var game = ref.game;
+
+  this.game = game;
+  this.el = document.createElement('img');
+  this.el.draggable = false;
+  this.el.style.touchAction = 'none';
+  this.el.style.position = 'absolute';
+};
+
+StandardCard.prototype.update = function update (card) {
+  var ref = this;
+    var game = ref.game;
+  var i = card.i;
+    var side = card.side;
+    var graphics = card.graphics;
+    var width = card.width;
+    var height = card.height;
+  var front = graphics.front;
+    var back = graphics.back;
+  var ref$1 = game.getPos(card, true);
+    var x = ref$1.x;
+    var y = ref$1.y;
+
+  this.card = card;
+
+  var src = side === 'back' ? back : front[i];
+  var transform = "translate(" + (Math.round(x)) + "px, " + (Math.round(y)) + "px)";
+
+  if (src !== this.src) {
+    this.el.src = src;
+    this.src = src;
+  }
+
+  if (width !== this.width || height !== this.height) {
+    this.el.width = width;
+    this.el.height = height;
+    this.el.style.marginLeft = -width / 2 + 'px';
+    this.el.style.marginTop = -height / 2 + 'px';
+    this.width = this.width;
+    this.height = this.height;
+  }
+
+  if (transform !== this.transform) {
+    this.el.style.transform = transform;
+    this.transform = transform;
+  }
+};
+
+var front = new Array(54);
+
+for (var i = 0; i < front.length; i++) {
+  front[i] = "img/front-" + i + ".png";
+}
+
+var standardDeck = {
+  width: 102,
+  height: 144,
+  back: 'img/back.png',
+  front: front,
+  View: StandardCard
+};
+
+function cardIntersecting (card, anotherCard) {
+  var ref = card.game.getPos(card);
+  var x1 = ref.x;
+  var y1 = ref.y;
+  var ref$1 = card.game.getPos(anotherCard);
+  var x2 = ref$1.x;
+  var y2 = ref$1.y;
+  var w1 = anotherCard.width;
+  var h1 = anotherCard.height;
+  var w2 = anotherCard.width;
+  var h2 = anotherCard.height;
+
+  return intersecting({
+    x: x1,
+    y: y1,
+    width: w1,
+    height: h1
+  }, {
+    x: x2,
+    y: y2,
+    width: w2,
+    height: h2
+  });
+}
+
+var Card = function Card (options) {
+  var this$1 = this;
+  if ( options === void 0 ) options = {};
+
+  var i = options.i; if ( i === void 0 ) i = 0;
+  var x = options.x; if ( x === void 0 ) x = 0;
+  var y = options.y; if ( y === void 0 ) y = 0;
+  var z = options.z; if ( z === void 0 ) z = 0;
+  var graphics = options.graphics; if ( graphics === void 0 ) graphics = standardDeck;
+  var pile = options.pile;
+
+  this.i = i;
+  this.x = x;
+  this.y = y;
+  this.z = z;
+  this.graphics = graphics;
+  this.pile = pile;
+
+  on(this, 'move', function (diff) {
+    var card = this$1;
+    var game = card.game;
+
+    card.x += diff.x;
+    card.y += diff.y;
+
+    if (card.pile) {
+      card.pile.move(card);
+    } else {
+      var intersectingCards = game.cards
+        .filter(function (card2) { return !card2.pile; })
+        .filter(function (card2) { return card !== card2; })
+        .filter(function (card2) { return card.intersecting(card2); });
+
+      var intersectingPiles = game.piles
+        .filter(function (pile) { return pile.cards.find(function (card2) { return card.intersecting(card2); }); })
+        .map(function (pile) {
+          return Object.assign({}, pile,
+            {z: Math.max.apply(Math, pile.cards.map(function (card) { return card.z; }))});
+        });
+
+      var z = Math.max.apply(Math, [ -1 ].concat( intersectingCards.concat(intersectingPiles).map(function (card) { return card.z; }) )) + 1;
+
+      if (card.z !== z) {
+        animate(card, 150, { z: z });
+      }
+      game.pile();
+    }
+  });
+
+  on(this, 'moveend', function () {
+    var card = this$1;
+    var game = card.game;
+
+    if (card.pile) {
+      card.pile.moveBack(card);
+    } else {
+      var intersectingPile = game.piles
+        .find(function (pile) { return pile.cards.find(function (card2) { return card.intersecting(card2); }); });
+
+      if (intersectingPile) {
+        intersectingPile.push(card);
+        game.pile();
+        return;
+      }
+      var intersectingCard = game.cards
+        .filter(function (card2) { return card !== card2; })
+        .filter(function (card2) { return !card2.pile; })
+        .find(function (card2) { return card.intersecting(card2); });
+
+      if (intersectingCard) {
+        var pile = new Pile();
+        pile.x = intersectingCard.x;
+        pile.y = intersectingCard.y;
+
+        var diffX = card.x - intersectingCard.x;
+        var diffY = card.y - intersectingCard.y;
+
+        if (Math.abs(diffY) > Math.abs(diffX)) {
+          pile.vertical = true;
+        }
+
+        pile.push(intersectingCard);
+        pile.push(card);
+
+        game.addPile(pile);
+        game.pile();
+      }
+    }
+  });
+};
+
+var prototypeAccessors = { width: { configurable: true },height: { configurable: true } };
+
+Card.prototype.intersecting = function intersecting (anotherCard) {
+  return cardIntersecting(this, anotherCard);
+};
+
+prototypeAccessors.width.get = function () {
+  return this.graphics.width;
+};
+
+prototypeAccessors.height.get = function () {
+  return this.graphics.height;
+};
+
+Object.defineProperties( Card.prototype, prototypeAccessors );
+
+function shuffle (array) {
+  if (!array.length) {
+    return array;
+  }
+  for (var i = array.length - 1; i; i--) {
+    var rnd = Math.floor(Math.random() * (i + 1));
+    var temp = array[i];
+
+    array[i] = array[rnd];
+    array[rnd] = temp;
+  }
+
+  return array;
+}
+
+var Deck = /*@__PURE__*/(function (Pile) {
+  function Deck (options) {
+    var this$1 = this;
+    if ( options === void 0 ) options = {};
+
+    var graphics = options.graphics; if ( graphics === void 0 ) graphics = standardDeck;
+
+    Pile.call(this, Object.assign({}, options,
+      {graphics: graphics}));
+
+    this.cards = graphics.front.map(function (card, i) { return new Card({
+      graphics: graphics,
+      pile: this$1,
+      i: 53 - i,
+      x: -i / 4,
+      y: -i / 4,
+      z: i
+    }); });
+  }
+
+  if ( Pile ) Deck.__proto__ = Pile;
+  Deck.prototype = Object.create( Pile && Pile.prototype );
+  Deck.prototype.constructor = Deck;
+
+  Deck.prototype.shuffle = function shuffle$1 () {
+    shuffle(this.cards);
+    this.cards.forEach(function (card, i) {
+      card.x = -i / 4;
+      card.y = -i / 4;
+      card.z = i;
+    });
+    this.game.pile();
+  };
+
+  Deck.prototype.moveBack = function moveBack (card) {
+    var cardIndex = this.cards.indexOf(card);
+    animate(card, 200, { x: -cardIndex / 4, y: -cardIndex / 4 });
+  };
+
+  Deck.prototype.push = function push (card) {
+    card.pile = this;
+    card.x = card.x - this.x;
+    card.y = card.y - this.y;
+
+    animate(card, 200, {
+      x: -this.cards.length / 4,
+      y: -this.cards.length / 4
+    });
+
+    this.cards.push(card);
+    card.z = this.cards.length - 1;
+  };
+
+  return Deck;
+}(Pile));
+
+var Renderer = function Renderer (ref) {
+  var game = ref.game;
+
+  this.game = game;
+  this.container = document.createElement('div');
+  this.container.style.width = game.width + 'px';
+  this.container.style.height = game.height + 'px';
+  this.container.style.top = '50%';
+  this.container.style.left = '50%';
+  this.container.style.position = 'absolute';
+  this.container.style.transform = 'translate(-50%, -50%)';
+  this.views = [];
+  this.viewsLookup = {};
+};
+
+Renderer.prototype.mountTo = function mountTo (parent) {
+  parent.appendChild(this.container);
+};
+
+Renderer.prototype.render = function render () {
+  var ref = this;
+    var game = ref.game;
+    var container = ref.container;
+  var cards = game.cards;
+
+  var views = new Array(cards.length);
+  var viewsLookup = {};
+
+  for (var i = 0; i < cards.length; i++) {
+    var card = cards[i];
+    var id = card.id;
+      var graphics = card.graphics;
+    var View = graphics.View;
+
+    var view = this.viewsLookup[id] || createView(View, game);
+    view.id = id;
+    views[i] = view;
+    viewsLookup[id] = view;
+
+    view.update(card);
+  }
+
+  var traverse = container.firstChild;
+
+  for (var i$1 = 0; i$1 < views.length; i$1++) {
+    var view$1 = views[i$1];
+
+    if (traverse === view$1.el) {
+      traverse = traverse.nextSibling;
+    } else if (traverse) {
+      container.insertBefore(view$1.el, traverse);
+    } else {
+      container.appendChild(view$1.el);
+    }
+  }
+
+  this.views = views;
+  this.viewsLookup = viewsLookup;
+};
+
+function createView (View, game) {
+  var view = new View({ game: game });
+
+  view.el.addEventListener('mousedown', ondown);
+  view.el.addEventListener('touchstart', ondown);
+
+  return view;
+
+  function ondown (e) {
+    game.trigger('cardmousedown', { view: view, e: e });
+  }
+}
+
+function interaction (game, renderer) {
+  on(game, 'cardmousedown', onmousedown);
+
+  function onmousedown (ref) {
+    var view = ref.view;
+    var e = ref.e;
+
+    var id = view.id;
+
+    if (!id) {
+      return;
+    }
+
+    var prev = {
+      x: (e.touches ? e.touches[0] : e).pageX,
+      y: (e.touches ? e.touches[0] : e).pageY
+    };
+
+    var card = game.getCard(id);
+
+    if (card) {
+      trigger(card, 'movestart');
+
+      var onmousemove = function (e) {
+        var x = (e.touches ? e.touches[0] : e).pageX;
+        var y = (e.touches ? e.touches[0] : e).pageY;
+
+        trigger(card, 'move', {
+          x: x - prev.x,
+          y: y - prev.y
+        }
+        );
+
+        prev.x = x;
+        prev.y = y;
+      };
+
+      var onmouseup = function (e) {
+        window.removeEventListener('mousemove', onmousemove);
+        window.removeEventListener('touchmove', onmousemove);
+
+        window.removeEventListener('mouseup', onmouseup);
+        window.removeEventListener('touchend', onmouseup);
+
+        trigger(card, 'moveend');
+      };
+
+      window.addEventListener('mousemove', onmousemove);
+      window.addEventListener('touchmove', onmousemove);
+
+      window.addEventListener('mouseup', onmouseup);
+      window.addEventListener('touchend', onmouseup);
+    }
+  }
+}
+
+/* global requestAnimationFrame */
+
+var game = new Game({
+  container: document.querySelector('#cards'),
+  width: 1920,
+  height: 1080
+});
+
+var renderer = new Renderer({
+  game: game
+});
+
+var deck = new Deck({
+  x: 960,
+  y: 540
+});
+
+game.addDeck(deck);
+
+interaction(game);
+
+deck.shuffle();
+
+renderer.mountTo(document.body);
+
+render();
+
+function render () {
+  requestAnimationFrame(render);
+
+  renderer.render();
+}

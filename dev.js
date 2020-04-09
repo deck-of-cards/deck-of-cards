@@ -1,6 +1,5 @@
 const cp = require('child_process');
 
-run('build-css');
 run('build-js');
 
 function run (cmd) {

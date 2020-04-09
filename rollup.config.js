@@ -7,7 +7,6 @@ export default {
     buble({
       objectAssign: true
     }),
-    nodeResolve(),
-    terser()
+    nodeResolve()
   ]
 };

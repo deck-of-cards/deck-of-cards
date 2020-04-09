@@ -1,8 +1,0 @@
-* {
-  box-sizing: inherit;
-}
-body {
-  background-color: #eee;
-  box-sizing: border-box;
-  user-select: none;
-}
