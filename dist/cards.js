@@ -348,7 +348,6 @@ function cardIntersecting (card, anotherCard) {
 }
 
 var Card = function Card (options) {
-  var this$1 = this;
   if ( options === void 0 ) options = {};
 
   var i = options.i; if ( i === void 0 ) i = 0;
@@ -364,78 +363,6 @@ var Card = function Card (options) {
   this.z = z;
   this.graphics = graphics;
   this.pile = pile;
-
-  on(this, 'move', function (diff) {
-    var card = this$1;
-    var game = card.game;
-
-    card.x += diff.x;
-    card.y += diff.y;
-
-    if (card.pile) {
-      card.pile.move(card);
-    } else {
-      var intersectingCards = game.cards
-        .filter(function (card2) { return !card2.pile; })
-        .filter(function (card2) { return card !== card2; })
-        .filter(function (card2) { return card.intersecting(card2); });
-
-      var intersectingPiles = game.piles
-        .filter(function (pile) { return pile.cards.find(function (card2) { return card.intersecting(card2); }); })
-        .map(function (pile) {
-          return Object.assign({}, pile,
-            {z: Math.max.apply(Math, pile.cards.map(function (card) { return card.z; }))});
-        });
-
-      var z = Math.max.apply(Math, [ -1 ].concat( intersectingCards.concat(intersectingPiles).map(function (card) { return card.z; }) )) + 1;
-
-      if (card.z !== z) {
-        animate(card, 150, { z: z });
-      }
-      game.pile();
-    }
-  });
-
-  on(this, 'moveend', function () {
-    var card = this$1;
-    var game = card.game;
-
-    if (card.pile) {
-      card.pile.moveBack(card);
-    } else {
-      var intersectingPile = game.piles
-        .find(function (pile) { return pile.cards.find(function (card2) { return card.intersecting(card2); }); });
-
-      if (intersectingPile) {
-        intersectingPile.push(card);
-        game.pile();
-        return;
-      }
-      var intersectingCard = game.cards
-        .filter(function (card2) { return card !== card2; })
-        .filter(function (card2) { return !card2.pile; })
-        .find(function (card2) { return card.intersecting(card2); });
-
-      if (intersectingCard) {
-        var pile = new Pile();
-        pile.x = intersectingCard.x;
-        pile.y = intersectingCard.y;
-
-        var diffX = card.x - intersectingCard.x;
-        var diffY = card.y - intersectingCard.y;
-
-        if (Math.abs(diffY) > Math.abs(diffX)) {
-          pile.vertical = true;
-        }
-
-        pile.push(intersectingCard);
-        pile.push(card);
-
-        game.addPile(pile);
-        game.pile();
-      }
-    }
-  });
 };
 
 var prototypeAccessors = { width: { configurable: true },height: { configurable: true } };
@@ -594,12 +521,12 @@ function createView (View, game) {
   return view;
 
   function ondown (e) {
-    game.trigger('cardmousedown', { view: view, e: e });
+    game.trigger('mousedown', { view: view, e: e });
   }
 }
 
-function interaction (game, renderer) {
-  on(game, 'cardmousedown', onmousedown);
+function mouse (game, renderer) {
+  on(game, 'mousedown', onmousedown);
 
   function onmousedown (ref) {
     var view = ref.view;
@@ -619,13 +546,14 @@ function interaction (game, renderer) {
     var card = game.getCard(id);
 
     if (card) {
-      trigger(card, 'movestart');
+      trigger(game, 'cardmovestart', { card: card });
 
       var onmousemove = function (e) {
         var x = (e.touches ? e.touches[0] : e).pageX;
         var y = (e.touches ? e.touches[0] : e).pageY;
 
-        trigger(card, 'move', {
+        trigger(game, 'cardmove', {
+          card: card,
           x: x - prev.x,
           y: y - prev.y
         }
@@ -642,7 +570,7 @@ function interaction (game, renderer) {
         window.removeEventListener('mouseup', onmouseup);
         window.removeEventListener('touchend', onmouseup);
 
-        trigger(card, 'moveend');
+        trigger(game, 'cardmoveend', { card: card });
       };
 
       window.addEventListener('mousemove', onmousemove);
@@ -652,6 +580,82 @@ function interaction (game, renderer) {
       window.addEventListener('touchend', onmouseup);
     }
   }
+}
+
+function interaction (game) {
+  on(game, 'cardmove', function (options) {
+    var card = options.card;
+    var x = options.x;
+    var y = options.y;
+    var game = card.game;
+
+    card.x += x;
+    card.y += y;
+
+    if (card.pile) {
+      card.pile.move(card);
+    } else {
+      var intersectingCards = game.cards
+        .filter(function (card2) { return !card2.pile; })
+        .filter(function (card2) { return card !== card2; })
+        .filter(function (card2) { return card.intersecting(card2); });
+
+      var intersectingPiles = game.piles
+        .filter(function (pile) { return pile.cards.find(function (card2) { return card.intersecting(card2); }); })
+        .map(function (pile) {
+          return Object.assign({}, pile,
+            {z: Math.max.apply(Math, pile.cards.map(function (card) { return card.z; }))});
+        });
+
+      var z = Math.max.apply(Math, [ -1 ].concat( intersectingCards.concat(intersectingPiles).map(function (card) { return card.z; }) )) + 1;
+
+      if (card.z !== z) {
+        animate(card, 150, { z: z });
+      }
+      game.pile();
+    }
+  });
+
+  on(game, 'cardmoveend', function (options) {
+    var card = options.card;
+    var game = card.game;
+
+    if (card.pile) {
+      card.pile.moveBack(card);
+    } else {
+      var intersectingPile = game.piles
+        .find(function (pile) { return pile.cards.find(function (card2) { return card.intersecting(card2); }); });
+
+      if (intersectingPile) {
+        intersectingPile.push(card);
+        game.pile();
+        return;
+      }
+      var intersectingCard = game.cards
+        .filter(function (card2) { return card !== card2; })
+        .filter(function (card2) { return !card2.pile; })
+        .find(function (card2) { return card.intersecting(card2); });
+
+      if (intersectingCard) {
+        var pile = new Pile();
+        pile.x = intersectingCard.x;
+        pile.y = intersectingCard.y;
+
+        var diffX = card.x - intersectingCard.x;
+        var diffY = card.y - intersectingCard.y;
+
+        if (Math.abs(diffY) > Math.abs(diffX)) {
+          pile.vertical = true;
+        }
+
+        pile.push(intersectingCard);
+        pile.push(card);
+
+        game.addPile(pile);
+        game.pile();
+      }
+    }
+  });
 }
 
 /* global requestAnimationFrame */
@@ -673,6 +677,7 @@ var deck = new Deck({
 
 game.addDeck(deck);
 
+mouse(game);
 interaction(game);
 
 deck.shuffle();
