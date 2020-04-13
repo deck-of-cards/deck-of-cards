@@ -363,7 +363,7 @@ var Card = function Card (options) {
   this.z = z;
   this.graphics = graphics;
   this.pile = pile;
-  this.side ='back';
+  this.side ='front';
 };
 
 var prototypeAccessors = { width: { configurable: true },height: { configurable: true } };
