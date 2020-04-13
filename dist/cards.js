@@ -363,6 +363,7 @@ var Card = function Card (options) {
   this.z = z;
   this.graphics = graphics;
   this.pile = pile;
+  this.side ='back';
 };
 
 var prototypeAccessors = { width: { configurable: true },height: { configurable: true } };
@@ -526,6 +527,7 @@ function createView (View, game) {
 }
 
 function mouse (game, renderer) {
+  var starttime = Date.now()
   on(game, 'mousedown', onmousedown);
 
   function onmousedown (ref) {
@@ -564,6 +566,7 @@ function mouse (game, renderer) {
       };
 
       var onmouseup = function (e) {
+		starttime = Date.now()
         window.removeEventListener('mousemove', onmousemove);
         window.removeEventListener('touchmove', onmousemove);
 
@@ -572,6 +575,16 @@ function mouse (game, renderer) {
 
         trigger(game, 'cardmoveend', { card: card });
       };
+	  
+	  /* Flip card: Flip card on double click. 
+	  If a downclick occurs 200ms after an upclick, it is assumed to be a doubleclick.
+	  */
+	  if (Date.now() - starttime < 200) {
+				// flip sides
+				e.preventDefault()
+				card.side = (card.side === 'front' ? 'back' : 'front');
+				view.update(card);
+			}	
 
       window.addEventListener('mousemove', onmousemove);
       window.addEventListener('touchmove', onmousemove);
