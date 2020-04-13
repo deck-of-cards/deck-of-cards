@@ -580,8 +580,6 @@ function mouse (game, renderer) {
 	  If a downclick occurs 200ms after an upclick, it is assumed to be a doubleclick.
 	  */
 	  if (Date.now() - starttime < 200) {
-				// flip sides
-				e.preventDefault()
 				card.side = (card.side === 'front' ? 'back' : 'front');
 				view.update(card);
 			}	
