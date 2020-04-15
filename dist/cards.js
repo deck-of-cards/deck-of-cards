@@ -18,6 +18,51 @@ function findMiddleware (entity) {
   });
 }
 
+function animate (target, duration, properties) {
+  Object.defineProperty(target, '_animate', {
+    writable: true,
+    value: {}
+  });
+
+  for (var prop in properties) {
+    target._animate[prop] = {
+      duration: duration,
+      from: target[prop],
+      to: properties[prop]
+    };
+
+    target[prop] = properties[prop];
+  }
+}
+
+function getAnimatedProps (card) {
+  var animate = card._animate || {};
+  var now = Date.now();
+
+  var diff = {};
+
+  for (var key in animate) {
+    var ref = animate[key];
+    var duration = ref.duration;
+    var to = ref.to;
+    var ref$1 = animate[key];
+    var start = ref$1.start;
+    var end = ref$1.end;
+    var from = ref$1.from;
+
+    if (!start) {
+      start = animate[key].start = Date.now();
+      end = animate[key].end = start + duration;
+    }
+
+    if (now < end) {
+      diff[key] = (end - Date.now()) / duration * (from - to);
+    }
+  }
+
+  return diff;
+}
+
 var Entity = function Entity (options) {
   if ( options === void 0 ) options = {};
 
@@ -38,7 +83,7 @@ var Entity = function Entity (options) {
   this.i = i;
 };
 
-var prototypeAccessors = { middleware: { configurable: true },game: { configurable: true } };
+var prototypeAccessors = { middleware: { configurable: true },game: { configurable: true },animatedPosition: { configurable: true },absolutePosition: { configurable: true } };
 
 prototypeAccessors.middleware.get = function () {
   return findMiddleware(this);
@@ -68,7 +113,55 @@ Entity.prototype.trigger = function trigger (event) {
   }
 };
 
+prototypeAccessors.animatedPosition.get = function () {
+  var animatedProps = getAnimatedProps(this);
+
+  var pos = {
+    x: this.x + (animatedProps.x || 0),
+    y: this.y + (animatedProps.y || 0)
+  };
+
+  return pos;
+};
+
+prototypeAccessors.absolutePosition.get = function () {
+  var pos = {
+    x: this.x,
+    y: this.y
+  };
+
+  var traverse = this.parent;
+
+  while (traverse) {
+    pos.x += traverse.x || 0;
+    pos.y += traverse.y || 0;
+
+    traverse = traverse.parent;
+  }
+
+  return pos;
+};
+
 Object.defineProperties( Entity.prototype, prototypeAccessors );
+
+function intersecting (r1, r2) {
+  var x1 = r1.x;
+  var y1 = r1.y;
+  var w1 = r1.width;
+  var h1 = r1.height;
+
+  var x2 = r2.x;
+  var y2 = r2.y;
+  var w2 = r2.width;
+  var h2 = r2.height;
+
+  return (
+    (x1 + w1 >= x2) &&
+    (x1 <= x2 + w2) &&
+    (y1 + h1 >= y2) &&
+    (y1 <= y2 + h2)
+  );
+}
 
 var Card = /*@__PURE__*/(function (Entity) {
   function Card (options) {
@@ -89,6 +182,20 @@ var Card = /*@__PURE__*/(function (Entity) {
   Card.prototype = Object.create( Entity && Entity.prototype );
   Card.prototype.constructor = Card;
 
+  Card.prototype.intersecting = function intersecting$1 (entity) {
+    return intersecting({
+      x: this.absolutePosition.x,
+      y: this.absolutePosition.y,
+      width: this.width,
+      height: this.height
+    }, {
+      x: entity.absolutePosition.x,
+      y: entity.absolutePosition.y,
+      width: entity.width,
+      height: entity.height
+    });
+  };
+
   Card.prototype.update = function update (data) {
     var x = data.x;
     var y = data.y;
@@ -106,7 +213,81 @@ var Card = /*@__PURE__*/(function (Entity) {
   return Card;
 }(Entity));
 
-var Deck = /*@__PURE__*/(function (Entity) {
+var Pile = /*@__PURE__*/(function (Entity) {
+  function Pile (options) {
+    if ( options === void 0 ) options = {};
+
+    var x = options.x; if ( x === void 0 ) x = 0;
+    var y = options.y; if ( y === void 0 ) y = 0;
+    var style = options.style; if ( style === void 0 ) style = 'standard';
+    var parent = options.parent;
+    var type = options.type; if ( type === void 0 ) type = 'Pile';
+
+    Entity.call(this, {
+      type: type,
+      parent: parent,
+      style: style,
+      x: x,
+      y: y
+    });
+
+    this.children = [];
+
+    if (parent) {
+      parent.add(this);
+    }
+  }
+
+  if ( Entity ) Pile.__proto__ = Entity;
+  Pile.prototype = Object.create( Entity && Entity.prototype );
+  Pile.prototype.constructor = Pile;
+
+  Pile.prototype.createCards = function createCards () {
+    this.trigger('createCards', { Card: Card });
+  };
+
+  Pile.prototype.intersecting = function intersecting (card) {
+    for (var i = 0; i < this.children.length; i++) {
+      var card2 = this.children[i];
+
+      if (card === card2) {
+        continue;
+      }
+
+      if (card.intersecting(card2)) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  Pile.prototype.add = function add (card) {
+    if (card.parent) {
+      card.parent.remove(card);
+    }
+
+    card.parent = this;
+
+    this.children.push(card);
+    card.trigger('add');
+    return this;
+  };
+
+  Pile.prototype.remove = function remove (card) {
+    var index = this.children.indexOf(card);
+
+    if (~index) {
+      this.children.splice(index, 1);
+      card.trigger('remove');
+      card.parent = null;
+    }
+  };
+
+  return Pile;
+}(Entity));
+
+var Deck = /*@__PURE__*/(function (Pile) {
   function Deck (options) {
     if ( options === void 0 ) options = {};
 
@@ -115,7 +296,7 @@ var Deck = /*@__PURE__*/(function (Entity) {
     var style = options.style; if ( style === void 0 ) style = 'standard';
     var parent = options.parent;
 
-    Entity.call(this, {
+    Pile.call(this, {
       type: 'Deck',
       parent: parent,
       style: style,
@@ -130,38 +311,16 @@ var Deck = /*@__PURE__*/(function (Entity) {
     }
   }
 
-  if ( Entity ) Deck.__proto__ = Entity;
-  Deck.prototype = Object.create( Entity && Entity.prototype );
+  if ( Pile ) Deck.__proto__ = Pile;
+  Deck.prototype = Object.create( Pile && Pile.prototype );
   Deck.prototype.constructor = Deck;
 
   Deck.prototype.createCards = function createCards () {
     this.trigger('createCards', { Card: Card });
   };
 
-  Deck.prototype.add = function add (card) {
-    if (card.parent) {
-      card.parent.remove(card);
-    }
-
-    card.parent = this;
-
-    this.children.push(card);
-    card.trigger('add');
-    return this;
-  };
-
-  Deck.prototype.remove = function remove (card) {
-    var index = this.children.indexOf(card);
-
-    if (~index) {
-      this.children.splice(index, 1);
-      card.parent = null;
-      card.trigger('remove');
-    }
-  };
-
   return Deck;
-}(Entity));
+}(Pile));
 
 /* global requestAnimationFrame, cancelAnimationFrame */
 
@@ -230,9 +389,8 @@ Game.prototype.remove = function remove (entity) {
 
   if (~index) {
     this.children.splice(index, 1);
-    entity.parent = null;
-
     entity.trigger('remove');
+    entity.parent = null;
   }
 
   return this;
@@ -318,8 +476,6 @@ var gameRenderer = {
 };
 
 function renderChildren (container, children) {
-  var traverse = container.firstChild;
-
   for (var i = 0; i < children.length; i++) {
     var entity = children[i];
 
@@ -328,17 +484,26 @@ function renderChildren (container, children) {
     }
 
     entity.trigger('render');
+  }
 
-    if (entity.el) {
-      if (traverse === entity.el) {
-        traverse = traverse.nextSibling;
-      } else if (traverse) {
-        container.insertBefore(entity.el, traverse);
+  var traverse = container.firstChild;
+
+  for (var i$1 = 0; i$1 < children.length; i$1++) {
+    var entity$1 = children[i$1];
+
+    if (entity$1.el) {
+      if (traverse) {
+        if (traverse === entity$1.el) {
+          traverse = traverse.nextSibling;
+        } else {
+          container.insertBefore(entity$1.el, traverse);
+        }
       } else {
-        container.appendChild(entity.el);
+        container.appendChild(entity$1.el);
       }
     }
   }
+
   while (traverse) {
     var next = traverse.nextSibling;
 
@@ -368,8 +533,43 @@ var deckRenderer = {
   }
 };
 
+var pileRenderer = {
+  type: 'Pile',
+  createEl: function createEl (pile) {
+    var el = document.createElement('div');
+
+    el.style.position = 'absolute';
+
+    pile.el = el;
+  },
+  render: function render (pile) {
+    var x = pile.x;
+    var y = pile.y;
+    var el = pile.el;
+
+    el.style.transform = "translate(" + (Math.round(x)) + "px, " + (Math.round(y)) + "px)";
+
+    renderChildren(el, pile.children);
+  }
+};
+
 var cardRenderer = {
   type: 'Card',
+  startmove: function startmove (card) {
+    card.el.style.boxShadow = '0 3px 5px rgba(0, 0, 0, .15)';
+  },
+  holdmove: function holdmove (card) {
+    if (card.parent && card.parent !== 'Game') {
+      card.el.style.boxShadow = '0 1px 1px rgba(0, 0, 0, .05)';
+      card.parent.children[0].el.style.boxShadow = '0 3px 5px rgba(0, 0, 0, .15)';
+    }
+  },
+  endmove: function endmove (card) {
+    card.el.style.boxShadow = '0 1px 1px rgba(0, 0, 0, .05)';
+    if (card.parent && card.parent !== 'Game') {
+      card.parent.children[0].el.style.boxShadow = '0 1px 1px rgba(0, 0, 0, .05)';
+    }
+  },
   createEl: function createEl (card) {
     card.el = document.createElement('div');
     card.el.style.position = 'absolute';
@@ -383,13 +583,14 @@ var cardRenderer = {
     card.el.style.willChange = 'transform';
   },
   render: function render (card) {
-    var x = card.x;
-    var y = card.y;
     var i = card.i;
     var side = card.side;
     var el = card.el;
     var width = card.width;
     var height = card.height;
+    var ref = card.animatedPosition;
+    var x = ref.x;
+    var y = ref.y;
 
     el.style.transform = "translate(" + (Math.round(x)) + "px, " + (Math.round(y)) + "px)";
     el.style.width = width + 'px';
@@ -408,12 +609,14 @@ var cardRenderer = {
 var domRenderer = [
   gameRenderer,
   deckRenderer,
+  pileRenderer,
   cardRenderer
 ];
 
 var entityInteraction = {
   createEl: function createEl (entity) {
     entity.el.addEventListener('mousedown', startmove);
+    entity.el.addEventListener('touchstart', startmove);
 
     function startmove (e) {
       var startPos = {
@@ -422,7 +625,7 @@ var entityInteraction = {
       };
       var longpressDelay = setTimeout(function () {
         entity.trigger('holdmove');
-      }, 2000);
+      }, 500);
       entity.trigger('startmove', startPos);
 
       window.addEventListener('mousemove', move);
@@ -474,9 +677,11 @@ var entityInteraction = {
 var cardInteraction = {
   type: 'Card',
   startmove: function startmove (card, pos) {
+    card.parent.add(card);
   },
   holdmove: function holdmove (card) {
-    if (card.parent) {
+    if (card.parent && (card.parent.type === 'Pile' || card.parent.type === 'Deck')) {
+      card.parent.parent.add(card.parent);
       card.parent._moving = true;
     }
   },
@@ -486,18 +691,102 @@ var cardInteraction = {
         return;
       }
     }
+    if (card.parent) {
+      if (card.parent.parent && !card.parent.intersecting(card)) {
+        card.x += card.parent.x;
+        card.y += card.parent.y;
+        card.parent.parent.add(card);
+      }
+    }
     card.x += delta.x;
     card.y += delta.y;
   },
   endmove: function endmove (card, pos, startPos) {
+    if (card.parent) {
+      if (card.parent._moving) {
+        return;
+      }
+      var intersecting = card.parent.children.find(function (entity) {
+        if (card === entity) {
+          return false;
+        }
+        return entity.intersecting(card);
+      });
+
+      if (intersecting) {
+        if (intersecting.type === 'Pile') {
+          card.x -= intersecting.x;
+          card.y -= intersecting.y;
+          intersecting.add(card);
+          var i = intersecting.children.length - 1;
+          animate(card, 200, {
+            x: intersecting.dir === 'horizontal' ? i * 15 : 0,
+            y: intersecting.dir === 'vertical' ? i * 30 : 0
+          });
+        } else if (intersecting.type === 'Deck') {
+          card.x -= intersecting.x;
+          card.y -= intersecting.y;
+          intersecting.add(card);
+          var i$1 = intersecting.children.length - 1;
+          animate(card, 200, {
+            x: -i$1 / 4,
+            y: -i$1 / 4
+          });
+        } else if (intersecting.type === 'Card') {
+          var pile = new Pile({ x: intersecting.x, y: intersecting.y });
+          var diff = {
+            x: card.x - intersecting.x,
+            y: card.y - intersecting.y
+          };
+          intersecting.x = 0;
+          intersecting.y = 0;
+          if (Math.abs(diff.x) > Math.abs(diff.y)) {
+            pile.dir = 'horizontal';
+          } else {
+            pile.dir = 'vertical';
+          }
+          card.x -= pile.x;
+          card.y -= pile.y;
+          var parent = card.parent;
+          parent.add(pile);
+          pile.add(intersecting);
+          pile.add(card);
+          animate(card, 200, {
+            x: pile.dir === 'horizontal' ? 15 : 0,
+            y: pile.dir === 'vertical' ? 30 : 0
+          });
+        }
+      }
+    }
+  }
+};
+
+var pileInteraction = {
+  type: 'Pile',
+  startmove: function startmove (pile, pos) {
+    pile.parent.add(pile);
+  },
+  move: function move (pile, pos, delta, diff, startPos) {
+    if (pile._moving) {
+      pile.x += delta.x;
+      pile.y += delta.y;
+    }
+  },
+  endmove: function endmove (pile) {
+    pile._moving = false;
   }
 };
 
 var deckInteraction = {
   type: 'Deck',
   startmove: function startmove (deck, pos) {
+    deck.parent.add(deck);
   },
-  move: function move (deck, pos, diff, startPos) {
+  move: function move (deck, pos, delta, diff, startPos) {
+    if (deck._moving) {
+      deck.x += delta.x;
+      deck.y += delta.y;
+    }
   },
   endmove: function endmove (deck) {
     deck._moving = false;
@@ -507,6 +796,7 @@ var deckInteraction = {
 var interaction = [
   entityInteraction,
   cardInteraction,
+  pileInteraction,
   deckInteraction
 ];
 

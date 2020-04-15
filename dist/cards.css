@@ -6,3 +6,6 @@ body {
   box-sizing: border-box;
   user-select: none;
 }
+#cards {
+  touch-action: none;
+}
