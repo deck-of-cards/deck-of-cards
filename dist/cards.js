@@ -1,693 +1,475 @@
-var chars = '0123456789abcdefghjkmnpqrstvwxyz';
+function findMiddleware (entity) {
+  return entity.game.middleware.filter(function (middleware) {
+    var type = middleware.type;
+    var style = middleware.style;
 
-function generateUID (lookup) {
-  var str = '';
-
-  for (var i = 0; i < 10; i++) {
-    str += chars[(Math.random() * 32) | 0];
-  }
-  var uid = str;
-
-  while (lookup[uid]) {
-    return generateUID(lookup);
-  }
-
-  return str;
-}
-
-function pile (game) {
-  var cards = game.cards;
-
-  cards.sort(function (c1, c2) {
-    var ref = game.getPos(c1);
-    var z1 = ref.z;
-    var ref$1 = game.getPos(c2);
-    var z2 = ref$1.z;
-
-    if (z1 > z2) {
-      return 1;
-    } else if (z2 > z1) {
-      return -1;
-    } else {
-      return 0;
+    if (style) {
+      if (style !== entity.style) {
+        return false;
+      } else if (type !== entity.type) {
+        return false;
+      }
+    } else if (type) {
+      if (type !== entity.type) {
+        return false;
+      }
     }
+    return true;
   });
 }
 
-function animate (target, duration, properties) {
-  target.animate || (target.animate = {});
+var Entity = function Entity (options) {
+  if ( options === void 0 ) options = {};
 
-  for (var prop in properties) {
-    target.animate[prop] = {
-      duration: duration,
-      from: target[prop],
-      to: properties[prop]
-    };
+  var parent = options.parent;
+  var type = options.type;
+  var style = options.style;
+  var x = options.x; if ( x === void 0 ) x = 0;
+  var y = options.y; if ( y === void 0 ) y = 0;
+  var z = options.z; if ( z === void 0 ) z = 0;
+  var i = options.i; if ( i === void 0 ) i = 0;
 
-    target[prop] = properties[prop];
-  }
-}
+  this.parent = parent;
+  this.type = type;
+  this.style = style;
+  this.x = x;
+  this.y = y;
+  this.z = z;
+  this.i = i;
+};
 
-function animations (card, animate) {
-  var now = Date.now();
+var prototypeAccessors = { middleware: { configurable: true },game: { configurable: true } };
 
-  var diff = {};
+prototypeAccessors.middleware.get = function () {
+  return findMiddleware(this);
+};
 
-  for (var key in animate) {
-    var ref = animate[key];
-    var duration = ref.duration;
-    var to = ref.to;
-    var ref$1 = animate[key];
-    var start = ref$1.start;
-    var end = ref$1.end;
-    var from = ref$1.from;
+prototypeAccessors.game.get = function () {
+  var game = this.parent;
 
-    if (!start) {
-      start = animate[key].start = Date.now();
-      end = animate[key].end = start + duration;
-    }
-
-    if (now < end) {
-      diff[key] = (end - Date.now()) / duration * (from - to);
-    }
+  while (game.parent) {
+    game = game.parent;
   }
 
-  return diff;
-}
+  return game;
+};
 
-function on (target, eventName, handler) {
-  target._events || (target._events = []);
+Entity.prototype.trigger = function trigger (event) {
+    var this$1 = this;
+    var data = [], len = arguments.length - 1;
+    while ( len-- > 0 ) data[ len ] = arguments[ len + 1 ];
 
-  target._events.push({
-    eventName: eventName,
-    handler: handler
+  if (this.game.DEBUG) {
+    console.log(event, data, this);
+  }
+  this.middleware.forEach(function (middleware) {
+    var handler = middleware[event];
+
+    if (handler) {
+      handler.apply(void 0, [ this$1 ].concat( data ));
+    }
   });
-}
+};
 
-function trigger (target, eventName, value) {
-  target._events || (target._events = []);
+Object.defineProperties( Entity.prototype, prototypeAccessors );
 
-  target._events
-    .filter(function (event) { return event.eventName === eventName; })
-    .forEach(function (event) { return event.handler(value); });
-}
+var Card = /*@__PURE__*/(function (Entity) {
+  function Card (options) {
+    if ( options === void 0 ) options = {};
+
+    var style = options.style; if ( style === void 0 ) style = 'standard';
+    var x = options.x; if ( x === void 0 ) x = 0;
+    var y = options.y; if ( y === void 0 ) y = 0;
+    var z = options.z; if ( z === void 0 ) z = 0;
+    var i = options.i;
+    var side = options.side; if ( side === void 0 ) side = 'front';
+
+    Entity.call(this, { type: 'Card', style: style, x: x, y: y, z: z, i: i });
+    this.side = side;
+  }
+
+  if ( Entity ) Card.__proto__ = Entity;
+  Card.prototype = Object.create( Entity && Entity.prototype );
+  Card.prototype.constructor = Card;
+
+  Card.prototype.update = function update (data) {
+    var x = data.x;
+    var y = data.y;
+    var z = data.z;
+    var i = data.i;
+    var side = data.side;
+
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.i = i;
+    this.side = side;
+  };
+
+  return Card;
+}(Entity));
+
+var Deck = /*@__PURE__*/(function (Entity) {
+  function Deck (options) {
+    if ( options === void 0 ) options = {};
+
+    var x = options.x; if ( x === void 0 ) x = 0;
+    var y = options.y; if ( y === void 0 ) y = 0;
+    var style = options.style; if ( style === void 0 ) style = 'standard';
+    var parent = options.parent;
+
+    Entity.call(this, {
+      type: 'Deck',
+      parent: parent,
+      style: style,
+      x: x,
+      y: y
+    });
+
+    this.children = [];
+
+    if (parent) {
+      parent.add(this);
+    }
+  }
+
+  if ( Entity ) Deck.__proto__ = Entity;
+  Deck.prototype = Object.create( Entity && Entity.prototype );
+  Deck.prototype.constructor = Deck;
+
+  Deck.prototype.createCards = function createCards () {
+    this.trigger('createCards', { Card: Card });
+  };
+
+  Deck.prototype.add = function add (card) {
+    if (card.parent) {
+      card.parent.remove(card);
+    }
+
+    card.parent = this;
+
+    this.children.push(card);
+    card.trigger('add');
+    return this;
+  };
+
+  Deck.prototype.remove = function remove (card) {
+    var index = this.children.indexOf(card);
+
+    if (~index) {
+      this.children.splice(index, 1);
+      card.parent = null;
+      card.trigger('remove');
+    }
+  };
+
+  return Deck;
+}(Entity));
 
 var Game = function Game (options) {
   if ( options === void 0 ) options = {};
 
   var width = options.width; if ( width === void 0 ) width = 1920;
   var height = options.height; if ( height === void 0 ) height = 1080;
-
+  var DEBUG = options.DEBUG;
+  this.type = 'Game';
   this.width = width;
   this.height = height;
-  this.cards = [];
-  this.piles = [];
-  this._uids = {};
-  this._cards = {};
-  this._moving = [];
-};
+  this.children = [];
+  this.middleware = [];
 
-Game.prototype.trigger = function trigger$1 (eventName, value) {
-  trigger(this, eventName, value);
-};
-
-Game.prototype.addDeck = function addDeck (deck) {
-  this.addPile(deck);
-};
-
-Game.prototype.addPile = function addPile (pile) {
-  pile.game = this;
-  this.piles.push(pile);
-  for (var i = 0; i < pile.cards.length; i++) {
-    var card = pile.cards[i];
-    if (card.game === this) {
-      continue;
-    }
-    card.game = this;
-    card.id = generateUID(this._uids);
-    this.cards.push(card);
-    this._cards[card.id] = card;
+  if (DEBUG) {
+    this.DEBUG = DEBUG;
   }
 };
 
-Game.prototype.pile = function pile$1 () {
-  pile(this);
-};
-
-Game.prototype.getCard = function getCard (id) {
-  return this._cards[id];
-};
-
-Game.prototype.getPos = function getPos (card, doAnimations) {
-  var x = card.x;
-    var y = card.y;
-    var z = card.z;
-    var pile = card.pile;
-    var animate = card.animate; if ( animate === void 0 ) animate = {};
-
-  var diff = doAnimations ? animations(card, animate) : {};
-
-  if (pile) {
-    return {
-      x: x + (diff.x || 0) + pile.x,
-      y: y + (diff.y || 0) + pile.y,
-      z: z + (diff.z || 0) + pile.z
-    };
-  } else {
-    return {
-      x: x + (diff.x || 0),
-      y: y + (diff.y || 0),
-      z: z + (diff.z || 0)
-    };
-  }
-};
-
-function intersecting (r1, r2) {
-  var x1 = r1.x;
-  var y1 = r1.y;
-  var w1 = r1.width;
-  var h1 = r1.height;
-
-  var x2 = r2.x;
-  var y2 = r2.y;
-  var w2 = r2.width;
-  var h2 = r2.height;
-
-  return (
-    (x1 + w1 >= x2) &&
-    (x1 <= x2 + w2) &&
-    (y1 + h1 >= y2) &&
-    (y1 <= y2 + h2)
-  );
-}
-
-var Pile = function Pile (options) {
-  if ( options === void 0 ) options = {};
-
-  var x = options.x; if ( x === void 0 ) x = 0;
-  var y = options.y; if ( y === void 0 ) y = 0;
-  var z = options.z; if ( z === void 0 ) z = 0;
-
-  this.x = x;
-  this.y = y;
-  this.z = z;
-
-  this.cards = [];
-};
-
-Pile.prototype.intersecting = function intersecting$1 (card, card2) {
-  return intersecting(card, card2);
-};
-
-Pile.prototype.moveBack = function moveBack (card) {
-  var cardIndex = this.cards.indexOf(card);
-  if (this.cards.length === 2) {
-    var anotherCard = this.cards.find(function (card2) { return card2 !== card; });
-    var diffX = Math.abs(card.x - anotherCard.x);
-    var diffY = Math.abs(card.y - anotherCard.y);
-
-    this.vertical = diffY > diffX;
-  }
-  if (this.vertical) {
-    animate(card, 200, { x: 0, y: cardIndex * 30 });
-  } else {
-    animate(card, 200, { x: cardIndex * 15, y: 0 });
-  }
-};
-
-Pile.prototype.push = function push (card) {
-  card.pile = this;
-  card.x = card.x - this.x;
-  card.y = card.y - this.y;
-
-  this.cards.push(card);
-  this.moveBack(card);
-  card.z = this.cards.length;
-};
-
-Pile.prototype.move = function move (card) {
+Game.prototype.trigger = function trigger (event, data) {
     var this$1 = this;
 
-  var intersectingCards = this.cards
-    .filter(function (card2) { return card2 !== card; })
-    .filter(function (card2) { return this$1.intersecting(card, card2); });
+  findMiddleware(Object.assign({}, this, {game: this}))
+    .forEach(function (middleware) {
+      var handler = middleware[event];
 
-  if (!intersectingCards.length) {
-    this.remove(card);
+      if (handler) {
+        handler(this$1, data);
+      }
+    });
+};
+
+Game.prototype.render = function render (container) {
+  this.trigger('renderGame', container);
+};
+
+Game.prototype.add = function add (entity) {
+  if (entity.parent) {
+    entity.parent.remove(entity);
+  }
+  entity.parent = this;
+
+  this.children.push(entity);
+
+  entity.trigger('add');
+
+  return this;
+};
+
+Game.prototype.remove = function remove (entity) {
+  var index = this.children.indexOf(entity);
+
+  if (~index) {
+    this.children.splice(index, 1);
+    entity.parent = null;
+
+    entity.trigger('remove');
+  }
+
+  return this;
+};
+
+Game.prototype.use = function use (middleware) {
+    var this$1 = this;
+
+  if (middleware.length) {
+    middleware.forEach(function (middleware) {
+      this$1.middleware.push(middleware);
+    });
+  } else {
+    this.middleware.push(middleware);
   }
 };
 
-Pile.prototype.remove = function remove (card) {
-  var removed = false;
-  for (var i = 0; i < this.cards.length; i++) {
-    var card2 = this.cards[i];
-
-    if (card === card2) {
-      card.pile = null;
-      card.x += this.x;
-      card.y += this.y;
-      animate(card, 150, { z: 0 });
-      this.cards.splice(i--, 1);
-      removed = true;
-    } else if (removed) {
-      this.moveBack(card2);
-      card2.z--;
-    }
-  }
-  if (this.cards.length === 1) {
-    this.remove(this.cards[0]);
-  }
-};
-
-var StandardCard = function StandardCard (ref) {
-  var game = ref.game;
-
-  this.game = game;
-  this.el = document.createElement('img');
-  this.el.draggable = false;
-  this.el.style.touchAction = 'none';
-  this.el.style.position = 'absolute';
-};
-
-StandardCard.prototype.update = function update (card) {
-  var ref = this;
-    var game = ref.game;
-  var i = card.i;
+var card = {
+  type: 'Card',
+  style: 'standard',
+  add: function add (card) {
+    card.width = 100;
+    card.height = 140;
+  },
+  render: function render (card) {
+    var x = card.x;
+    var y = card.y;
+    var i = card.i;
     var side = card.side;
-    var graphics = card.graphics;
+    var el = card.el;
     var width = card.width;
     var height = card.height;
-  var front = graphics.front;
-    var back = graphics.back;
-  var ref$1 = game.getPos(card, true);
-    var x = ref$1.x;
-    var y = ref$1.y;
 
-  this.card = card;
+    el.style.transform = "translate(" + x + "px, " + y + "px)";
+    el.style.width = width + 'px';
+    el.style.height = height + 'px';
 
-  var src = side === 'back' ? back : front[i];
-  var transform = "translate(" + (Math.round(x)) + "px, " + (Math.round(y)) + "px)";
+    if (side === 'front') {
+      el.style.backgroundImage = "url(standard-deck/front-" + i + ".png)";
+    } else {
+      el.style.backgroundImage = 'url(standard-deck/back.png)';
+    }
 
-  if (src !== this.src) {
-    this.el.src = src;
-    this.src = src;
+    return card;
   }
-
-  if (width !== this.width || height !== this.height) {
-    this.el.width = width;
-    this.el.height = height;
-    this.el.style.marginLeft = -width / 2 + 'px';
-    this.el.style.marginTop = -height / 2 + 'px';
-    this.width = this.width;
-    this.height = this.height;
-  }
-
-  if (transform !== this.transform) {
-    this.el.style.transform = transform;
-    this.transform = transform;
-  }
-};
-
-var front = new Array(54);
-
-for (var i = 0; i < front.length; i++) {
-  front[i] = "img/front-" + i + ".png";
 }
+;
 
-var standardDeck = {
-  width: 102,
-  height: 144,
-  back: 'img/back.png',
-  front: front,
-  View: StandardCard
-};
+var deck = {
+  type: 'Deck',
+  style: 'standard',
+  createCards: function createCards (deck, ref) {
+    var Card = ref.Card;
 
-function cardIntersecting (card, anotherCard) {
-  var ref = card.game.getPos(card);
-  var x1 = ref.x;
-  var y1 = ref.y;
-  var ref$1 = card.game.getPos(anotherCard);
-  var x2 = ref$1.x;
-  var y2 = ref$1.y;
-  var w1 = anotherCard.width;
-  var h1 = anotherCard.height;
-  var w2 = anotherCard.width;
-  var h2 = anotherCard.height;
+    var count = 54;
 
-  return intersecting({
-    x: x1,
-    y: y1,
-    width: w1,
-    height: h1
-  }, {
-    x: x2,
-    y: y2,
-    width: w2,
-    height: h2
-  });
-}
+    for (var i = 0; i < count; i++) {
+      var card = new Card({
+        x: -i / 4,
+        y: -i / 4,
+        i: count - i - 1
+      });
 
-var Card = function Card (options) {
-  if ( options === void 0 ) options = {};
-
-  var i = options.i; if ( i === void 0 ) i = 0;
-  var x = options.x; if ( x === void 0 ) x = 0;
-  var y = options.y; if ( y === void 0 ) y = 0;
-  var z = options.z; if ( z === void 0 ) z = 0;
-  var graphics = options.graphics; if ( graphics === void 0 ) graphics = standardDeck;
-  var pile = options.pile;
-
-  this.i = i;
-  this.x = x;
-  this.y = y;
-  this.z = z;
-  this.graphics = graphics;
-  this.pile = pile;
-};
-
-var prototypeAccessors = { width: { configurable: true },height: { configurable: true } };
-
-Card.prototype.intersecting = function intersecting (anotherCard) {
-  return cardIntersecting(this, anotherCard);
-};
-
-prototypeAccessors.width.get = function () {
-  return this.graphics.width;
-};
-
-prototypeAccessors.height.get = function () {
-  return this.graphics.height;
-};
-
-Object.defineProperties( Card.prototype, prototypeAccessors );
-
-function shuffle (array) {
-  if (!array.length) {
-    return array;
+      deck.add(card);
+    }
   }
-  for (var i = array.length - 1; i; i--) {
-    var rnd = Math.floor(Math.random() * (i + 1));
-    var temp = array[i];
-
-    array[i] = array[rnd];
-    array[rnd] = temp;
-  }
-
-  return array;
-}
-
-var Deck = /*@__PURE__*/(function (Pile) {
-  function Deck (options) {
-    var this$1 = this;
-    if ( options === void 0 ) options = {};
-
-    var graphics = options.graphics; if ( graphics === void 0 ) graphics = standardDeck;
-
-    Pile.call(this, Object.assign({}, options,
-      {graphics: graphics}));
-
-    this.cards = graphics.front.map(function (card, i) { return new Card({
-      graphics: graphics,
-      pile: this$1,
-      i: 53 - i,
-      x: -i / 4,
-      y: -i / 4,
-      z: i
-    }); });
-  }
-
-  if ( Pile ) Deck.__proto__ = Pile;
-  Deck.prototype = Object.create( Pile && Pile.prototype );
-  Deck.prototype.constructor = Deck;
-
-  Deck.prototype.shuffle = function shuffle$1 () {
-    shuffle(this.cards);
-    this.cards.forEach(function (card, i) {
-      card.x = -i / 4;
-      card.y = -i / 4;
-      card.z = i;
-    });
-    this.game.pile();
-  };
-
-  Deck.prototype.moveBack = function moveBack (card) {
-    var cardIndex = this.cards.indexOf(card);
-    animate(card, 200, { x: -cardIndex / 4, y: -cardIndex / 4 });
-  };
-
-  Deck.prototype.push = function push (card) {
-    card.pile = this;
-    card.x = card.x - this.x;
-    card.y = card.y - this.y;
-
-    animate(card, 200, {
-      x: -this.cards.length / 4,
-      y: -this.cards.length / 4
-    });
-
-    this.cards.push(card);
-    card.z = this.cards.length - 1;
-  };
-
-  return Deck;
-}(Pile));
-
-var Renderer = function Renderer (ref) {
-  var game = ref.game;
-
-  this.game = game;
-  this.container = document.createElement('div');
-  this.container.style.width = game.width + 'px';
-  this.container.style.height = game.height + 'px';
-  this.container.style.top = '50%';
-  this.container.style.left = '50%';
-  this.container.style.position = 'absolute';
-  this.container.style.transform = 'translate(-50%, -50%)';
-  this.views = [];
-  this.viewsLookup = {};
 };
 
-Renderer.prototype.mountTo = function mountTo (parent) {
-  parent.appendChild(this.container);
+var standardDeck = [
+  card,
+  deck
+];
+
+var gameRenderer = {
+  type: 'Game',
+  renderGame: function renderGame (game, container) {
+    var width = game.width;
+    var height = game.height;
+    var children = game.children;
+
+    container.style.position = 'absolute';
+    container.style.top = '50%';
+    container.style.left = '50%';
+    container.style.transform = "translate(" + (-width / 2) + "px, " + (-height / 2) + "px)";
+    container.style.width = width + 'px';
+    container.style.height = height + 'px';
+
+    renderChildren(container, children);
+  }
 };
 
-Renderer.prototype.render = function render () {
-  var ref = this;
-    var game = ref.game;
-    var container = ref.container;
-  var cards = game.cards;
-
-  var views = new Array(cards.length);
-  var viewsLookup = {};
-
-  for (var i = 0; i < cards.length; i++) {
-    var card = cards[i];
-    var id = card.id;
-      var graphics = card.graphics;
-    var View = graphics.View;
-
-    var view = this.viewsLookup[id] || createView(View, game);
-    view.id = id;
-    views[i] = view;
-    viewsLookup[id] = view;
-
-    view.update(card);
-  }
-
+function renderChildren (container, children) {
   var traverse = container.firstChild;
 
-  for (var i$1 = 0; i$1 < views.length; i$1++) {
-    var view$1 = views[i$1];
+  for (var i = 0; i < children.length; i++) {
+    var entity = children[i];
 
-    if (traverse === view$1.el) {
-      traverse = traverse.nextSibling;
-    } else if (traverse) {
-      container.insertBefore(view$1.el, traverse);
-    } else {
-      container.appendChild(view$1.el);
+    if (!entity.el) {
+      entity.trigger('createEl');
+    }
+
+    entity.trigger('render');
+
+    if (entity.el) {
+      if (traverse === entity.el) {
+        traverse = traverse.nextSibling;
+      } else if (traverse) {
+        container.insertBefore(entity.el, traverse);
+      } else {
+        container.appendChild(entity.el);
+      }
     }
   }
+  while (traverse) {
+    var next = traverse.nextSibling;
 
-  this.views = views;
-  this.viewsLookup = viewsLookup;
+    container.removeChild(traverse);
+
+    traverse = next;
+  }
+}
+
+var deckRenderer = {
+  type: 'Deck',
+  createEl: function createEl (deck) {
+    var el = document.createElement('div');
+
+    el.style.position = 'absolute';
+
+    deck.el = el;
+  },
+  render: function render (deck) {
+    var x = deck.x;
+    var y = deck.y;
+    var el = deck.el;
+
+    el.style.transform = "translate(" + x + "px, " + y + "px)";
+
+    renderChildren(el, deck.children);
+  }
 };
 
-function createView (View, game) {
-  var view = new View({ game: game });
+var cardRenderer = {
+  type: 'Card',
+  createEl: function createEl (card) {
+    card.el = document.createElement('div');
+    card.el.style.position = 'absolute';
+    card.el.style.backgroundPosition = '50% 50%';
+    card.el.style.backgroundRepeat = 'no-repeat';
+    card.el.style.backgroundSize = 'contain';
+    card.el.style.backgroundColor = '#fff';
+    card.el.style.borderRadius = (6 / 1) + "% " + (6 / 1.4) + "%";
+    card.el.style.boxShadow = '0 1px 1px rgba(0, 0, 0, .05)';
+  },
+  render: function render (card) {
+    var x = card.x;
+    var y = card.y;
+    var i = card.i;
+    var side = card.side;
+    var el = card.el;
+    var width = card.width;
+    var height = card.height;
 
-  view.el.addEventListener('mousedown', ondown);
-  view.el.addEventListener('touchstart', ondown);
+    el.style.transform = "translate(" + x + "px, " + y + "px)";
+    el.style.width = width + 'px';
+    el.style.height = height + 'px';
+    el.style.marginLeft = -width / 2 + 'px';
+    el.style.marginTop = -height / 2 + 'px';
 
-  return view;
-
-  function ondown (e) {
-    game.trigger('mousedown', { view: view, e: e });
-  }
-}
-
-function mouse (game, renderer) {
-  on(game, 'mousedown', onmousedown);
-
-  function onmousedown (ref) {
-    var view = ref.view;
-    var e = ref.e;
-
-    var id = view.id;
-
-    if (!id) {
-      return;
-    }
-
-    var prev = {
-      x: (e.touches ? e.touches[0] : e).pageX,
-      y: (e.touches ? e.touches[0] : e).pageY
-    };
-
-    var card = game.getCard(id);
-
-    if (card) {
-      trigger(game, 'cardmovestart', { card: card });
-
-      var onmousemove = function (e) {
-        var x = (e.touches ? e.touches[0] : e).pageX;
-        var y = (e.touches ? e.touches[0] : e).pageY;
-
-        trigger(game, 'cardmove', {
-          card: card,
-          x: x - prev.x,
-          y: y - prev.y
-        }
-        );
-
-        prev.x = x;
-        prev.y = y;
-      };
-
-      var onmouseup = function (e) {
-        window.removeEventListener('mousemove', onmousemove);
-        window.removeEventListener('touchmove', onmousemove);
-
-        window.removeEventListener('mouseup', onmouseup);
-        window.removeEventListener('touchend', onmouseup);
-
-        trigger(game, 'cardmoveend', { card: card });
-      };
-
-      window.addEventListener('mousemove', onmousemove);
-      window.addEventListener('touchmove', onmousemove);
-
-      window.addEventListener('mouseup', onmouseup);
-      window.addEventListener('touchend', onmouseup);
+    if (side === 'front') {
+      el.style.backgroundImage = "url(standard-deck/front-" + i + ".png)";
+    } else {
+      el.style.backgroundImage = 'url(standard-deck/back.png)';
     }
   }
-}
+};
 
-function interaction (game) {
-  on(game, 'cardmove', function (options) {
-    var card = options.card;
-    var x = options.x;
-    var y = options.y;
-    var game = card.game;
+var domRenderer = [
+  gameRenderer,
+  deckRenderer,
+  cardRenderer
+];
 
-    card.x += x;
-    card.y += y;
+var interaction = {
+  createEl: function createEl (entity) {
+    entity.el.addEventListener('mousedown', startmove);
 
-    if (card.pile) {
-      card.pile.move(card);
-    } else {
-      var intersectingCards = game.cards
-        .filter(function (card2) { return !card2.pile; })
-        .filter(function (card2) { return card !== card2; })
-        .filter(function (card2) { return card.intersecting(card2); });
+    function startmove (e) {
+      var startPos = {
+        x: e.touches ? e.touches[0].pageX : e.pageX,
+        y: e.touches ? e.touches[0].pageY : e.pageY
+      };
+      entity.trigger('startmove', startPos);
 
-      var intersectingPiles = game.piles
-        .filter(function (pile) { return pile.cards.find(function (card2) { return card.intersecting(card2); }); })
-        .map(function (pile) {
-          return Object.assign({}, pile,
-            {z: Math.max.apply(Math, pile.cards.map(function (card) { return card.z; }))});
-        });
+      window.addEventListener('mousemove', move);
+      window.addEventListener('mouseup', endmove);
 
-      var z = Math.max.apply(Math, [ -1 ].concat( intersectingCards.concat(intersectingPiles).map(function (card) { return card.z; }) )) + 1;
+      window.addEventListener('touchmove', move);
+      window.addEventListener('touchend', endmove);
 
-      if (card.z !== z) {
-        animate(card, 150, { z: z });
+      var pos = {
+        x: startPos.x,
+        y: startPos.y
+      };
+
+      function move (e) {
+        pos.x = e.touches ? e.touches[0].pageX : e.pageX;
+        pos.y = e.touches ? e.touches[0].pageY : e.pageY;
+
+        var diff = {
+          x: pos.x - startPos.x,
+          y: pos.y - startPos.y
+        };
+
+        entity.trigger('move', pos, diff, startPos);
       }
-      game.pile();
-    }
-  });
 
-  on(game, 'cardmoveend', function (options) {
-    var card = options.card;
-    var game = card.game;
+      function endmove (e) {
+        window.removeEventListener('mousemove', move);
+        window.removeEventListener('mouseup', endmove);
 
-    if (card.pile) {
-      card.pile.moveBack(card);
-    } else {
-      var intersectingPile = game.piles
-        .find(function (pile) { return pile.cards.find(function (card2) { return card.intersecting(card2); }); });
+        window.removeEventListener('touchmove', move);
+        window.removeEventListener('touchend', endmove);
 
-      if (intersectingPile) {
-        intersectingPile.push(card);
-        game.pile();
-        return;
-      }
-      var intersectingCard = game.cards
-        .filter(function (card2) { return card !== card2; })
-        .filter(function (card2) { return !card2.pile; })
-        .find(function (card2) { return card.intersecting(card2); });
-
-      if (intersectingCard) {
-        var pile = new Pile();
-        pile.x = intersectingCard.x;
-        pile.y = intersectingCard.y;
-
-        var diffX = card.x - intersectingCard.x;
-        var diffY = card.y - intersectingCard.y;
-
-        if (Math.abs(diffY) > Math.abs(diffX)) {
-          pile.vertical = true;
-        }
-
-        pile.push(intersectingCard);
-        pile.push(card);
-
-        game.addPile(pile);
-        game.pile();
+        entity.trigger('endmove');
       }
     }
-  });
-}
-
-/* global requestAnimationFrame */
+  }
+};
 
 var game = new Game({
-  container: document.querySelector('#cards'),
   width: 1920,
-  height: 1080
+  height: 1080,
+  DEBUG: true
 });
 
-var renderer = new Renderer({
-  game: game
+game.use(domRenderer);
+game.use(standardDeck);
+game.use(interaction);
+
+var deck$1 = new Deck({
+  x: 1920 / 2,
+  y: 1080 / 2
 });
 
-var deck = new Deck({
-  x: 960,
-  y: 540
-});
+game.add(deck$1);
 
-game.addDeck(deck);
+deck$1.createCards();
 
-mouse(game);
-interaction(game);
+var container = document.getElementById('cards');
 
-deck.shuffle();
-
-renderer.mountTo(document.body);
-
-render();
-
-function render () {
-  requestAnimationFrame(render);
-
-  renderer.render();
-}
+game.render(container);
