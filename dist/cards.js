@@ -311,6 +311,7 @@ var gameRenderer = {
     container.style.transform = "translate(" + (-width / 2) + "px, " + (-height / 2) + "px)";
     container.style.width = width + 'px';
     container.style.height = height + 'px';
+    container.style.overflow = 'hidden';
 
     renderChildren(container, children);
   }
@@ -379,6 +380,7 @@ var cardRenderer = {
     card.el.style.borderRadius = (6 / 1) + "% " + (6 / 1.4) + "%";
     card.el.style.boxShadow = '0 1px 1px rgba(0, 0, 0, .05)';
     card.el.style.overflow = 'hidden';
+    card.el.style.willChange = 'transform';
   },
   render: function render (card) {
     var x = card.x;
