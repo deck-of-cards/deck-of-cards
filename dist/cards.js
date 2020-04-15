@@ -55,20 +55,17 @@ prototypeAccessors.game.get = function () {
 };
 
 Entity.prototype.trigger = function trigger (event) {
-    var this$1 = this;
     var data = [], len = arguments.length - 1;
     while ( len-- > 0 ) data[ len ] = arguments[ len + 1 ];
 
-  if (this.game.DEBUG) {
-    console.log(event, data, this);
-  }
-  this.middleware.forEach(function (middleware) {
+  for (var i = 0; i < this.middleware.length; i++) {
+    var middleware = this.middleware[i];
     var handler = middleware[event];
 
     if (handler) {
-      handler.apply(void 0, [ this$1 ].concat( data ));
+      handler.apply(void 0, [ this ].concat( data ));
     }
-  });
+  }
 };
 
 Object.defineProperties( Entity.prototype, prototypeAccessors );
@@ -166,6 +163,8 @@ var Deck = /*@__PURE__*/(function (Entity) {
   return Deck;
 }(Entity));
 
+/* global requestAnimationFrame, cancelAnimationFrame */
+
 var Game = function Game (options) {
   if ( options === void 0 ) options = {};
 
@@ -194,6 +193,19 @@ Game.prototype.trigger = function trigger (event, data) {
         handler(this$1, data);
       }
     });
+};
+
+Game.prototype.startRender = function startRender (container) {
+    var this$1 = this;
+
+  this._rendering = requestAnimationFrame(function () {
+    this$1.startRender(container);
+    this$1.render(container);
+  });
+};
+
+Game.prototype.stopRender = function stopRender () {
+  cancelAnimationFrame(this._rendering);
 };
 
 Game.prototype.render = function render (container) {
@@ -246,17 +258,9 @@ var card = {
     card.height = 140;
   },
   render: function render (card) {
-    var x = card.x;
-    var y = card.y;
     var i = card.i;
     var side = card.side;
     var el = card.el;
-    var width = card.width;
-    var height = card.height;
-
-    el.style.transform = "translate(" + x + "px, " + y + "px)";
-    el.style.width = width + 'px';
-    el.style.height = height + 'px';
 
     if (side === 'front') {
       el.style.backgroundImage = "url(standard-deck/front-" + i + ".png)";
@@ -357,7 +361,7 @@ var deckRenderer = {
     var y = deck.y;
     var el = deck.el;
 
-    el.style.transform = "translate(" + x + "px, " + y + "px)";
+    el.style.transform = "translate(" + (Math.round(x)) + "px, " + (Math.round(y)) + "px)";
 
     renderChildren(el, deck.children);
   }
@@ -374,6 +378,7 @@ var cardRenderer = {
     card.el.style.backgroundColor = '#fff';
     card.el.style.borderRadius = (6 / 1) + "% " + (6 / 1.4) + "%";
     card.el.style.boxShadow = '0 1px 1px rgba(0, 0, 0, .05)';
+    card.el.style.overflow = 'hidden';
   },
   render: function render (card) {
     var x = card.x;
@@ -384,7 +389,7 @@ var cardRenderer = {
     var width = card.width;
     var height = card.height;
 
-    el.style.transform = "translate(" + x + "px, " + y + "px)";
+    el.style.transform = "translate(" + (Math.round(x)) + "px, " + (Math.round(y)) + "px)";
     el.style.width = width + 'px';
     el.style.height = height + 'px';
     el.style.marginLeft = -width / 2 + 'px';
@@ -404,7 +409,7 @@ var domRenderer = [
   cardRenderer
 ];
 
-var interaction = {
+var entityInteraction = {
   createEl: function createEl (entity) {
     entity.el.addEventListener('mousedown', startmove);
 
@@ -413,6 +418,9 @@ var interaction = {
         x: e.touches ? e.touches[0].pageX : e.pageX,
         y: e.touches ? e.touches[0].pageY : e.pageY
       };
+      var longpressDelay = setTimeout(function () {
+        entity.trigger('holdmove');
+      }, 2000);
       entity.trigger('startmove', startPos);
 
       window.addEventListener('mousemove', move);
@@ -421,21 +429,31 @@ var interaction = {
       window.addEventListener('touchmove', move);
       window.addEventListener('touchend', endmove);
 
-      var pos = {
-        x: startPos.x,
-        y: startPos.y
-      };
+      var prevPos = startPos;
 
       function move (e) {
-        pos.x = e.touches ? e.touches[0].pageX : e.pageX;
-        pos.y = e.touches ? e.touches[0].pageY : e.pageY;
+        var pos = {
+          x: e.touches ? e.touches[0].pageX : e.pageX,
+          y: e.touches ? e.touches[0].pageY : e.pageY
+        };
 
         var diff = {
           x: pos.x - startPos.x,
           y: pos.y - startPos.y
         };
 
-        entity.trigger('move', pos, diff, startPos);
+        if (Math.sqrt(Math.pow(diff.x, 2) + Math.pow(diff.y, 2))) {
+          clearTimeout(longpressDelay);
+        }
+
+        var delta = {
+          x: pos.x - prevPos.x,
+          y: pos.y - prevPos.y
+        };
+
+        prevPos = pos;
+
+        entity.trigger('move', pos, delta, diff, startPos);
       }
 
       function endmove (e) {
@@ -445,16 +463,54 @@ var interaction = {
         window.removeEventListener('touchmove', move);
         window.removeEventListener('touchend', endmove);
 
-        entity.trigger('endmove');
+        entity.trigger('endmove', prevPos, startPos);
       }
     }
   }
 };
 
+var cardInteraction = {
+  type: 'Card',
+  startmove: function startmove (card, pos) {
+  },
+  holdmove: function holdmove (card) {
+    if (card.parent) {
+      card.parent._moving = true;
+    }
+  },
+  move: function move (card, pos, delta, diff, startPos) {
+    if (card.parent) {
+      if (card.parent._moving) {
+        return;
+      }
+    }
+    card.x += delta.x;
+    card.y += delta.y;
+  },
+  endmove: function endmove (card, pos, startPos) {
+  }
+};
+
+var deckInteraction = {
+  type: 'Deck',
+  startmove: function startmove (deck, pos) {
+  },
+  move: function move (deck, pos, diff, startPos) {
+  },
+  endmove: function endmove (deck) {
+    deck._moving = false;
+  }
+};
+
+var interaction = [
+  entityInteraction,
+  cardInteraction,
+  deckInteraction
+];
+
 var game = new Game({
   width: 1920,
-  height: 1080,
-  DEBUG: true
+  height: 1080
 });
 
 game.use(domRenderer);
@@ -472,4 +528,4 @@ deck$1.createCards();
 
 var container = document.getElementById('cards');
 
-game.render(container);
+game.startRender(container);
