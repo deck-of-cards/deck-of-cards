@@ -180,7 +180,7 @@ var Group = function Group (options) {
   });
 };
 
-Group.prototype.add = function add (entity) {
+Group.prototype.add = function add (entity, animate) {
   if (entity.group) {
     entity.group.remove(entity);
     entity.x -= this.x;
@@ -192,9 +192,10 @@ Group.prototype.add = function add (entity) {
   }
   entity.group = this;
   this.children.push(entity);
+  animate && this.moveBack();
 };
 
-Group.prototype.remove = function remove (entity) {
+Group.prototype.remove = function remove (entity, animate) {
   var index = this.children.indexOf(entity);
   if (~index) {
     entity.x += this.x;
@@ -202,6 +203,7 @@ Group.prototype.remove = function remove (entity) {
     entity.group = null;
     this.children.splice(index, 1);
   }
+  animate && this.moveBack();
 };
 
 Group.prototype.isIntersectingWith = function isIntersectingWith$1 (other) {
@@ -423,9 +425,13 @@ var Card = /*@__PURE__*/(function (Entity) {
       this.x += delta.x;
       this.y += delta.y;
 
-      if (this.group) {
-        if (!this.group.isIntersectingWith(this)) {
-          this.group.game.add(this);
+      var ref = this;
+      var group = ref.group;
+
+      if (group) {
+        if (!group.isIntersectingWith(this)) {
+          group.remove(this, true);
+          group.game.add(this);
         }
       }
     }
@@ -455,8 +461,7 @@ var Card = /*@__PURE__*/(function (Entity) {
         }
 
         if (closest.children) {
-          closest.add(this);
-          closest.moveBack(this);
+          closest.add(this, true);
         } else {
           var diff = {
             x: Math.abs(closest.x - this.x),
@@ -469,8 +474,7 @@ var Card = /*@__PURE__*/(function (Entity) {
           pile.x = closest.x;
           pile.y = closest.y;
           pile.add(closest);
-          pile.add(this);
-          pile.moveBack();
+          pile.add(this, true);
           this.game.add(pile);
         }
       }
