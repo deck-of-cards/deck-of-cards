@@ -125,20 +125,29 @@ Game.prototype.startRender = function startRender (container) {
   });
 };
 
+Game.prototype.intersectingChildren = function intersectingChildren (other) {
+  return this.children.filter(function (child) {
+    return child.isIntersectingWith(other);
+  });
+};
+
 Game.prototype.stopRender = function stopRender () {
   cancelAnimationFrame(this.rendering);
 };
 
 Object.defineProperties( Game.prototype, prototypeAccessors );
 
-function intersecting (r1, r2) {
-  var x1 = r1.x;
-  var y1 = r1.y;
+function isIntersectingWith (r1, r2) {
+  if (r1 === r2) {
+    return false;
+  }
+  var x1 = (r1.absolutePosition || r1).x;
+  var y1 = (r1.absolutePosition || r1).y;
   var w1 = r1.width;
   var h1 = r1.height;
 
-  var x2 = r2.x;
-  var y2 = r2.y;
+  var x2 = (r2.absolutePosition || r2).x;
+  var y2 = (r2.absolutePosition || r2).y;
   var w2 = r2.width;
   var h2 = r2.height;
 
@@ -177,6 +186,7 @@ Group.prototype.add = function add (entity) {
     entity.x -= this.x;
     entity.y -= this.y;
   } else if (entity.game) {
+    entity.game.remove(entity);
     entity.x -= this.x;
     entity.y -= this.y;
   }
@@ -194,20 +204,24 @@ Group.prototype.remove = function remove (entity) {
   }
 };
 
-Group.prototype.intersecting = function intersecting$1 (card) {
-  for (var i = 0; i < this.children.length; i++) {
-    var child = this.children[i];
-
-    if (child === card) {
-      continue;
-    }
-
-    if (intersecting(child, card)) {
-      return true;
-    }
+Group.prototype.isIntersectingWith = function isIntersectingWith$1 (other) {
+  if (other.children) {
+    return this.children.find(function (child) {
+      return other.children.find(function (child2) {
+        return isIntersectingWith(child, child2);
+      });
+    });
+  } else {
+    return this.children.find(function (child) {
+      return isIntersectingWith(other, child);
+    });
   }
+};
 
-  return false;
+Group.prototype.distanceTo = function distanceTo (other) {
+  return this.children.reduce(function (min, child) {
+    return Math.min(min, Math.sqrt(Math.pow(other.x - child.x, 2) + Math.pow(other.y - child.y, 2)));
+  }, Infinity);
 };
 
 function animate (target, duration, properties) {
@@ -307,6 +321,14 @@ prototypeAccessors$1.absolutePosition.get = function () {
   return pos;
 };
 
+Entity.prototype.isIntersectingWith = function isIntersectingWith$1 (other) {
+  if (other.children) {
+    return other.isIntersectingWith(this);
+  } else {
+    return isIntersectingWith(this, other);
+  }
+};
+
 prototypeAccessors$1.game.set = function (game) {
   this._game = game;
 };
@@ -316,6 +338,35 @@ prototypeAccessors$1.game.get = function () {
 };
 
 Object.defineProperties( Entity.prototype, prototypeAccessors$1 );
+
+var Pile = /*@__PURE__*/(function (Group) {
+  function Pile (options) {
+    if ( options === void 0 ) options = {};
+
+    var dir = options.dir;
+    Group.call(this, Object.assign({}, options,
+      {type: 'Pile'}));
+    this.dir = dir;
+  }
+
+  if ( Group ) Pile.__proto__ = Group;
+  Pile.prototype = Object.create( Group && Group.prototype );
+  Pile.prototype.constructor = Pile;
+
+  Pile.prototype.moveBack = function moveBack () {
+    var ref = this;
+    var dir = ref.dir;
+
+    for (var i = 0; i < this.children.length; i++) {
+      animate(this.children[i], 200, {
+        x: dir === 'horizontal' ? 15 * i : 0,
+        y: dir === 'vertical' ? 30 * i : 0
+      });
+    }
+  };
+
+  return Pile;
+}(Group));
 
 var Card = /*@__PURE__*/(function (Entity) {
   function Card (options) {
@@ -373,7 +424,7 @@ var Card = /*@__PURE__*/(function (Entity) {
       this.y += delta.y;
 
       if (this.group) {
-        if (!this.group.intersecting(this)) {
+        if (!this.group.isIntersectingWith(this)) {
           this.group.game.add(this);
         }
       }
@@ -390,6 +441,38 @@ var Card = /*@__PURE__*/(function (Entity) {
       this._moving = false;
       if (this.group) {
         this.group.moveBack();
+      } else {
+        var intersectingEntities = this.game.intersectingChildren(this);
+
+        intersectingEntities.sort(function (a, b) {
+          return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+        });
+
+        var closest = intersectingEntities[0];
+
+        if (!closest) {
+          return;
+        }
+
+        if (closest.children) {
+          closest.add(this);
+          closest.moveBack(this);
+        } else {
+          var diff = {
+            x: Math.abs(closest.x - this.x),
+            y: Math.abs(closest.y - this.y)
+          };
+          var pile = new Pile({
+            game: this.game,
+            dir: diff.x > diff.y ? 'horizontal' : 'vertical'
+          });
+          pile.x = closest.x;
+          pile.y = closest.y;
+          pile.add(closest);
+          pile.add(this);
+          pile.moveBack();
+          this.game.add(pile);
+        }
       }
     }
   };
