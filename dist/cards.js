@@ -210,6 +210,51 @@ Group.prototype.intersecting = function intersecting$1 (card) {
   return false;
 };
 
+function animate (target, duration, properties) {
+  Object.defineProperty(target, '_animate', {
+    writable: true,
+    value: {}
+  });
+
+  for (var prop in properties) {
+    target._animate[prop] = {
+      duration: duration,
+      from: target[prop],
+      to: properties[prop]
+    };
+
+    target[prop] = properties[prop];
+  }
+}
+
+function getAnimatedProps (card) {
+  var animate = card._animate || {};
+  var now = Date.now();
+
+  var diff = {};
+
+  for (var key in animate) {
+    var ref = animate[key];
+    var duration = ref.duration;
+    var to = ref.to;
+    var ref$1 = animate[key];
+    var start = ref$1.start;
+    var end = ref$1.end;
+    var from = ref$1.from;
+
+    if (!start) {
+      start = animate[key].start = Date.now();
+      end = animate[key].end = start + duration;
+    }
+
+    if (now < end) {
+      diff[key] = (end - Date.now()) / duration * (from - to);
+    }
+  }
+
+  return diff;
+}
+
 var Entity = function Entity (options) {
   if ( options === void 0 ) options = {};
 
@@ -248,6 +293,11 @@ prototypeAccessors$1.absolutePosition.get = function () {
     x: this.x,
     y: this.y
   };
+
+  var animatedProps = getAnimatedProps(this);
+
+  pos.x += animatedProps.x || 0;
+  pos.y += animatedProps.y || 0;
 
   if (this.group) {
     pos.x += this.group.x;
@@ -338,6 +388,9 @@ var Card = /*@__PURE__*/(function (Entity) {
       });
     } else {
       this._moving = false;
+      if (this.group) {
+        this.group.moveBack();
+      }
     }
   };
 
@@ -465,6 +518,15 @@ var Deck = /*@__PURE__*/(function (Group) {
     }
 
     return this;
+  };
+
+  Deck.prototype.moveBack = function moveBack () {
+    for (var i = 0; i < this.children.length; i++) {
+      animate(this.children[i], 200, {
+        x: -i / 4,
+        y: -i / 4
+      });
+    }
   };
 
   return Deck;
