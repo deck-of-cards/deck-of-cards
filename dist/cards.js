@@ -430,6 +430,8 @@ var Card = /*@__PURE__*/(function (Entity) {
     el.style.transform = "translate(" + x + "px, " + y + "px)";
     el.style.width = width + 'px';
     el.style.height = height + 'px';
+    el.style.marginLeft = -width / 2 + 'px';
+    el.style.marginTop = -height / 2 + 'px';
     el.style.backgroundImage = "url(standard-deck/front-" + i + ".png)";
     if (_moving) {
       el.style.boxShadow = '0px 2px 5px rgba(0, 0, 0, 0.25)';
@@ -486,4 +488,4 @@ deck.createCards(54, {
   height: 140
 });
 
-game.startRender(document.querySelector('#cards'));
+game.startRender(document.querySelector('#game'));
