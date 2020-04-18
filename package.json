@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node dev",
     "build-css": "postcss -w lib/index.css -o dist/cards.css",
-    "build-js": "rollup -c -w -i lib/index.js -o dist/cards.js"
+    "build-js": "rollup -c -w -i example.js -o dist/cards.js"
   },
   "repository": {
     "type": "git",

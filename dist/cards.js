@@ -24,15 +24,17 @@ function render (game, container) {
   for (var i$1 = 0; i$1 < entities.length; i$1++) {
     var entity$1 = entities[i$1];
 
-    if (traverse) {
-      if (traverse === entity$1.el) {
-        traverse = traverse.nextSibling;
-        continue;
+    if (entity$1.el) {
+      if (traverse) {
+        if (traverse === entity$1.el) {
+          traverse = traverse.nextSibling;
+          continue;
+        } else {
+          container.insertBefore(entity$1.el, traverse);
+        }
       } else {
-        container.insertBefore(entity$1.el, traverse);
+        container.appendChild(entity$1.el);
       }
-    } else {
-      container.appendChild(entity$1.el);
     }
   }
 
@@ -192,7 +194,7 @@ Group.prototype.add = function add (entity, animate) {
   }
   entity.group = this;
   this.children.push(entity);
-  animate && this.moveBack();
+  animate && this.moveBack(true);
 };
 
 Group.prototype.remove = function remove (entity, animate) {
@@ -203,7 +205,7 @@ Group.prototype.remove = function remove (entity, animate) {
     entity.group = null;
     this.children.splice(index, 1);
   }
-  animate && this.moveBack();
+  animate && this.moveBack(true);
 };
 
 Group.prototype.isIntersectingWith = function isIntersectingWith$1 (other) {
@@ -226,49 +228,89 @@ Group.prototype.distanceTo = function distanceTo (other) {
   }, Infinity);
 };
 
-function animate (target, duration, properties) {
-  Object.defineProperty(target, '_animate', {
-    writable: true,
-    value: {}
-  });
+var animations = [];
+
+function animate (target, duration, properties, delay) {
+  if ( delay === void 0 ) delay = 0;
+
+  var from = {};
+  var to = {};
 
   for (var prop in properties) {
-    target._animate[prop] = {
-      duration: duration,
-      from: target[prop],
-      to: properties[prop]
-    };
-
+    from[prop] = target[prop];
+    to[prop] = properties[prop];
     target[prop] = properties[prop];
   }
+
+  var animation = {
+    target: target,
+    properties: properties,
+    duration: duration,
+    delay: delay,
+    from: from,
+    to: to
+  };
+
+  animations.push(animation);
+
+  return function (cb) {
+    animation.cb = cb;
+  };
 }
 
 function getAnimatedProps (card) {
-  var animate = card._animate || {};
+  var diff = {};
   var now = Date.now();
 
-  var diff = {};
+  for (var i = 0; i < animations.length; i++) {
+    var animation = animations[i];
 
-  for (var key in animate) {
-    var ref = animate[key];
-    var duration = ref.duration;
-    var to = ref.to;
-    var ref$1 = animate[key];
-    var start = ref$1.start;
-    var end = ref$1.end;
-    var from = ref$1.from;
+    if (animation.target !== card) {
+      continue;
+    }
+
+    var duration = animation.duration;
+    var delay = animation.delay;
+    var to = animation.to;
+    var start = animation.start;
+    var end = animation.end;
+    var from = animation.from;
 
     if (!start) {
-      start = animate[key].start = Date.now();
-      end = animate[key].end = start + duration;
+      start = animation.start = delay + now;
+      end = animation.end = start + duration;
     }
 
-    if (now < end) {
-      diff[key] = (end - Date.now()) / duration * (from - to);
+    for (var key in animation.properties) {
+      diff[key] || (diff[key] = 0);
+
+      if (now < start) {
+        diff[key] += from[key] - to[key];
+      } else if (now >= start && now <= end) {
+        diff[key] += (end - Date.now()) / duration * (from[key] - to[key]);
+      }
+    }
+
+    if (now >= end) {
+      animation.cb && animation.cb();
+      animations.splice(i--, 1);
     }
   }
-
   return diff;
+}
+
+function all (animations, done) {
+  var waiting = animations.length;
+
+  animations.forEach(function (animation) {
+    animation(function (cb) {
+      waiting--;
+
+      if (waiting === 0) {
+        done();
+      }
+    });
+  });
 }
 
 var Entity = function Entity (options) {
@@ -282,6 +324,8 @@ var Entity = function Entity (options) {
   var y = options.y;
   var width = options.width;
   var height = options.height;
+  var createEl = options.createEl;
+  var render = options.render;
 
   this.type = type;
   this.style = style;
@@ -289,6 +333,8 @@ var Entity = function Entity (options) {
   this.y = y;
   this.width = width;
   this.height = height;
+  this.createEl = createEl;
+  this.render = render;
 
   Object.defineProperties(this, {
     _game: {
@@ -377,8 +423,10 @@ var Card = /*@__PURE__*/(function (Entity) {
     Entity.call(this, Object.assign({}, options,
       {type: 'Card'}));
     var i = options.i;
+    var side = options.side;
 
     this.i = i;
+    this.side = side;
 
     Object.defineProperties(this, {
       _movingGroup: {
@@ -404,6 +452,12 @@ var Card = /*@__PURE__*/(function (Entity) {
     }
   };
 
+  Card.prototype.dblClick = function dblClick () {
+    if (this.group && this.group.type === 'Deck') {
+      this.group.shuffle();
+    }
+  };
+
   Card.prototype.startMove = function startMove () {
     if (this._movingGroup) {
       this.group.game.add(this.group);
@@ -425,7 +479,7 @@ var Card = /*@__PURE__*/(function (Entity) {
       this.x += delta.x;
       this.y += delta.y;
 
-      var ref = this;
+      var ref = this;
       var group = ref.group;
 
       if (group) {
@@ -446,7 +500,7 @@ var Card = /*@__PURE__*/(function (Entity) {
     } else {
       this._moving = false;
       if (this.group) {
-        this.group.moveBack();
+        this.group.moveBack(true);
       } else {
         var intersectingEntities = this.game.intersectingChildren(this);
 
@@ -461,15 +515,22 @@ var Card = /*@__PURE__*/(function (Entity) {
         }
 
         if (closest.children) {
+          if (closest.type === 'Pile' && closest.children.length === 1) {
+            var diff = {
+              x: Math.abs(closest.x - this.x),
+              y: Math.abs(closest.y - this.y)
+            };
+            closest.dir = diff.y > diff.x ? 'vertical' : 'horizontal';
+          }
           closest.add(this, true);
         } else {
-          var diff = {
+          var diff$1 = {
             x: Math.abs(closest.x - this.x),
             y: Math.abs(closest.y - this.y)
           };
           var pile = new Pile({
             game: this.game,
-            dir: diff.x > diff.y ? 'horizontal' : 'vertical'
+            dir: diff$1.y > diff$1.x ? 'vertical' : 'horizontal'
           });
           pile.x = closest.x;
           pile.y = closest.y;
@@ -498,6 +559,14 @@ var Card = /*@__PURE__*/(function (Entity) {
         this$1.hold();
       }, 500);
 
+      var now = Date.now();
+
+      if (now - this._lastClick < 500) {
+        this.dblClick();
+      }
+
+      this._lastClick = now;
+
       var move = function (e) {
         if (!moved) {
           clearTimeout(holdTimeout);
@@ -521,6 +590,14 @@ var Card = /*@__PURE__*/(function (Entity) {
       };
 
       var endmove = function (e) {
+        this$1._moving = false;
+        this$1._movingGroup = false;
+        if (this$1.group) {
+          this$1.group.children.forEach(function (item) {
+            item._moving = false;
+          });
+        }
+        clearTimeout(holdTimeout);
         if (moved) {
           this$1.endMove();
         }
@@ -540,7 +617,137 @@ var Card = /*@__PURE__*/(function (Entity) {
     }
   };
 
-  Card.prototype.createEl = function createEl () {
+  return Card;
+}(Entity));
+
+function shuffle (array) {
+  if (!array.length) {
+    return array;
+  }
+  for (var i = array.length - 1; i; i--) {
+    var rnd = Math.floor(Math.random() * (i + 1));
+    var temp = array[i];
+
+    array[i] = array[rnd];
+    array[rnd] = temp;
+  }
+
+  return array;
+}
+
+var Deck = /*@__PURE__*/(function (Group) {
+  function Deck (options) {
+    if ( options === void 0 ) options = {};
+
+    Group.call(this, Object.assign({}, options,
+      {type: 'Deck'}));
+  }
+
+  if ( Group ) Deck.__proto__ = Group;
+  Deck.prototype = Object.create( Group && Group.prototype );
+  Deck.prototype.constructor = Deck;
+
+  Deck.prototype.createCards = function createCards (count, options, options2) {
+    for (var i = 0; i < count; i++) {
+      var card = new Card(Object.assign({}, options,
+        options2,
+        {i: count - i - 1,
+        x: -i / 4,
+        y: -i / 4}));
+      this.add(card);
+    }
+
+    return this;
+  };
+
+  Deck.prototype.moveBack = function moveBack (withAnimation) {
+    for (var i = 0; i < this.children.length; i++) {
+      var target = {
+        x: -i / 4,
+        y: -i / 4
+      };
+      if (withAnimation) {
+        animate(this.children[i], 200, target);
+      } else {
+        this.children[i].x = target.x;
+        this.children[i].y = target.y;
+      }
+    }
+  };
+
+  Deck.prototype.shuffle = function shuffle$1 () {
+    var this$1 = this;
+
+    var shuffled = shuffle(this.children.slice());
+    var left = [];
+    var right = [];
+
+    for (var i = 0; i < this.children.length; i++) {
+      var child = this.children[i];
+
+      if (Math.round(Math.random())) {
+        right.push(child);
+      } else {
+        left.push(child);
+      }
+    }
+
+    var animations = [];
+
+    var rate = 1;
+
+    for (var i$1 = 0; i$1 < left.length || i$1 < right.length; i$1++) {
+      if (i$1 < left.length) {
+        var card = left[i$1];
+        animations.push(animate(card, 200 * rate, {
+          x: -60 + 15 * Math.random(),
+          y: -i$1 / 2
+        }, i$1 * 3 * rate));
+      }
+
+      if (i$1 < right.length) {
+        var card$1 = right[i$1];
+        animations.push(animate(card$1, 200 * rate, {
+          x: 60 + 15 * Math.random(),
+          y: -i$1 / 2
+        }, i$1 * 3 * rate));
+      }
+    }
+    all(animations, function () {
+      var i = 0;
+      var animations = [];
+      while (left.length || right.length) {
+        var random = Math.round(Math.random());
+        var card = random
+          ? (left.shift() || right.shift())
+          : (right.shift() || left.shift());
+
+        animations.push(animate(card, 150 * rate, {
+          x: -i / 4,
+          y: -i / 4
+        }, i * 5 * rate));
+        i++;
+      }
+
+      all(animations, function () {
+        for (var i = 0; i < this$1.children.length; i++) {
+          this$1.children[i].i = shuffled[i].i;
+          this$1.children[i].x = -i / 4;
+          this$1.children[i].y = -i / 4;
+        }
+      });
+    });
+  };
+
+  return Deck;
+}(Group));
+
+var standardDeck = {
+  style: 'standard',
+  width: 100,
+  height: 140,
+  side: 'front',
+  createEl: function createEl () {
     var el = document.createElement('div');
 
     el.style.position = 'absolute';
@@ -556,68 +763,35 @@ var Card = /*@__PURE__*/(function (Entity) {
     el.addEventListener('touchstart', this);
 
     return el;
-  };
-
-  Card.prototype.render = function render (el, data) {
-    var i = data.i;
-    var width = data.width;
-    var height = data.height;
-    var absolutePosition = data.absolutePosition;
-    var _moving = data._moving;
+  },
+  render: function render () {
+    var ref = this;
+    var i = ref.i;
+    var width = ref.width;
+    var height = ref.height;
+    var side = ref.side;
+    var absolutePosition = ref.absolutePosition;
+    var _moving = ref._moving;
     var x = absolutePosition.x;
     var y = absolutePosition.y;
 
-    el.style.transform = "translate(" + x + "px, " + y + "px)";
-    el.style.width = width + 'px';
-    el.style.height = height + 'px';
-    el.style.marginLeft = -width / 2 + 'px';
-    el.style.marginTop = -height / 2 + 'px';
-    el.style.backgroundImage = "url(standard-deck/front-" + i + ".png)";
-    if (_moving) {
-      el.style.boxShadow = '0px 2px 5px rgba(0, 0, 0, 0.25)';
+    this.el.style.transform = "translate(" + (Math.round(x)) + "px, " + (Math.round(y)) + "px)";
+    this.el.style.width = width + 'px';
+    this.el.style.height = height + 'px';
+    this.el.style.marginLeft = -width / 2 + 'px';
+    this.el.style.marginTop = -height / 2 + 'px';
+    if (side === 'front') {
+      this.el.style.backgroundImage = "url(standard-deck/front-" + i + ".png)";
     } else {
-      el.style.boxShadow = '0px 1px 1px rgba(0, 0, 0, 0.05)';
+      this.el.style.backgroundImage = 'url(standard-deck/back.png)';
     }
-  };
-
-  return Card;
-}(Entity));
-
-var Deck = /*@__PURE__*/(function (Group) {
-  function Deck (options) {
-    if ( options === void 0 ) options = {};
-
-    Group.call(this, Object.assign({}, options,
-      {type: 'Deck'}));
+    if (_moving) {
+      this.el.style.boxShadow = '0px 2px 5px rgba(0, 0, 0, 0.25)';
+    } else {
+      this.el.style.boxShadow = '0px 1px 1px rgba(0, 0, 0, 0.05)';
+    }
   }
-
-  if ( Group ) Deck.__proto__ = Group;
-  Deck.prototype = Object.create( Group && Group.prototype );
-  Deck.prototype.constructor = Deck;
-
-  Deck.prototype.createCards = function createCards (count, options) {
-    for (var i = 0; i < count; i++) {
-      var card = new Card(Object.assign({}, options,
-        {i: count - i - 1,
-        x: -i / 4,
-        y: -i / 4}));
-      this.add(card);
-    }
-
-    return this;
-  };
-
-  Deck.prototype.moveBack = function moveBack () {
-    for (var i = 0; i < this.children.length; i++) {
-      animate(this.children[i], 200, {
-        x: -i / 4,
-        y: -i / 4
-      });
-    }
-  };
-
-  return Deck;
-}(Group));
+};
 
 var game = new Game({
   width: 1920,
@@ -631,10 +805,8 @@ var deck = new Deck({
 
 game.add(deck);
 
-deck.createCards(54, {
-  style: 'standard',
-  width: 100,
-  height: 140
+deck.createCards(54, standardDeck, {
+  side: 'front'
 });
 
 game.startRender(document.querySelector('#game'));
