@@ -16,7 +16,7 @@ const deck = new Deck({
 game.add(deck);
 
 deck.createCards(54, standardDeck, {
-  side: 'front'
+  side: 'back'
 });
 
 game.startRender(document.querySelector('#game'));

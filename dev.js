@@ -1,6 +1,7 @@
 const cp = require('child_process');
 
-run('build-js');
+run('build');
+run('build-example-js');
 
 function run (cmd) {
   const child = cp.spawn('npm', ['run', cmd]);

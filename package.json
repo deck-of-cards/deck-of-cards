@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "node dev",
-    "build-css": "postcss -w lib/index.css -o dist/cards.css",
-    "build-js": "rollup -c -w -i example.js -o dist/cards.js"
+    "build": "rollup -c -w -i lib/index.js -o dist/cards.js",
+    "build-example-css": "postcss -w lib/index.css -o dist/example.css",
+    "build-example-js": "rollup -c -w -i example.js -o dist/example.js"
   },
   "repository": {
     "type": "git",
