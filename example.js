@@ -1,5 +1,4 @@
-import { Game } from './lib/game.js';
-import { Deck } from './lib/deck.js';
+import { Game, Deck } from './lib/index.js';
 
 import { standardDeck } from '../standard-deck/dist/index.js';
 
