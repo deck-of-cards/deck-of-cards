@@ -1,6 +1,12 @@
-import { Game, Deck } from './lib/index.js';
+import {
+  Game,
+  Deck,
+  Renderer
+} from './lib/index.js';
 
-import { standardDeck } from '../standard-deck/dist/index.js';
+import {
+  standardDeck
+} from '../standard-deck/dist/index.js';
 
 const game = new Game({
   width: 1920,
@@ -18,4 +24,6 @@ deck.createCards(54, standardDeck, {
   side: 'back'
 });
 
-game.startRender(document.querySelector('#game'));
+const $game = document.querySelector('#game');
+const renderer = new Renderer(game, $game);
+renderer.start();
