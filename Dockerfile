@@ -17,3 +17,5 @@ COPY --chown=root:root . /app/
 RUN rm -f /app/Dockerfile /app/LICENSE /app/README.md
 
 RUN npm install
+
+CMD ["/app/entrypoint.sh"]
