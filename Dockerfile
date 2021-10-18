@@ -14,7 +14,7 @@ WORKDIR /app
 # Copy app code into container in /data
 COPY --chown=root:root . /app/
 
-RUN rm -f /app/Dockerfile /app/LICENSE /app/README.md
+RUN rm -f Dockerfile LICENSE README.md build.sh
 
 RUN npm install
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 sleep_secs=300
 
