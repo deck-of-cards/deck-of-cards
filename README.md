@@ -3,7 +3,7 @@
 
 ## NEW VERSION COMING UP!
 
-The new **multiplayer** Deck of Cards is released at https://deck.of.cards, but will have it's cards library open sourced soon here!
+The new **multiplayer** Deck of Cards is released at https://deck.of.cards, but will have its cards library open sourced soon here!
 
 ## Old version
 
@@ -157,7 +157,7 @@ Shuffle cards and fan: http://jsfiddle.net/favbdkta/
 Deck with jokers:
 
 ``` js
-// Instanciate a deck with jokers
+// Instantiate a deck with jokers
 var deck = Deck(true);
 ```
 
