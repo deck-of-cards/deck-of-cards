@@ -49,9 +49,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js"></script>
     <script>
       FastClick.attach(document.body);
-      if ((window.location.protocol !== 'file:') && (window.location.hostname !== 'deck.of.cards')) {
-        window.location.href = 'https://deck.of.cards'
-      }
 
       window.addEventListener('keydown', function (e) {
         if ((e.key === 'h') && (e.ctrlKey || e.metaKey)) {
